@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Critical Minerals Tracker — Prospector Labs</title>
     <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-sankey@0.12.0/dist/chartjs-chart-sankey.min.js"></script>
     <style>
@@ -25,6 +25,8 @@
             --ember: #F59E0B;
             --jade: #10B981;
             --coral: #EF4444;
+            --violet: #8B5CF6;
+            --cyan: #06B6D4;
         }
         
         body {
@@ -71,7 +73,7 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 32px;
+            margin-bottom: 24px;
             padding-bottom: 24px;
             border-bottom: 1px solid var(--zinc);
         }
@@ -104,6 +106,38 @@
             font-size: 11px;
             opacity: 0.7;
             margin-left: 4px;
+        }
+        
+        /* View Tabs */
+        .view-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            background: var(--graphite);
+            padding: 4px;
+            border-radius: 8px;
+            width: fit-content;
+        }
+        
+        .view-tab {
+            background: transparent;
+            border: none;
+            color: var(--silver);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .view-tab:hover {
+            color: var(--white);
+        }
+        
+        .view-tab.active {
+            background: var(--zinc);
+            color: var(--white);
         }
         
         /* Grid Layout */
@@ -186,6 +220,10 @@
             height: 400px;
         }
         
+        .chart-container.sankey {
+            height: 500px;
+        }
+        
         /* Bar chart custom */
         .bar-row {
             display: flex;
@@ -241,6 +279,7 @@
         .risk-critical { background: rgba(239, 68, 68, 0.2); color: var(--coral); }
         .risk-high { background: rgba(245, 158, 11, 0.2); color: var(--ember); }
         .risk-moderate { background: rgba(59, 130, 246, 0.2); color: var(--electric); }
+        .risk-low { background: rgba(16, 185, 129, 0.2); color: var(--jade); }
         
         /* Data Table */
         .data-table {
@@ -278,41 +317,103 @@
             font-size: 13px;
         }
         
-        /* Supply Chain section */
-        .supply-chain-section {
-            margin-top: 48px;
-            padding-top: 48px;
-            border-top: 1px solid var(--zinc);
+        /* Company Cards */
+        .company-card {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.15s ease;
         }
         
-        /* Footer */
-        footer {
-            margin-top: 64px;
-            padding-top: 24px;
-            border-top: 1px solid var(--zinc);
+        .company-card:hover {
+            border-color: var(--electric);
+            transform: translateY(-2px);
+        }
+        
+        .company-header {
             display: flex;
             justify-content: space-between;
-            align-items: center;
+            align-items: flex-start;
+            margin-bottom: 12px;
         }
         
-        footer .small {
+        .company-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--white);
+        }
+        
+        .company-ticker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--electric);
+            background: rgba(59, 130, 246, 0.15);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        
+        .company-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            font-size: 12px;
             color: var(--stone);
         }
         
-        /* Tooltip */
-        .tooltip {
-            position: absolute;
-            background: var(--black);
-            color: var(--white);
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 13px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            pointer-events: none;
-            z-index: 100;
+        .company-stat {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
         }
         
-        /* Company list */
+        .company-stat-label {
+            font-size: 11px;
+            color: var(--stone);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .company-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--white);
+        }
+        
+        .company-assets {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 12px;
+        }
+        
+        .asset-tag {
+            background: var(--zinc);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            color: var(--silver);
+        }
+        
+        .company-news {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--zinc);
+        }
+        
+        .news-item {
+            font-size: 12px;
+            color: var(--stone);
+            margin-bottom: 4px;
+        }
+        
+        .news-item::before {
+            content: "→ ";
+            color: var(--electric);
+        }
+        
+        /* Company list compact */
         .company-list {
             display: flex;
             flex-wrap: wrap;
@@ -355,13 +456,40 @@
             margin-bottom: 8px;
         }
         
-        /* Loading state */
-        .loading {
+        /* Supply Chain Flow */
+        .supply-chain-flow {
             display: flex;
             align-items: center;
-            justify-content: center;
-            height: 200px;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        
+        .flow-step {
+            background: var(--zinc);
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: var(--silver);
+            position: relative;
+        }
+        
+        .flow-step.bottleneck {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: var(--coral);
+        }
+        
+        .flow-arrow {
             color: var(--stone);
+            font-size: 18px;
+        }
+        
+        .flow-country {
+            display: block;
+            font-size: 11px;
+            color: var(--stone);
+            margin-top: 4px;
         }
         
         /* Section headers */
@@ -390,6 +518,51 @@
             font-size: 16px;
             font-weight: 600;
         }
+        
+        /* Sankey legend */
+        .sankey-legend {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            padding: 16px;
+            background: var(--graphite);
+            border-radius: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--silver);
+        }
+        
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid var(--zinc);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        footer .small {
+            color: var(--stone);
+        }
+        
+        /* Hidden */
+        .hidden { display: none !important; }
+        
+        /* View sections */
+        .view-section { display: none; }
+        .view-section.active { display: block; }
     </style>
 </head>
 <body>
@@ -412,6 +585,14 @@
             <button class="mineral-btn" data-mineral="gallium">Gallium <span class="symbol">Ga</span></button>
             <button class="mineral-btn" data-mineral="germanium">Germanium <span class="symbol">Ge</span></button>
         </nav>
+        
+        <!-- View Tabs (for mineral detail) -->
+        <div class="view-tabs" id="viewTabs" style="display: none;">
+            <button class="view-tab active" data-view="overview">Overview</button>
+            <button class="view-tab" data-view="companies">Companies</button>
+            <button class="view-tab" data-view="supplychain">Supply Chain</button>
+            <button class="view-tab" data-view="tradeflows">Trade Flows</button>
+        </div>
         
         <!-- Main Content Area -->
         <main id="mainContent">
@@ -456,6 +637,20 @@
                                 </div>
                             </div>
                             <div class="bar-row">
+                                <span class="bar-label">Graphite Anode</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 95%; background: var(--coral);"></div>
+                                    <span class="bar-value">China 95%</span>
+                                </div>
+                            </div>
+                            <div class="bar-row">
+                                <span class="bar-label">REE Magnets</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 92%; background: var(--coral);"></div>
+                                    <span class="bar-value">China 92%</span>
+                                </div>
+                            </div>
+                            <div class="bar-row">
                                 <span class="bar-label">REE Processing</span>
                                 <div class="bar-container">
                                     <div class="bar-fill" style="width: 90%; background: var(--coral);"></div>
@@ -463,28 +658,28 @@
                                 </div>
                             </div>
                             <div class="bar-row">
-                                <span class="bar-label">Polysilicon</span>
+                                <span class="bar-label">Cobalt Refining</span>
                                 <div class="bar-container">
-                                    <div class="bar-fill" style="width: 90%; background: var(--coral);"></div>
-                                    <span class="bar-value">China 90%</span>
+                                    <div class="bar-fill" style="width: 72%; background: var(--ember);"></div>
+                                    <span class="bar-value">China 72%</span>
                                 </div>
                             </div>
                             <div class="bar-row">
-                                <span class="bar-label">Graphite</span>
-                                <div class="bar-container">
-                                    <div class="bar-fill" style="width: 75%; background: var(--ember);"></div>
-                                    <span class="bar-value">China 75%</span>
-                                </div>
-                            </div>
-                            <div class="bar-row">
-                                <span class="bar-label">Cobalt</span>
+                                <span class="bar-label">Cobalt Mining</span>
                                 <div class="bar-container">
                                     <div class="bar-fill" style="width: 68%; background: var(--ember);"></div>
                                     <span class="bar-value">DRC 68%</span>
                                 </div>
                             </div>
                             <div class="bar-row">
-                                <span class="bar-label">Nickel</span>
+                                <span class="bar-label">Lithium Processing</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 65%; background: var(--ember);"></div>
+                                    <span class="bar-value">China 65%</span>
+                                </div>
+                            </div>
+                            <div class="bar-row">
+                                <span class="bar-label">Nickel Mining</span>
                                 <div class="bar-container">
                                     <div class="bar-fill" style="width: 50%; background: var(--electric);"></div>
                                     <span class="bar-value">Indonesia 50%</span>
@@ -494,11 +689,87 @@
                     </div>
                     
                     <div class="card">
-                        <p class="card-title">Production by Mineral (2024)</p>
+                        <p class="card-title">Top Mining Companies by Mineral</p>
                         <div class="chart-container">
-                            <canvas id="productionChart"></canvas>
+                            <canvas id="companiesChart"></canvas>
                         </div>
                     </div>
+                </div>
+                
+                <!-- Top Companies Overview -->
+                <div class="card" style="margin-top: 24px;">
+                    <p class="card-title">Major Players Across Critical Minerals</p>
+                    <p class="small" style="margin-bottom: 16px;">Key companies dominating the critical minerals supply chain</p>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Company</th>
+                                <th>HQ</th>
+                                <th>Minerals</th>
+                                <th>Role</th>
+                                <th>Market Position</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Glencore</strong></td>
+                                <td class="mono">🇨🇭 Switzerland</td>
+                                <td>Cobalt, Copper, Nickel, Zinc</td>
+                                <td>Mining & Trading</td>
+                                <td><span class="risk-badge risk-moderate">#1 Cobalt</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Albemarle</strong></td>
+                                <td class="mono">🇺🇸 USA</td>
+                                <td>Lithium</td>
+                                <td>Mining & Processing</td>
+                                <td><span class="risk-badge risk-moderate">#1 Lithium</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Ganfeng Lithium</strong></td>
+                                <td class="mono">🇨🇳 China</td>
+                                <td>Lithium</td>
+                                <td>Integrated</td>
+                                <td><span class="risk-badge risk-moderate">#3 Lithium</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>China Northern Rare Earth</strong></td>
+                                <td class="mono">🇨🇳 China</td>
+                                <td>Rare Earths</td>
+                                <td>Mining & Processing</td>
+                                <td><span class="risk-badge risk-critical">#1 REE</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Tsingshan</strong></td>
+                                <td class="mono">🇨🇳 China</td>
+                                <td>Nickel, Stainless Steel</td>
+                                <td>Integrated</td>
+                                <td><span class="risk-badge risk-high">#1 Nickel</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Codelco</strong></td>
+                                <td class="mono">🇨🇱 Chile</td>
+                                <td>Copper</td>
+                                <td>State Mining</td>
+                                <td><span class="risk-badge risk-moderate">#1 Copper</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>BTR New Material</strong></td>
+                                <td class="mono">🇨🇳 China</td>
+                                <td>Graphite Anode</td>
+                                <td>Processing</td>
+                                <td><span class="risk-badge risk-critical">#1 Anode</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>MP Materials</strong></td>
+                                <td class="mono">🇺🇸 USA</td>
+                                <td>Rare Earths</td>
+                                <td>Mining</td>
+                                <td><span class="risk-badge risk-low">Key Western Player</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
                 
                 <!-- Data Quality Matrix -->
@@ -513,7 +784,7 @@
                                 <th>Price Data</th>
                                 <th>Production</th>
                                 <th>Reserves</th>
-                                <th>Supply Chain</th>
+                                <th>Companies</th>
                                 <th>Data Quality</th>
                             </tr>
                         </thead>
@@ -523,15 +794,15 @@
                                 <td class="mono">✓ Trading Economics</td>
                                 <td class="mono">✓ USGS</td>
                                 <td class="mono">✓ USGS</td>
-                                <td class="mono">✓ Industry</td>
-                                <td><span class="risk-badge risk-moderate">Excellent</span></td>
+                                <td class="mono">✓ Public</td>
+                                <td><span class="risk-badge risk-low">Excellent</span></td>
                             </tr>
                             <tr>
                                 <td><strong>Cobalt</strong></td>
                                 <td class="mono">✓ LME/TE</td>
                                 <td class="mono">✓ USGS</td>
                                 <td class="mono">✓ USGS</td>
-                                <td class="mono">✓ Industry</td>
+                                <td class="mono">✓ Public</td>
                                 <td><span class="risk-badge risk-moderate">Good</span></td>
                             </tr>
                             <tr>
@@ -539,16 +810,16 @@
                                 <td class="mono">✓ LME/TE</td>
                                 <td class="mono">✓ USGS</td>
                                 <td class="mono">✓ USGS</td>
-                                <td class="mono">✓ Industry</td>
-                                <td><span class="risk-badge risk-moderate">Excellent</span></td>
+                                <td class="mono">✓ Public</td>
+                                <td><span class="risk-badge risk-low">Excellent</span></td>
                             </tr>
                             <tr>
                                 <td><strong>Copper</strong></td>
                                 <td class="mono">✓ COMEX/TE</td>
                                 <td class="mono">✓ USGS</td>
                                 <td class="mono">✓ USGS</td>
-                                <td class="mono">✓ Industry</td>
-                                <td><span class="risk-badge risk-moderate">Excellent</span></td>
+                                <td class="mono">✓ Public</td>
+                                <td><span class="risk-badge risk-low">Excellent</span></td>
                             </tr>
                             <tr>
                                 <td><strong>Graphite</strong></td>
@@ -563,7 +834,7 @@
                                 <td class="mono">△ Paid sources</td>
                                 <td class="mono">✓ USGS</td>
                                 <td class="mono">✓ USGS</td>
-                                <td class="mono">△ Limited</td>
+                                <td class="mono">✓ Public</td>
                                 <td><span class="risk-badge risk-high">Moderate</span></td>
                             </tr>
                             <tr>
@@ -589,174 +860,171 @@
                         <p class="micro">Data Sources</p>
                         <p class="small">✓ = Freely available public data | △ = Requires paid sources or estimates | ✗ = Data not available</p>
                         <p class="small" style="margin-top: 8px;"><strong>Primary Sources:</strong> USGS Mineral Commodity Summaries, Trading Economics, LME, COMEX, Company Reports</p>
-                        <p class="small"><strong>Paid Sources (for real-time):</strong> Benchmark Mineral Intelligence, S&P Global Platts, Fastmarkets, Asian Metal</p>
                     </div>
                 </div>
             </section>
             
-            <!-- Individual Mineral Sections (hidden by default) -->
+            <!-- Individual Mineral Sections -->
             <section id="mineralDetail" style="display: none;">
                 <div class="section-header">
                     <div class="h2">
                         <div class="mineral-symbol" id="mineralSymbol">Li</div>
                         <span id="mineralName">Lithium</span>
                     </div>
-                    <div>
-                        <span class="use-badge" id="mineralUse">EV Batteries</span>
+                    <div id="mineralUses"></div>
+                </div>
+                
+                <!-- Overview View -->
+                <div class="view-section active" id="viewOverview">
+                    <!-- Price & Stats -->
+                    <div class="grid grid-4" style="margin-bottom: 24px;">
+                        <div class="card">
+                            <p class="card-title">Current Price</p>
+                            <p class="stat-value" id="detailPrice">-</p>
+                            <p class="stat-change" id="detailPriceChange">-</p>
+                        </div>
+                        <div class="card">
+                            <p class="card-title">All-Time High</p>
+                            <p class="stat-value" id="detailHigh">-</p>
+                            <p class="small" id="detailHighDate">-</p>
+                        </div>
+                        <div class="card">
+                            <p class="card-title">World Production</p>
+                            <p class="stat-value" id="detailProduction">-</p>
+                            <p class="small" id="detailProductionUnit">tonnes</p>
+                        </div>
+                        <div class="card">
+                            <p class="card-title">World Reserves</p>
+                            <p class="stat-value" id="detailReserves">-</p>
+                            <p class="small" id="detailReservesUnit">tonnes</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Production & Reserves Charts -->
+                    <div class="grid grid-2" style="margin-bottom: 24px;">
+                        <div class="card">
+                            <p class="card-title">Production by Country</p>
+                            <div id="productionBars"></div>
+                        </div>
+                        <div class="card">
+                            <p class="card-title">Reserves by Country</p>
+                            <div id="reservesBars"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Concentration Risk -->
+                    <div class="card" id="concentrationCard">
+                        <p class="card-title">Concentration Risk Assessment</p>
+                        <div id="concentrationInfo"></div>
                     </div>
                 </div>
                 
-                <!-- Price & Stats -->
-                <div class="grid grid-4" style="margin-bottom: 24px;">
-                    <div class="card">
-                        <p class="card-title">Current Price</p>
-                        <p class="stat-value" id="detailPrice">-</p>
-                        <p class="stat-change" id="detailPriceChange">-</p>
+                <!-- Companies View -->
+                <div class="view-section" id="viewCompanies">
+                    <div class="grid grid-2" style="margin-bottom: 24px;">
+                        <div class="card">
+                            <p class="card-title">Mining Companies</p>
+                            <div id="miningCompanies"></div>
+                        </div>
+                        <div class="card">
+                            <p class="card-title">Processing Companies</p>
+                            <div id="processingCompanies"></div>
+                        </div>
                     </div>
+                    
                     <div class="card">
-                        <p class="card-title">All-Time High</p>
-                        <p class="stat-value" id="detailHigh">-</p>
-                        <p class="small" id="detailHighDate">-</p>
-                    </div>
-                    <div class="card">
-                        <p class="card-title">World Production</p>
-                        <p class="stat-value" id="detailProduction">-</p>
-                        <p class="small" id="detailProductionUnit">tonnes</p>
-                    </div>
-                    <div class="card">
-                        <p class="card-title">World Reserves</p>
-                        <p class="stat-value" id="detailReserves">-</p>
-                        <p class="small" id="detailReservesUnit">tonnes</p>
+                        <p class="card-title">Top Companies Detailed</p>
+                        <div class="grid grid-2" id="companyCards" style="margin-top: 16px;"></div>
                     </div>
                 </div>
                 
-                <!-- Production & Reserves Charts -->
-                <div class="grid grid-2" style="margin-bottom: 24px;">
+                <!-- Supply Chain View -->
+                <div class="view-section" id="viewSupplychain">
                     <div class="card">
-                        <p class="card-title">Production by Country</p>
-                        <div id="productionBars"></div>
+                        <p class="card-title">Supply Chain Stages</p>
+                        <div id="supplyChainStages"></div>
                     </div>
-                    <div class="card">
-                        <p class="card-title">Reserves by Country</p>
-                        <div id="reservesBars"></div>
+                    
+                    <div class="card" style="margin-top: 24px;">
+                        <p class="card-title">Supply Chain Flow</p>
+                        <div class="chart-container sankey">
+                            <canvas id="sankeyChart"></canvas>
+                        </div>
+                        <div class="sankey-legend" id="sankeyLegend"></div>
                     </div>
                 </div>
                 
-                <!-- Supply Chain & Companies -->
-                <div class="grid grid-2">
+                <!-- Trade Flows View -->
+                <div class="view-section" id="viewTradeflows">
                     <div class="card">
-                        <p class="card-title">Supply Chain</p>
-                        <div id="supplyChainInfo"></div>
+                        <p class="card-title">Major Export Routes</p>
+                        <div id="exportRoutes"></div>
                     </div>
-                    <div class="card">
-                        <p class="card-title">Major Companies</p>
-                        <div class="company-list" id="companiesList"></div>
-                        
-                        <div id="concernsPanel" style="margin-top: 16px;"></div>
+                    
+                    <div class="grid grid-2" style="margin-top: 24px;">
+                        <div class="card">
+                            <p class="card-title">Top Exporters</p>
+                            <div id="exporters"></div>
+                        </div>
+                        <div class="card">
+                            <p class="card-title">Top Importers</p>
+                            <div id="importers"></div>
+                        </div>
                     </div>
                 </div>
             </section>
         </main>
         
         <footer>
-            <p class="small">Last updated: February 6, 2026 | Data: USGS, Trading Economics, Industry Reports</p>
+            <p class="small">Last updated: February 6, 2026 | Data: USGS, Trading Economics, Industry Reports, Company Filings</p>
             <p class="small">prospectorlabs.io</p>
         </footer>
     </div>
     
     <script>
-        // Load mineral data
+        // Data stores
         let mineralsData = null;
+        let companiesData = null;
+        let tradeFlowsData = null;
+        let supplyChainData = null;
+        let currentMineral = 'overview';
+        let currentView = 'overview';
+        let sankeyChart = null;
         
+        // Load all data
         async function loadData() {
             try {
-                const response = await fetch('data/minerals.json');
-                mineralsData = await response.json();
+                const [minerals, companies, tradeFlows, supplyChain] = await Promise.all([
+                    fetch('data/minerals.json').then(r => r.json()),
+                    fetch('data/companies.json').then(r => r.json()),
+                    fetch('data/trade-flows.json').then(r => r.json()),
+                    fetch('data/supply-chain-steps.json').then(r => r.json())
+                ]);
+                
+                mineralsData = minerals;
+                companiesData = companies;
+                tradeFlowsData = tradeFlows;
+                supplyChainData = supplyChain;
+                
                 initCharts();
             } catch (e) {
                 console.error('Error loading data:', e);
-                // Use inline data as fallback
-                initWithFallbackData();
             }
-        }
-        
-        function initWithFallbackData() {
-            // Fallback data inline
-            mineralsData = {
-                minerals: {
-                    lithium: {
-                        symbol: "Li", name: "Lithium", primaryUse: "EV Batteries",
-                        price: { current: 134500, unit: "CNY/t", yearOverYearChange: 74, historicalHigh: 5750000, historicalHighDate: "2022-12" },
-                        production2024: { world: 240000, byCountry: [
-                            {country: "Australia", value: 88000, share: 36.7},
-                            {country: "Chile", value: 49000, share: 20.4},
-                            {country: "China", value: 41000, share: 17.1},
-                            {country: "Argentina", value: 18000, share: 7.5}
-                        ]},
-                        reserves: { world: 30000000, byCountry: [
-                            {country: "Chile", value: 9300000, share: 31.0},
-                            {country: "Australia", value: 7000000, share: 23.3}
-                        ]},
-                        majorCompanies: ["Albemarle (USA)", "SQM (Chile)", "Tianqi Lithium (China)", "Ganfeng Lithium (China)"]
-                    },
-                    cobalt: {
-                        symbol: "Co", name: "Cobalt", primaryUse: "EV Batteries",
-                        price: { current: 56290, unit: "USD/t", yearOverYearChange: 161.21, historicalHigh: 95250, historicalHighDate: "2018-03" },
-                        production2023: { world: 190000, byCountry: [
-                            {country: "DR Congo", value: 130000, share: 68.4},
-                            {country: "Indonesia", value: 17000, share: 8.9}
-                        ]},
-                        reserves: { world: 8300000, byCountry: [
-                            {country: "DR Congo", value: 4000000, share: 48.2},
-                            {country: "Australia", value: 1500000, share: 18.1}
-                        ]},
-                        majorCompanies: ["Glencore (Switzerland)", "CMOC (China)", "Umicore (Belgium)"],
-                        concerns: ["ESG/Child labor concerns in DRC artisanal mining"]
-                    },
-                    nickel: {
-                        symbol: "Ni", name: "Nickel", primaryUse: "Stainless Steel, Batteries",
-                        price: { current: 17032.88, unit: "USD/t", yearOverYearChange: 8.21, historicalHigh: 54050, historicalHighDate: "2007-05" },
-                        production2023: { world: 3600000, byCountry: [
-                            {country: "Indonesia", value: 1800000, share: 50.0},
-                            {country: "Philippines", value: 400000, share: 11.1}
-                        ]},
-                        reserves: { world: 100000000, byCountry: [
-                            {country: "Indonesia", value: 21000000, share: 21.0},
-                            {country: "Australia", value: 21000000, share: 21.0}
-                        ]},
-                        majorCompanies: ["Nornickel (Russia)", "Vale (Brazil)", "BHP (Australia)"]
-                    },
-                    copper: {
-                        symbol: "Cu", name: "Copper", primaryUse: "Electrical Wiring",
-                        price: { current: 5.85, unit: "USD/lb", yearOverYearChange: 27.55, historicalHigh: 6.58, historicalHighDate: "2026-01" },
-                        production2023: { world: 22000000, byCountry: [
-                            {country: "Chile", value: 5200000, share: 23.6},
-                            {country: "Peru", value: 2700000, share: 12.3}
-                        ]},
-                        reserves: { world: 890000000, byCountry: [
-                            {country: "Chile", value: 190000000, share: 21.3},
-                            {country: "Australia", value: 97000000, share: 10.9}
-                        ]},
-                        majorCompanies: ["Codelco (Chile)", "Freeport-McMoRan (USA)", "BHP (Australia)"]
-                    }
-                }
-            };
-            initCharts();
         }
         
         // Initialize charts
         function initCharts() {
-            // Production overview chart
-            const ctx = document.getElementById('productionChart');
+            // Companies overview chart
+            const ctx = document.getElementById('companiesChart');
             if (ctx) {
                 new Chart(ctx, {
                     type: 'bar',
                     data: {
-                        labels: ['Lithium', 'Cobalt', 'Nickel', 'Copper'],
+                        labels: ['Lithium', 'Cobalt', 'Nickel', 'Copper', 'REE', 'Graphite'],
                         datasets: [{
-                            label: 'Top Producer Share %',
-                            data: [36.7, 68.4, 50.0, 23.6],
-                            backgroundColor: ['#3B82F6', '#EF4444', '#F59E0B', '#10B981'],
+                            label: 'Top 3 Companies Share %',
+                            data: [49, 46, 29, 24, 58, 45],
+                            backgroundColor: ['#3B82F6', '#EF4444', '#F59E0B', '#10B981', '#8B5CF6', '#06B6D4'],
                             borderRadius: 4
                         }]
                     },
@@ -783,20 +1051,47 @@
             }
         }
         
-        // Navigation
+        // Navigation handlers
         document.querySelectorAll('.mineral-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.mineral-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 
                 const mineral = btn.dataset.mineral;
+                currentMineral = mineral;
+                
                 if (mineral === 'overview') {
                     document.getElementById('overviewSection').style.display = 'block';
                     document.getElementById('mineralDetail').style.display = 'none';
+                    document.getElementById('viewTabs').style.display = 'none';
                 } else {
                     document.getElementById('overviewSection').style.display = 'none';
                     document.getElementById('mineralDetail').style.display = 'block';
+                    document.getElementById('viewTabs').style.display = 'flex';
                     showMineralDetail(mineral);
+                }
+            });
+        });
+        
+        // View tab handlers
+        document.querySelectorAll('.view-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                const view = tab.dataset.view;
+                currentView = view;
+                
+                document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+                document.getElementById('view' + view.charAt(0).toUpperCase() + view.slice(1)).classList.add('active');
+                
+                // Refresh view-specific data
+                if (view === 'supplychain') {
+                    renderSupplyChain(currentMineral);
+                } else if (view === 'companies') {
+                    renderCompanies(currentMineral);
+                } else if (view === 'tradeflows') {
+                    renderTradeFlows(currentMineral);
                 }
             });
         });
@@ -810,7 +1105,11 @@
             // Update header
             document.getElementById('mineralSymbol').textContent = mineral.symbol || mineralKey.substring(0, 2).toUpperCase();
             document.getElementById('mineralName').textContent = mineral.name;
-            document.getElementById('mineralUse').textContent = mineral.primaryUse;
+            
+            // Uses
+            const usesDiv = document.getElementById('mineralUses');
+            const uses = mineral.primaryUse ? mineral.primaryUse.split(',').map(u => u.trim()) : [];
+            usesDiv.innerHTML = uses.map(u => `<span class="use-badge">${u}</span>`).join('');
             
             // Price
             const price = mineral.price;
@@ -819,9 +1118,14 @@
                 const changeClass = price.yearOverYearChange >= 0 ? 'positive' : 'negative';
                 const arrow = price.yearOverYearChange >= 0 ? '↑' : '↓';
                 document.getElementById('detailPriceChange').className = `stat-change ${changeClass}`;
-                document.getElementById('detailPriceChange').textContent = `${arrow} ${Math.abs(price.yearOverYearChange)}% YoY`;
+                document.getElementById('detailPriceChange').textContent = `${arrow} ${Math.abs(price.yearOverYearChange).toFixed(1)}% YoY`;
                 document.getElementById('detailHigh').innerHTML = `${formatNumber(price.historicalHigh)} <span class="stat-unit">${price.unit}</span>`;
                 document.getElementById('detailHighDate').textContent = price.historicalHighDate || '-';
+            } else {
+                document.getElementById('detailPrice').textContent = '-';
+                document.getElementById('detailPriceChange').textContent = '';
+                document.getElementById('detailHigh').textContent = '-';
+                document.getElementById('detailHighDate').textContent = '';
             }
             
             // Production
@@ -830,7 +1134,6 @@
                 document.getElementById('detailProduction').textContent = formatNumber(prod.world);
                 document.getElementById('detailProductionUnit').textContent = prod.unit || 'tonnes';
                 
-                // Production bars
                 const prodBars = document.getElementById('productionBars');
                 prodBars.innerHTML = prod.byCountry ? prod.byCountry.slice(0, 6).map(c => `
                     <div class="bar-row">
@@ -849,7 +1152,6 @@
                 document.getElementById('detailReserves').textContent = formatNumber(res.world);
                 document.getElementById('detailReservesUnit').textContent = res.unit || 'tonnes';
                 
-                // Reserves bars
                 const resBars = document.getElementById('reservesBars');
                 resBars.innerHTML = res.byCountry ? res.byCountry.slice(0, 6).map(c => `
                     <div class="bar-row">
@@ -859,59 +1161,422 @@
                             <span class="bar-value">${c.share}%</span>
                         </div>
                     </div>
-                `).join('') : '<p class="small">No data available</p>';
+                `).join('') : '<p class="small">No reserves data available</p>';
             } else {
                 document.getElementById('detailReserves').textContent = '-';
                 document.getElementById('reservesBars').innerHTML = '<p class="small">No reserves data available</p>';
             }
             
-            // Supply Chain
-            const supply = mineral.supplyChain;
-            const supplyDiv = document.getElementById('supplyChainInfo');
-            if (supply) {
-                supplyDiv.innerHTML = `
-                    <div style="margin-bottom: 12px;">
-                        <p class="micro" style="color: var(--stone); margin-bottom: 4px;">Mining</p>
-                        <p class="small">${supply.mining ? supply.mining.join(' → ') : '-'}</p>
-                    </div>
-                    <div style="margin-bottom: 12px;">
-                        <p class="micro" style="color: var(--stone); margin-bottom: 4px;">Processing</p>
-                        <p class="small">${supply.processing ? supply.processing.join(' → ') : (supply.smelting ? supply.smelting.join(' → ') : '-')}</p>
-                    </div>
-                    <div>
-                        <p class="micro" style="color: var(--stone); margin-bottom: 4px;">End Use</p>
-                        <p class="small">${supply.endUse ? supply.endUse.join(' • ') : '-'}</p>
-                    </div>
-                `;
-            } else {
-                supplyDiv.innerHTML = '<p class="small">Supply chain data not available</p>';
+            // Concentration info
+            renderConcentrationInfo(mineralKey);
+            
+            // Load companies if on that view
+            if (currentView === 'companies') {
+                renderCompanies(mineralKey);
+            } else if (currentView === 'supplychain') {
+                renderSupplyChain(mineralKey);
+            } else if (currentView === 'tradeflows') {
+                renderTradeFlows(mineralKey);
+            }
+        }
+        
+        function renderConcentrationInfo(mineralKey) {
+            if (!companiesData) return;
+            
+            const companyInfo = companiesData.companies[mineralKey];
+            const concentrationDiv = document.getElementById('concentrationInfo');
+            
+            if (!companyInfo || !companyInfo.concentration) {
+                concentrationDiv.innerHTML = '<p class="small">No concentration data available</p>';
+                return;
             }
             
-            // Companies
-            const companiesDiv = document.getElementById('companiesList');
-            companiesDiv.innerHTML = mineral.majorCompanies ? 
-                mineral.majorCompanies.map(c => `<span class="company-tag">${c}</span>`).join('') :
-                '<p class="small">No company data available</p>';
+            const conc = companyInfo.concentration;
+            let html = '<div class="grid grid-2" style="gap: 16px; margin-top: 16px;">';
             
-            // Concerns
-            const concernsDiv = document.getElementById('concernsPanel');
-            if (mineral.concerns && mineral.concerns.length > 0) {
-                concernsDiv.innerHTML = `
-                    <div class="info-panel" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
-                        <p class="micro" style="color: var(--coral);">Supply Chain Concerns</p>
-                        ${mineral.concerns.map(c => `<p class="small">• ${c}</p>`).join('')}
+            // Mining concentration
+            if (conc.mining) {
+                const riskClass = conc.mining.riskLevel === 'critical' ? 'risk-critical' : 
+                                  conc.mining.riskLevel === 'high' ? 'risk-high' : 'risk-moderate';
+                html += `
+                    <div>
+                        <p class="micro" style="color: var(--stone); margin-bottom: 8px;">Mining Concentration</p>
+                        ${conc.mining.chinaShare ? `<p class="body"><strong>China:</strong> ${conc.mining.chinaShare}%</p>` : ''}
+                        ${conc.mining.drcShare ? `<p class="body"><strong>DRC:</strong> ${conc.mining.drcShare}%</p>` : ''}
+                        ${conc.mining.indonesiaShare ? `<p class="body"><strong>Indonesia:</strong> ${conc.mining.indonesiaShare}%</p>` : ''}
+                        ${conc.mining.top3Share ? `<p class="body"><strong>Top 3:</strong> ${conc.mining.top3Share}%</p>` : ''}
+                        <span class="risk-badge ${riskClass}" style="margin-top: 8px;">${conc.mining.riskLevel} risk</span>
                     </div>
                 `;
+            }
+            
+            // Processing concentration
+            if (conc.processing) {
+                const riskClass = conc.processing.riskLevel === 'critical' ? 'risk-critical' : 
+                                  conc.processing.riskLevel === 'high' ? 'risk-high' : 'risk-moderate';
+                html += `
+                    <div>
+                        <p class="micro" style="color: var(--stone); margin-bottom: 8px;">Processing Concentration</p>
+                        ${conc.processing.chinaShare ? `<p class="body"><strong>China:</strong> ${conc.processing.chinaShare}%</p>` : ''}
+                        <span class="risk-badge ${riskClass}" style="margin-top: 8px;">${conc.processing.riskLevel} risk</span>
+                    </div>
+                `;
+            }
+            
+            // Magnets (for REE)
+            if (conc.magnets) {
+                const riskClass = 'risk-critical';
+                html += `
+                    <div style="grid-column: span 2;">
+                        <p class="micro" style="color: var(--stone); margin-bottom: 8px;">Magnet Manufacturing</p>
+                        <p class="body"><strong>China:</strong> ${conc.magnets.chinaShare}%</p>
+                        <span class="risk-badge ${riskClass}" style="margin-top: 8px;">critical risk</span>
+                    </div>
+                `;
+            }
+            
+            html += '</div>';
+            
+            // Concerns
+            const concerns = conc.mining?.concerns || conc.processing?.concerns || conc.magnets?.concerns;
+            if (concerns && concerns.length > 0) {
+                html += `
+                    <div class="info-panel" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3); margin-top: 16px;">
+                        <p class="micro" style="color: var(--coral);">Supply Chain Concerns</p>
+                        ${concerns.map(c => `<p class="small">• ${c}</p>`).join('')}
+                    </div>
+                `;
+            }
+            
+            concentrationDiv.innerHTML = html;
+        }
+        
+        function renderCompanies(mineralKey) {
+            if (!companiesData) return;
+            
+            const companyInfo = companiesData.companies[mineralKey];
+            if (!companyInfo) {
+                document.getElementById('miningCompanies').innerHTML = '<p class="small">No company data available</p>';
+                document.getElementById('processingCompanies').innerHTML = '<p class="small">No company data available</p>';
+                document.getElementById('companyCards').innerHTML = '';
+                return;
+            }
+            
+            // Mining companies list
+            const miningDiv = document.getElementById('miningCompanies');
+            const mining = companyInfo.mining || companyInfo.production || [];
+            miningDiv.innerHTML = mining.length > 0 ? mining.slice(0, 8).map(c => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--zinc);">
+                    <div>
+                        <p style="font-weight: 500; color: var(--white);">${c.name}</p>
+                        <p class="small">${c.hq}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        ${c.ticker ? `<span class="company-ticker">${c.ticker}</span>` : ''}
+                        ${c.marketShare ? `<p class="mono small" style="margin-top: 4px;">${c.marketShare}% share</p>` : ''}
+                    </div>
+                </div>
+            `).join('') : '<p class="small">No mining company data</p>';
+            
+            // Processing companies list
+            const processingDiv = document.getElementById('processingCompanies');
+            const processing = companyInfo.processing || companyInfo.smelting || [];
+            processingDiv.innerHTML = processing.length > 0 ? processing.slice(0, 6).map(c => `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--zinc);">
+                    <div>
+                        <p style="font-weight: 500; color: var(--white);">${c.name}</p>
+                        <p class="small">${c.hq || c.type || ''}</p>
+                    </div>
+                    <div style="text-align: right;">
+                        ${c.marketShare ? `<p class="mono small">${c.marketShare}% share</p>` : ''}
+                    </div>
+                </div>
+            `).join('') : '<p class="small">No processing company data</p>';
+            
+            // Detailed company cards
+            const cardsDiv = document.getElementById('companyCards');
+            const topCompanies = mining.slice(0, 4);
+            cardsDiv.innerHTML = topCompanies.map(c => `
+                <div class="company-card">
+                    <div class="company-header">
+                        <span class="company-name">${c.name}</span>
+                        ${c.ticker ? `<span class="company-ticker">${c.ticker}</span>` : ''}
+                    </div>
+                    <div class="company-meta">
+                        <span>📍 ${c.hq}</span>
+                        ${c.exchange ? `<span>📈 ${c.exchange}</span>` : ''}
+                    </div>
+                    <div style="display: flex; gap: 24px; margin-top: 12px;">
+                        ${c.marketShare ? `
+                            <div class="company-stat">
+                                <span class="company-stat-label">Market Share</span>
+                                <span class="company-stat-value">${c.marketShare}%</span>
+                            </div>
+                        ` : ''}
+                        ${c.production2024 ? `
+                            <div class="company-stat">
+                                <span class="company-stat-label">Production</span>
+                                <span class="company-stat-value">${formatNumber(c.production2024)}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                    ${c.keyAssets ? `
+                        <div class="company-assets">
+                            ${c.keyAssets.slice(0, 3).map(a => `<span class="asset-tag">${a}</span>`).join('')}
+                        </div>
+                    ` : ''}
+                    ${c.recentNews ? `
+                        <div class="company-news">
+                            ${c.recentNews.slice(0, 2).map(n => `<p class="news-item">${n}</p>`).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+        }
+        
+        function renderSupplyChain(mineralKey) {
+            if (!supplyChainData) return;
+            
+            const chain = supplyChainData.supplyChains[mineralKey];
+            const stagesDiv = document.getElementById('supplyChainStages');
+            
+            if (!chain) {
+                stagesDiv.innerHTML = '<p class="small">No supply chain data available</p>';
+                return;
+            }
+            
+            // Supply chain flow visualization
+            let flowHtml = '<div class="supply-chain-flow">';
+            chain.stages.forEach((stage, i) => {
+                const isBottleneck = stage.bottleneck || 
+                    (stage.dominantCountries && stage.dominantCountries.some(c => c.includes('China') && parseFloat(c.match(/\d+/)?.[0]) > 60));
+                flowHtml += `
+                    <div class="flow-step ${isBottleneck ? 'bottleneck' : ''}">
+                        ${stage.name}
+                        <span class="flow-country">${stage.dominantCountries ? stage.dominantCountries[0] : ''}</span>
+                    </div>
+                `;
+                if (i < chain.stages.length - 1) {
+                    flowHtml += '<span class="flow-arrow">→</span>';
+                }
+            });
+            flowHtml += '</div>';
+            
+            // Detailed stages
+            let stagesHtml = flowHtml + '<div style="margin-top: 24px;">';
+            chain.stages.forEach(stage => {
+                const isBottleneck = stage.bottleneck;
+                stagesHtml += `
+                    <div style="padding: 16px; background: ${isBottleneck ? 'rgba(239, 68, 68, 0.1)' : 'var(--zinc)'}; border-radius: 8px; margin-bottom: 12px; ${isBottleneck ? 'border: 1px solid rgba(239, 68, 68, 0.3);' : ''}">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                            <div>
+                                <p class="h3" style="margin-bottom: 4px;">${stage.stage}. ${stage.name}</p>
+                                <p class="small">${stage.description}</p>
+                            </div>
+                            ${isBottleneck ? '<span class="risk-badge risk-critical">Bottleneck</span>' : ''}
+                        </div>
+                        ${stage.products ? `
+                            <div style="margin-top: 12px;">
+                                <p class="micro" style="color: var(--stone); margin-bottom: 4px;">Products</p>
+                                <div class="company-list">
+                                    ${(Array.isArray(stage.products) ? stage.products : Object.values(stage.products)).slice(0, 4).map(p => 
+                                        `<span class="company-tag">${typeof p === 'object' ? JSON.stringify(p) : p}</span>`
+                                    ).join('')}
+                                </div>
+                            </div>
+                        ` : ''}
+                        ${stage.locations || stage.dominantCountries ? `
+                            <div style="margin-top: 12px;">
+                                <p class="micro" style="color: var(--stone); margin-bottom: 4px;">Key Locations</p>
+                                <p class="small">${(stage.dominantCountries || stage.locations || []).join(' • ')}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            });
+            stagesHtml += '</div>';
+            
+            stagesDiv.innerHTML = stagesHtml;
+            
+            // Render Sankey chart
+            renderSankeyChart(mineralKey);
+        }
+        
+        function renderSankeyChart(mineralKey) {
+            if (!tradeFlowsData) return;
+            
+            const flows = tradeFlowsData.tradeFlows[mineralKey];
+            if (!flows || !flows.sankey) {
+                document.getElementById('sankeyChart').style.display = 'none';
+                return;
+            }
+            
+            document.getElementById('sankeyChart').style.display = 'block';
+            
+            // Destroy existing chart
+            if (sankeyChart) {
+                sankeyChart.destroy();
+            }
+            
+            const ctx = document.getElementById('sankeyChart');
+            const sankey = flows.sankey;
+            
+            // Create sankey data
+            const data = sankey.links.map(link => ({
+                from: link.source,
+                to: link.target,
+                flow: link.value
+            }));
+            
+            const colors = {
+                mining: '#3B82F6',
+                processing: '#F59E0B',
+                manufacturing: '#10B981',
+                smelting: '#8B5CF6',
+                refining: '#06B6D4',
+                separation: '#EF4444',
+                metals: '#EC4899',
+                magnets: '#F97316',
+                cells: '#14B8A6',
+                anode: '#6366F1',
+                enduse: '#10B981'
+            };
+            
+            sankeyChart = new Chart(ctx, {
+                type: 'sankey',
+                data: {
+                    datasets: [{
+                        data: data,
+                        colorFrom: (c) => {
+                            const node = sankey.nodes.find(n => n.id === c.dataset.data[c.dataIndex].from);
+                            return node ? colors[node.stage] || '#71717A' : '#71717A';
+                        },
+                        colorTo: (c) => {
+                            const node = sankey.nodes.find(n => n.id === c.dataset.data[c.dataIndex].to);
+                            return node ? colors[node.stage] || '#71717A' : '#71717A';
+                        },
+                        colorMode: 'gradient',
+                        labels: sankey.nodes.reduce((acc, n) => { acc[n.id] = n.label; return acc; }, {}),
+                        size: 'max'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const from = context.dataset.labels[context.raw.from] || context.raw.from;
+                                    const to = context.dataset.labels[context.raw.to] || context.raw.to;
+                                    return `${from} → ${to}: ${context.raw.flow}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Render legend
+            const legendDiv = document.getElementById('sankeyLegend');
+            const stages = [...new Set(sankey.nodes.map(n => n.stage))];
+            legendDiv.innerHTML = stages.map(s => `
+                <div class="legend-item">
+                    <div class="legend-color" style="background: ${colors[s] || '#71717A'};"></div>
+                    <span>${s.charAt(0).toUpperCase() + s.slice(1)}</span>
+                </div>
+            `).join('');
+        }
+        
+        function renderTradeFlows(mineralKey) {
+            if (!tradeFlowsData) return;
+            
+            const flows = tradeFlowsData.tradeFlows[mineralKey];
+            
+            if (!flows) {
+                document.getElementById('exportRoutes').innerHTML = '<p class="small">No trade flow data available</p>';
+                document.getElementById('exporters').innerHTML = '';
+                document.getElementById('importers').innerHTML = '';
+                return;
+            }
+            
+            // Export routes
+            const routesDiv = document.getElementById('exportRoutes');
+            if (flows.exports) {
+                routesDiv.innerHTML = `
+                    <div style="margin-top: 16px;">
+                        ${flows.exports.map(e => `
+                            <div style="display: flex; align-items: center; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--zinc);">
+                                <span style="font-weight: 500; color: var(--white); min-width: 100px;">${e.from}</span>
+                                <span class="flow-arrow">→</span>
+                                <span style="font-weight: 500; color: var(--white); min-width: 100px;">${e.to}</span>
+                                <span class="company-tag">${e.product}</span>
+                                <span class="mono" style="margin-left: auto; color: var(--electric);">${e.share}%</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Exporters
+            const exportersDiv = document.getElementById('exporters');
+            if (flows.exports) {
+                const exporterMap = {};
+                flows.exports.forEach(e => {
+                    exporterMap[e.from] = (exporterMap[e.from] || 0) + e.share;
+                });
+                const exporters = Object.entries(exporterMap).sort((a, b) => b[1] - a[1]);
+                
+                exportersDiv.innerHTML = exporters.map(([country, share]) => `
+                    <div class="bar-row">
+                        <span class="bar-label">${country}</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${Math.min(share, 100)}%; background: var(--electric);"></div>
+                            <span class="bar-value">${share}%</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+            
+            // Importers
+            const importersDiv = document.getElementById('importers');
+            if (flows.imports) {
+                importersDiv.innerHTML = flows.imports.map(i => `
+                    <div class="bar-row">
+                        <span class="bar-label">${i.country}</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${i.share}%; background: var(--jade);"></div>
+                            <span class="bar-value">${i.share}%</span>
+                        </div>
+                    </div>
+                `).join('');
             } else {
-                concernsDiv.innerHTML = '';
+                // Calculate from exports
+                const importerMap = {};
+                flows.exports?.forEach(e => {
+                    importerMap[e.to] = (importerMap[e.to] || 0) + e.share;
+                });
+                const importers = Object.entries(importerMap).sort((a, b) => b[1] - a[1]);
+                
+                importersDiv.innerHTML = importers.map(([country, share]) => `
+                    <div class="bar-row">
+                        <span class="bar-label">${country}</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${Math.min(share, 100)}%; background: var(--jade);"></div>
+                            <span class="bar-value">${share}%</span>
+                        </div>
+                    </div>
+                `).join('');
             }
         }
         
         function formatNumber(num) {
+            if (num === undefined || num === null) return '-';
             if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
             if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
             if (num >= 1000) return num.toLocaleString();
-            return num;
+            return num.toString();
         }
         
         // Initialize

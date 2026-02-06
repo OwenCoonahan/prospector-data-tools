@@ -6,6 +6,49 @@ Last updated: February 6, 2026
 
 This document details all data sources used in the Critical Minerals Tracker, including their availability, cost, and reliability.
 
+## New Data Files (v2)
+
+### Company Data (`data/companies.json`)
+Comprehensive company profiles for each critical mineral including:
+- **Mining companies**: Top 10 players with HQ, ticker, market share, key assets
+- **Processing companies**: Refiners and processors with capacity data
+- **Concentration metrics**: China/DRC dependency percentages
+- **Recent news**: M&A activity, expansion plans
+
+**Sources:**
+- Company annual reports and investor presentations
+- USGS Mineral Commodity Summaries 2024
+- S&P Global Market Intelligence (summarized)
+- Bloomberg, Reuters news
+- Wikipedia company profiles
+
+### Trade Flow Data (`data/trade-flows.json`)
+Export/import relationships for Sankey diagrams:
+- **Sankey nodes**: Mining → Processing → Manufacturing → End Use
+- **Trade links**: Percentage flows between countries/stages
+- **Export routes**: Key bilateral trade relationships
+- **Concentration summary**: Bottleneck identification
+
+**Sources:**
+- UN Comtrade database (aggregated)
+- IEA Critical Minerals Outlook
+- Benchmark Mineral Intelligence (summarized)
+- Industry reports and trade publications
+
+### Supply Chain Steps (`data/supply-chain-steps.json`)
+Full processing stages for each mineral:
+- **Stage descriptions**: Mining → Concentration → Refining → Manufacturing → End Products
+- **Products at each stage**: Ore, concentrate, refined metal, components
+- **Processing methods**: Technical details of each transformation
+- **Location data**: Where each stage happens globally
+- **Bottleneck identification**: Critical chokepoints marked
+
+**Sources:**
+- Industry technical papers
+- Company process descriptions
+- IEA reports
+- USGS Mineral Commodity Summaries
+
 ---
 
 ## Primary Data Sources (Free/Public)
@@ -267,11 +310,83 @@ When public data is unavailable, estimates are based on:
 
 ---
 
+## Company Data Sources by Mineral
+
+### Lithium Companies
+| Company | Primary Sources |
+|---------|----------------|
+| Albemarle | NYSE 10-K, Investor Relations |
+| SQM | NYSE 20-F, Santiago Exchange |
+| Ganfeng | HKEX/Shenzhen filings |
+| Tianqi | Shenzhen/HKEX filings |
+| Pilbara Minerals | ASX announcements |
+| Arcadium Lithium | NYSE 10-K (post-merger) |
+
+### Cobalt Companies
+| Company | Primary Sources |
+|---------|----------------|
+| Glencore | LSE Annual Reports |
+| CMOC | Shanghai/HKEX filings |
+| Umicore | Euronext Brussels |
+| Huayou Cobalt | Shanghai filings |
+
+### Nickel Companies
+| Company | Primary Sources |
+|---------|----------------|
+| Tsingshan | Private (industry estimates) |
+| Vale | NYSE 20-F |
+| Nornickel | MOEX, Company reports |
+| BHP | ASX/LSE filings |
+
+### Rare Earth Companies
+| Company | Primary Sources |
+|---------|----------------|
+| China Northern Rare Earth | Shanghai filings |
+| MP Materials | NYSE 10-K |
+| Lynas | ASX announcements |
+
+---
+
+## Trade Flow Methodology
+
+Trade flow data is compiled from:
+1. **UN Comtrade** - Official bilateral trade statistics
+2. **IEA Critical Minerals Outlook 2024** - Processing stage concentrations
+3. **Industry reports** - Benchmark Mineral, BloombergNEF
+4. **Company announcements** - Offtake agreements, partnerships
+
+**Note:** Trade flows represent approximate percentage shares based on tonnage. Value-based shares may differ due to price variations.
+
+---
+
+## Supply Chain Stage Methodology
+
+Supply chain stages are documented based on:
+1. **Industry technical literature**
+2. **Company investor presentations**
+3. **IEA reports** - Global Critical Minerals Outlook
+4. **Academic papers** on mineral processing
+
+Bottleneck identification uses:
+- Single-country concentration >60% = High risk
+- Single-country concentration >80% = Critical bottleneck
+
+---
+
 ## Citation Format
 
 When using this data, cite as:
 ```
 Critical Minerals Tracker, Prospector Labs (2026).
 Data sources: USGS Mineral Commodity Summaries 2024, 
-Trading Economics, industry estimates.
+Trading Economics, company filings, industry estimates.
 ```
+
+---
+
+## Version History
+
+| Version | Date | Changes |
+|---------|------|---------|
+| 2.0 | 2026-02-06 | Added company data, trade flows, supply chain steps |
+| 1.0 | 2026-02-05 | Initial release with country-level data |
