@@ -10,7 +10,6 @@
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      /* Light mode (default - report style) */
       --bg-primary: #ffffff;
       --bg-secondary: #f4f4f5;
       --bg-card: #ffffff;
@@ -53,7 +52,7 @@
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
       padding: 48px 24px;
     }
@@ -84,6 +83,39 @@
     .header-actions {
       display: flex;
       gap: 12px;
+      align-items: center;
+    }
+
+    .btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 8px 16px;
+      cursor: pointer;
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.15s ease;
+    }
+
+    .btn:hover {
+      border-color: var(--text-muted);
+      background: var(--bg-card);
+    }
+
+    .btn.primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    .btn.primary:hover {
+      background: #2563eb;
+      border-color: #2563eb;
     }
 
     .theme-toggle {
@@ -103,6 +135,140 @@
       border-color: var(--text-muted);
       color: var(--text-primary);
     }
+
+    /* Compare Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 32px;
+      max-width: 480px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .modal p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
+
+    .iso-selector {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .iso-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .iso-option:hover {
+      border-color: var(--accent);
+    }
+
+    .iso-option.selected {
+      border-color: var(--accent);
+      background: rgba(59, 130, 246, 0.1);
+    }
+
+    .iso-option input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+    }
+
+    .iso-option label {
+      flex: 1;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .iso-option span {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    /* Compare View */
+    .compare-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+      padding: 16px 24px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+    }
+
+    .compare-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .compare-pills {
+      display: flex;
+      gap: 8px;
+    }
+
+    .compare-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .compare-pill .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .compare-pill:nth-child(1) .dot { background: var(--accent); }
+    .compare-pill:nth-child(2) .dot { background: var(--positive); }
+    .compare-pill:nth-child(3) .dot { background: var(--warning); }
 
     /* Summary Stats */
     .summary-stats {
@@ -154,9 +320,13 @@
     /* Charts Grid */
     .charts-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       gap: 24px;
       margin-bottom: 48px;
+    }
+
+    .charts-grid-2 {
+      grid-template-columns: repeat(2, 1fr);
     }
 
     .chart-card {
@@ -217,17 +387,14 @@
       transition: width 0.5s ease;
     }
 
-    .bar-fill.highlight {
-      background: var(--accent);
-    }
+    .bar-fill.highlight { background: var(--accent); }
+    .bar-fill.positive { background: var(--positive); }
+    .bar-fill.negative { background: var(--negative); }
+    .bar-fill.warning { background: var(--warning); }
 
-    .bar-fill.positive {
-      background: var(--positive);
-    }
-
-    .bar-fill.negative {
-      background: var(--negative);
-    }
+    .bar-fill.compare-1 { background: var(--accent); }
+    .bar-fill.compare-2 { background: var(--positive); }
+    .bar-fill.compare-3 { background: var(--warning); }
 
     .bar-value {
       font-family: var(--font-mono);
@@ -296,55 +463,6 @@
     .legend-dot.gas { background: #71717a; }
     .legend-dot.other { background: #d4d4d8; }
 
-    /* Sparklines */
-    .sparkline-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 24px;
-    }
-
-    .sparkline-item {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .sparkline-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: baseline;
-    }
-
-    .sparkline-label {
-      font-family: var(--font-mono);
-      font-size: 13px;
-      font-weight: 500;
-    }
-
-    .sparkline-value {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-muted);
-    }
-
-    .sparkline-track {
-      height: 32px;
-      display: flex;
-      align-items: flex-end;
-      gap: 2px;
-    }
-
-    .spark-bar {
-      flex: 1;
-      background: var(--bar-context);
-      border-radius: 2px 2px 0 0;
-      min-height: 2px;
-    }
-
-    .spark-bar:last-child {
-      background: var(--accent);
-    }
-
     /* Comparison Table */
     .comparison-table {
       width: 100%;
@@ -386,17 +504,18 @@
       background: var(--bg-secondary);
     }
 
+    .comparison-table tbody tr.compare-highlight {
+      background: rgba(59, 130, 246, 0.1);
+    }
+
     .iso-name {
       font-weight: 600;
     }
 
-    .metric-good {
-      color: var(--positive);
-    }
-
-    .metric-bad {
-      color: var(--negative);
-    }
+    .metric-good { color: var(--positive); }
+    .metric-bad { color: var(--negative); }
+    .metric-best { color: var(--positive); font-weight: 600; }
+    .metric-worst { color: var(--negative); font-weight: 600; }
 
     /* Footer */
     footer {
@@ -420,16 +539,18 @@
     }
 
     /* Responsive */
+    @media (max-width: 1100px) {
+      .charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
     @media (max-width: 900px) {
       .summary-stats {
         grid-template-columns: repeat(2, 1fr);
       }
 
       .charts-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .sparkline-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -476,6 +597,12 @@
         <p>Side-by-side metrics across all major US interconnection regions. Data from public ISO queue filings.</p>
       </div>
       <div class="header-actions">
+        <button class="btn primary" onclick="openCompareModal()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 20V10M12 20V4M6 20v-6"/>
+          </svg>
+          Compare ISOs
+        </button>
         <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="5"/>
@@ -484,6 +611,13 @@
         </button>
       </div>
     </header>
+
+    <!-- Compare Header (hidden by default) -->
+    <div class="compare-header" id="compareHeader" style="display: none;">
+      <h2>Comparing:</h2>
+      <div class="compare-pills" id="comparePills"></div>
+      <button class="btn" onclick="clearComparison()">Clear</button>
+    </div>
 
     <!-- Summary Stats -->
     <div class="summary-stats">
@@ -505,7 +639,7 @@
       </div>
     </div>
 
-    <!-- Queue Size -->
+    <!-- Main Charts Grid -->
     <section class="charts-grid">
       <div class="chart-card">
         <div class="chart-title">Queue Size by Projects</div>
@@ -521,19 +655,19 @@
 
       <div class="chart-card">
         <div class="chart-title">Withdrawal Rate</div>
-        <div class="chart-subtitle">% of projects that withdrew from queue</div>
+        <div class="chart-subtitle">% of projects that withdrew</div>
         <div class="bar-chart" id="withdrawalChart"></div>
       </div>
 
       <div class="chart-card">
         <div class="chart-title">Completion Rate</div>
-        <div class="chart-subtitle">% of projects reaching operational status</div>
+        <div class="chart-subtitle">% reaching operational status</div>
         <div class="bar-chart" id="completionChart"></div>
       </div>
 
       <div class="chart-card">
         <div class="chart-title">Average Timeline</div>
-        <div class="chart-subtitle">Years from queue entry to commercial operation</div>
+        <div class="chart-subtitle">Years from queue entry to COD</div>
         <div class="bar-chart" id="timelineChart"></div>
       </div>
 
@@ -542,13 +676,31 @@
         <div class="chart-subtitle">Mean capacity per project (MW)</div>
         <div class="bar-chart" id="avgSizeChart"></div>
       </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Active vs Withdrawn</div>
+        <div class="chart-subtitle">Current queue health</div>
+        <div class="bar-chart" id="activeChart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Solar Capacity</div>
+        <div class="chart-subtitle">Solar MW in queue by region</div>
+        <div class="bar-chart" id="solarChart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Storage Capacity</div>
+        <div class="chart-subtitle">Battery storage MW in queue</div>
+        <div class="bar-chart" id="storageChart"></div>
+      </div>
     </section>
 
     <!-- Capacity Mix -->
     <section>
       <div class="section-header">
-        <h2>Capacity Mix</h2>
-        <p>Technology composition by region (MW in queue)</p>
+        <h2>Capacity Mix by Region</h2>
+        <p>Technology composition (MW in queue)</p>
       </div>
       <div class="chart-card" style="margin-bottom: 48px;">
         <div class="stacked-bar-chart" id="mixChart"></div>
@@ -559,17 +711,6 @@
           <div class="legend-item"><div class="legend-dot gas"></div> Gas</div>
           <div class="legend-item"><div class="legend-dot other"></div> Other</div>
         </div>
-      </div>
-    </section>
-
-    <!-- Queue Growth Trends -->
-    <section>
-      <div class="section-header">
-        <h2>Queue Growth Trends</h2>
-        <p>Annual new project entries (2019-2024)</p>
-      </div>
-      <div class="chart-card" style="margin-bottom: 48px;">
-        <div class="sparkline-grid" id="sparklineGrid"></div>
       </div>
     </section>
 
@@ -587,6 +728,7 @@
               <th>Projects</th>
               <th>Capacity (GW)</th>
               <th>Avg MW</th>
+              <th>Active</th>
               <th>Withdrawn</th>
               <th>Completed</th>
               <th>Timeline (Yrs)</th>
@@ -603,7 +745,24 @@
     </footer>
   </div>
 
+  <!-- Compare Modal -->
+  <div class="modal-overlay" id="compareModal">
+    <div class="modal">
+      <h2>Compare ISOs</h2>
+      <p>Select 2-3 ISOs to compare side-by-side. Selected ISOs will be highlighted across all charts.</p>
+      <div class="iso-selector" id="isoSelector"></div>
+      <div class="modal-actions">
+        <button class="btn" onclick="closeCompareModal()">Cancel</button>
+        <button class="btn primary" onclick="applyComparison()">Compare</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // State
+    let selectedISOs = [];
+    let allData = null;
+
     // Theme toggle
     function toggleTheme() {
       const html = document.documentElement;
@@ -613,28 +772,93 @@
       localStorage.setItem('theme', next);
     }
 
-    // Initialize theme (light default for report style)
+    // Initialize theme
     const savedTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', savedTheme);
 
-    // Inline data (for file:// compatibility)
+    // Modal controls
+    function openCompareModal() {
+      document.getElementById('compareModal').classList.add('active');
+      renderISOSelector();
+    }
+
+    function closeCompareModal() {
+      document.getElementById('compareModal').classList.remove('active');
+    }
+
+    function renderISOSelector() {
+      if (!allData) return;
+      const container = document.getElementById('isoSelector');
+      container.innerHTML = allData.isos.map(iso => `
+        <label class="iso-option ${selectedISOs.includes(iso.id) ? 'selected' : ''}">
+          <input type="checkbox" 
+                 value="${iso.id}" 
+                 ${selectedISOs.includes(iso.id) ? 'checked' : ''}
+                 onchange="toggleISOSelection('${iso.id}', this)">
+          <label>${iso.name}</label>
+          <span>${iso.projects.toLocaleString()} projects</span>
+        </label>
+      `).join('');
+    }
+
+    function toggleISOSelection(isoId, checkbox) {
+      if (checkbox.checked && !selectedISOs.includes(isoId)) {
+        if (selectedISOs.length >= 3) {
+          checkbox.checked = false;
+          return;
+        }
+        selectedISOs.push(isoId);
+      } else if (!checkbox.checked) {
+        selectedISOs = selectedISOs.filter(id => id !== isoId);
+      }
+      renderISOSelector();
+    }
+
+    function applyComparison() {
+      closeCompareModal();
+      render(allData);
+    }
+
+    function clearComparison() {
+      selectedISOs = [];
+      render(allData);
+    }
+
+    // Inline data
     const DATA = {"generated":"2026-02-06","source":"US ISO Interconnection Queues","isos":[{"id":"PJM","name":"PJM Interconnection","projects":8152,"totalMW":876166,"avgMW":107,"withdrawn":4885,"operational":1195,"active":1942,"withdrawalRate":0.599,"completionRate":0.147,"avgTimelineYears":3.4,"capacityMix":{"solar":201384,"wind":107673,"storage":75210,"gas":317566,"other":174333},"yearlyGrowth":[{"year":2019,"projects":695,"mw":61162},{"year":2020,"projects":972,"mw":67388},{"year":2021,"projects":1304,"mw":107026},{"year":2022,"projects":517,"mw":58680},{"year":2023,"projects":466,"mw":33325}]},{"id":"West","name":"Western Interconnection","projects":6008,"totalMW":1133237,"avgMW":189,"withdrawn":3728,"operational":660,"active":1455,"withdrawalRate":0.621,"completionRate":0.110,"avgTimelineYears":3.5,"capacityMix":{"solar":147837,"wind":248394,"storage":173116,"gas":87354,"other":476536},"yearlyGrowth":[{"year":2019,"projects":280,"mw":52023},{"year":2020,"projects":243,"mw":51433},{"year":2021,"projects":505,"mw":118083},{"year":2022,"projects":753,"mw":181986},{"year":2023,"projects":791,"mw":233491},{"year":2024,"projects":367,"mw":78743}]},{"id":"MISO","name":"MISO","projects":5435,"totalMW":1001656,"avgMW":185,"withdrawn":3341,"operational":987,"active":1107,"withdrawalRate":0.615,"completionRate":0.182,"avgTimelineYears":3.3,"capacityMix":{"solar":304700,"wind":256768,"storage":102493,"gas":153239,"other":184456},"yearlyGrowth":[{"year":2019,"projects":306,"mw":45247},{"year":2020,"projects":302,"mw":43149},{"year":2021,"projects":413,"mw":61985},{"year":2022,"projects":1023,"mw":176284},{"year":2023,"projects":39,"mw":4822},{"year":2024,"projects":710,"mw":139698},{"year":2025,"projects":399,"mw":106942}]},{"id":"ERCOT","name":"ERCOT","projects":3768,"totalMW":798474,"avgMW":212,"withdrawn":2021,"operational":489,"active":1258,"withdrawalRate":0.537,"completionRate":0.130,"avgTimelineYears":4.9,"capacityMix":{"solar":257334,"wind":164908,"storage":39872,"gas":110244,"other":226116},"yearlyGrowth":[{"year":2019,"projects":223,"mw":42045},{"year":2020,"projects":222,"mw":44662},{"year":2021,"projects":311,"mw":57550},{"year":2022,"projects":354,"mw":66701},{"year":2023,"projects":460,"mw":92078},{"year":2024,"projects":439,"mw":97608}]},{"id":"Southeast","name":"Southeast","projects":2879,"totalMW":636066,"avgMW":221,"withdrawn":1881,"operational":275,"active":710,"withdrawalRate":0.653,"completionRate":0.095,"avgTimelineYears":4.1,"capacityMix":{"solar":152604,"wind":12533,"storage":24671,"gas":237083,"other":209175},"yearlyGrowth":[{"year":2019,"projects":214,"mw":43527},{"year":2020,"projects":210,"mw":34300},{"year":2021,"projects":167,"mw":27895},{"year":2022,"projects":254,"mw":36885},{"year":2023,"projects":382,"mw":57019},{"year":2024,"projects":289,"mw":58433}]},{"id":"SPP","name":"SPP","projects":2841,"totalMW":581049,"avgMW":205,"withdrawn":2517,"operational":43,"active":281,"withdrawalRate":0.886,"completionRate":0.015,"avgTimelineYears":5.4,"capacityMix":{"solar":119556,"wind":237788,"storage":62024,"gas":97907,"other":63774},"yearlyGrowth":[{"year":2019,"projects":79,"mw":9455},{"year":2020,"projects":103,"mw":19548},{"year":2021,"projects":115,"mw":22090},{"year":2022,"projects":116,"mw":24100},{"year":2023,"projects":421,"mw":86932},{"year":2024,"projects":110,"mw":25533},{"year":2025,"projects":369,"mw":98356}]},{"id":"CAISO","name":"CAISO","projects":2837,"totalMW":708171,"avgMW":250,"withdrawn":2298,"operational":228,"active":311,"withdrawalRate":0.810,"completionRate":0.080,"avgTimelineYears":5.2,"capacityMix":{"solar":122779,"wind":63929,"storage":193556,"gas":71392,"other":256515},"yearlyGrowth":[{"year":2019,"projects":139,"mw":42957},{"year":2020,"projects":153,"mw":43744},{"year":2021,"projects":361,"mw":108258},{"year":2022,"projects":3,"mw":388},{"year":2023,"projects":562,"mw":215006}]},{"id":"NYISO","name":"NYISO","projects":1948,"totalMW":385307,"avgMW":199,"withdrawn":1677,"operational":111,"active":4,"withdrawalRate":0.861,"completionRate":0.057,"avgTimelineYears":5.9,"capacityMix":{"solar":34970,"wind":37278,"storage":101450,"gas":52418,"other":159191},"yearlyGrowth":[{"year":2019,"projects":200,"mw":20577},{"year":2020,"projects":152,"mw":28198},{"year":2021,"projects":163,"mw":24768},{"year":2022,"projects":168,"mw":57277},{"year":2023,"projects":140,"mw":41666},{"year":2024,"projects":401,"mw":81545},{"year":2025,"projects":27,"mw":8397}]},{"id":"ISO-NE","name":"ISO-NE","projects":1601,"totalMW":206148,"avgMW":143,"withdrawn":1225,"operational":297,"active":79,"withdrawalRate":0.765,"completionRate":0.185,"avgTimelineYears":3.5,"capacityMix":{"solar":10247,"wind":47098,"storage":42631,"gas":20225,"other":85947},"yearlyGrowth":[{"year":2019,"projects":115,"mw":13494},{"year":2020,"projects":142,"mw":10480},{"year":2021,"projects":121,"mw":15483},{"year":2022,"projects":135,"mw":21735},{"year":2023,"projects":140,"mw":22791},{"year":2024,"projects":116,"mw":18930}]}]};
 
-    // Load and render data
     function init() {
+      allData = DATA;
       render(DATA);
     }
 
     function render(data) {
       const isos = data.isos;
+      const isComparing = selectedISOs.length > 0;
       
-      // Sort by total projects for consistent ordering
+      // Update compare header
+      const compareHeader = document.getElementById('compareHeader');
+      const comparePills = document.getElementById('comparePills');
+      if (isComparing) {
+        compareHeader.style.display = 'flex';
+        comparePills.innerHTML = selectedISOs.map(id => {
+          const iso = isos.find(i => i.id === id);
+          return `<div class="compare-pill"><div class="dot"></div>${iso.id}</div>`;
+        }).join('');
+      } else {
+        compareHeader.style.display = 'none';
+      }
+
+      // Sort orders
       const sortedByProjects = [...isos].sort((a, b) => b.projects - a.projects);
       const sortedByMW = [...isos].sort((a, b) => b.totalMW - a.totalMW);
       const sortedByWithdrawal = [...isos].sort((a, b) => b.withdrawalRate - a.withdrawalRate);
       const sortedByCompletion = [...isos].sort((a, b) => b.completionRate - a.completionRate);
       const sortedByTimeline = [...isos].sort((a, b) => b.avgTimelineYears - a.avgTimelineYears);
       const sortedByAvgMW = [...isos].sort((a, b) => b.avgMW - a.avgMW);
+      const sortedBySolar = [...isos].sort((a, b) => b.capacityMix.solar - a.capacityMix.solar);
+      const sortedByStorage = [...isos].sort((a, b) => b.capacityMix.storage - a.capacityMix.storage);
+      const sortedByActive = [...isos].sort((a, b) => b.active - a.active);
 
       // Summary stats
       const totalProjects = isos.reduce((sum, i) => sum + i.projects, 0);
@@ -647,13 +871,21 @@
       document.getElementById('avgWithdrawal').textContent = (avgWithdrawal * 100).toFixed(0) + '%';
       document.getElementById('avgTimeline').textContent = avgTimeline.toFixed(1);
 
+      // Helper to get highlight class
+      function getHighlight(iso) {
+        if (!isComparing) return '';
+        const idx = selectedISOs.indexOf(iso.id);
+        if (idx === -1) return '';
+        return `compare-${idx + 1}`;
+      }
+
       // Projects chart
       const maxProjects = Math.max(...isos.map(i => i.projects));
-      document.getElementById('projectsChart').innerHTML = sortedByProjects.map((iso, idx) => `
+      document.getElementById('projectsChart').innerHTML = sortedByProjects.map(iso => `
         <div class="bar-row">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
-            <div class="bar-fill ${idx === 0 ? 'highlight' : ''}" style="width: ${(iso.projects / maxProjects * 100)}%"></div>
+            <div class="bar-fill ${getHighlight(iso) || (selectedISOs.length === 0 && iso === sortedByProjects[0] ? 'highlight' : '')}" style="width: ${(iso.projects / maxProjects * 100)}%"></div>
           </div>
           <div class="bar-value">${(iso.projects / 1000).toFixed(1)}k</div>
         </div>
@@ -661,33 +893,33 @@
 
       // Capacity chart
       const maxMW = Math.max(...isos.map(i => i.totalMW));
-      document.getElementById('capacityChart').innerHTML = sortedByMW.map((iso, idx) => `
+      document.getElementById('capacityChart').innerHTML = sortedByMW.map(iso => `
         <div class="bar-row">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
-            <div class="bar-fill ${idx === 0 ? 'highlight' : ''}" style="width: ${(iso.totalMW / maxMW * 100)}%"></div>
+            <div class="bar-fill ${getHighlight(iso) || (selectedISOs.length === 0 && iso === sortedByMW[0] ? 'highlight' : '')}" style="width: ${(iso.totalMW / maxMW * 100)}%"></div>
           </div>
           <div class="bar-value">${(iso.totalMW / 1000).toFixed(0)}</div>
         </div>
       `).join('');
 
       // Withdrawal chart
-      document.getElementById('withdrawalChart').innerHTML = sortedByWithdrawal.map((iso, idx) => `
+      document.getElementById('withdrawalChart').innerHTML = sortedByWithdrawal.map(iso => `
         <div class="bar-row">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
-            <div class="bar-fill negative" style="width: ${(iso.withdrawalRate * 100)}%"></div>
+            <div class="bar-fill ${getHighlight(iso) || 'negative'}" style="width: ${(iso.withdrawalRate * 100)}%"></div>
           </div>
           <div class="bar-value">${(iso.withdrawalRate * 100).toFixed(0)}%</div>
         </div>
       `).join('');
 
       // Completion chart
-      document.getElementById('completionChart').innerHTML = sortedByCompletion.map((iso, idx) => `
+      document.getElementById('completionChart').innerHTML = sortedByCompletion.map(iso => `
         <div class="bar-row">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
-            <div class="bar-fill positive" style="width: ${(iso.completionRate * 100 * 5)}%"></div>
+            <div class="bar-fill ${getHighlight(iso) || 'positive'}" style="width: ${(iso.completionRate * 100 * 5)}%"></div>
           </div>
           <div class="bar-value">${(iso.completionRate * 100).toFixed(1)}%</div>
         </div>
@@ -695,11 +927,11 @@
 
       // Timeline chart
       const maxTimeline = Math.max(...isos.map(i => i.avgTimelineYears));
-      document.getElementById('timelineChart').innerHTML = sortedByTimeline.map((iso) => `
+      document.getElementById('timelineChart').innerHTML = sortedByTimeline.map(iso => `
         <div class="bar-row">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
-            <div class="bar-fill" style="width: ${(iso.avgTimelineYears / maxTimeline * 100)}%"></div>
+            <div class="bar-fill ${getHighlight(iso)}" style="width: ${(iso.avgTimelineYears / maxTimeline * 100)}%"></div>
           </div>
           <div class="bar-value">${iso.avgTimelineYears.toFixed(1)}</div>
         </div>
@@ -707,13 +939,49 @@
 
       // Avg size chart
       const maxAvgMW = Math.max(...isos.map(i => i.avgMW));
-      document.getElementById('avgSizeChart').innerHTML = sortedByAvgMW.map((iso, idx) => `
+      document.getElementById('avgSizeChart').innerHTML = sortedByAvgMW.map(iso => `
         <div class="bar-row">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
-            <div class="bar-fill ${idx === 0 ? 'highlight' : ''}" style="width: ${(iso.avgMW / maxAvgMW * 100)}%"></div>
+            <div class="bar-fill ${getHighlight(iso) || (selectedISOs.length === 0 && iso === sortedByAvgMW[0] ? 'highlight' : '')}" style="width: ${(iso.avgMW / maxAvgMW * 100)}%"></div>
           </div>
           <div class="bar-value">${iso.avgMW}</div>
+        </div>
+      `).join('');
+
+      // Active chart
+      const maxActive = Math.max(...isos.map(i => i.active));
+      document.getElementById('activeChart').innerHTML = sortedByActive.map(iso => `
+        <div class="bar-row">
+          <div class="bar-label">${iso.id}</div>
+          <div class="bar-track">
+            <div class="bar-fill ${getHighlight(iso) || 'positive'}" style="width: ${(iso.active / maxActive * 100)}%"></div>
+          </div>
+          <div class="bar-value">${iso.active.toLocaleString()}</div>
+        </div>
+      `).join('');
+
+      // Solar chart
+      const maxSolar = Math.max(...isos.map(i => i.capacityMix.solar));
+      document.getElementById('solarChart').innerHTML = sortedBySolar.map(iso => `
+        <div class="bar-row">
+          <div class="bar-label">${iso.id}</div>
+          <div class="bar-track">
+            <div class="bar-fill ${getHighlight(iso) || 'warning'}" style="width: ${(iso.capacityMix.solar / maxSolar * 100)}%"></div>
+          </div>
+          <div class="bar-value">${(iso.capacityMix.solar / 1000).toFixed(0)}</div>
+        </div>
+      `).join('');
+
+      // Storage chart
+      const maxStorage = Math.max(...isos.map(i => i.capacityMix.storage));
+      document.getElementById('storageChart').innerHTML = sortedByStorage.map(iso => `
+        <div class="bar-row">
+          <div class="bar-label">${iso.id}</div>
+          <div class="bar-track">
+            <div class="bar-fill ${getHighlight(iso)}" style="width: ${(iso.capacityMix.storage / maxStorage * 100)}%; background: #8b5cf6;"></div>
+          </div>
+          <div class="bar-value">${(iso.capacityMix.storage / 1000).toFixed(0)}</div>
         </div>
       `).join('');
 
@@ -735,33 +1003,14 @@
         `;
       }).join('');
 
-      // Sparklines
-      document.getElementById('sparklineGrid').innerHTML = sortedByProjects.map(iso => {
-        const growth = iso.yearlyGrowth.slice(-5);  // Last 5 years
-        const maxYear = Math.max(...growth.map(g => g.projects));
-        const latestMW = growth[growth.length - 1]?.mw || 0;
-        return `
-          <div class="sparkline-item">
-            <div class="sparkline-header">
-              <span class="sparkline-label">${iso.id}</span>
-              <span class="sparkline-value">${(latestMW/1000).toFixed(0)} GW latest</span>
-            </div>
-            <div class="sparkline-track">
-              ${growth.map((g, idx) => `
-                <div class="spark-bar" style="height: ${Math.max(5, (g.projects / maxYear * 100))}%" title="${g.year}: ${g.projects} projects"></div>
-              `).join('')}
-            </div>
-          </div>
-        `;
-      }).join('');
-
       // Comparison table
       document.getElementById('tableBody').innerHTML = sortedByProjects.map(iso => `
-        <tr>
+        <tr class="${selectedISOs.includes(iso.id) ? 'compare-highlight' : ''}">
           <td class="iso-name">${iso.name}</td>
           <td>${iso.projects.toLocaleString()}</td>
           <td>${(iso.totalMW / 1000).toFixed(0)}</td>
           <td>${iso.avgMW}</td>
+          <td>${iso.active.toLocaleString()}</td>
           <td class="metric-bad">${(iso.withdrawalRate * 100).toFixed(0)}%</td>
           <td class="metric-good">${(iso.completionRate * 100).toFixed(1)}%</td>
           <td>${iso.avgTimelineYears.toFixed(1)}</td>
