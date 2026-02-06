@@ -8,6 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.css" rel="stylesheet">
+  <script src="https://api.mapbox.com/mapbox-gl-js/v3.2.0/mapbox-gl.js"></script>
   <style>
     :root {
       --bg-primary: #ffffff;
@@ -19,7 +21,7 @@
       --border: #e1e4e8;
       --accent: #2563eb;
       --accent-muted: #3b82f6;
-      --success: #22c55e;
+      --success: #10B981;
       --warning: #f59e0b;
       --danger: #ef4444;
       --font-sans: 'Geist', system-ui, sans-serif;
@@ -206,9 +208,52 @@
     }
 
     .stats-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .total-capacity {
       font-family: var(--font-mono);
       font-size: 0.75rem;
       color: var(--text-muted);
+    }
+
+    /* View Toggle */
+    .view-toggle {
+      display: flex;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .view-toggle button {
+      padding: 0.4rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.35rem;
+    }
+
+    .view-toggle button:hover {
+      color: var(--text-primary);
+    }
+
+    .view-toggle button.active {
+      background: var(--accent);
+      color: white;
+    }
+
+    .view-toggle button svg {
+      width: 14px;
+      height: 14px;
     }
 
     /* Table */
@@ -269,6 +314,11 @@
       color: var(--text-primary);
     }
 
+    tbody tr {
+      cursor: pointer;
+      transition: background 0.1s ease;
+    }
+
     tbody tr:hover {
       background: var(--bg-secondary);
     }
@@ -311,10 +361,10 @@
       display: inline-block;
     }
 
-    .status-operational, .status-active { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
+    .status-operational, .status-active { background: rgba(16, 185, 129, 0.15); color: #10B981; }
     .status-withdrawn { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-    .status-pending, .status-suspended { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-    .status-under-construction { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .status-pending, .status-suspended { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
+    .status-under-construction { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
 
     .cell-date {
       font-family: var(--font-mono);
@@ -337,6 +387,146 @@
       font-size: 0.8rem;
       color: var(--text-secondary);
     }
+
+    /* Map View */
+    #mapView {
+      display: none;
+      height: 600px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    #mapView.active {
+      display: block;
+    }
+
+    #tableView {
+      display: block;
+    }
+
+    #tableView.hidden {
+      display: none;
+    }
+
+    .mapboxgl-popup {
+      max-width: 320px !important;
+    }
+
+    .mapboxgl-popup-content {
+      background: var(--bg-secondary) !important;
+      border: 1px solid var(--border) !important;
+      border-radius: 8px !important;
+      padding: 16px !important;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2) !important;
+    }
+
+    [data-theme="dark"] .mapboxgl-popup-content {
+      background: #1a1a1a !important;
+      border-color: #333 !important;
+    }
+
+    .mapboxgl-popup-close-button {
+      font-size: 18px;
+      padding: 4px 8px;
+      color: var(--text-secondary);
+    }
+
+    .popup-content {
+      font-family: var(--font-sans);
+      color: var(--text-primary);
+    }
+
+    .popup-content h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+
+    .popup-content .popup-meta {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.75rem;
+    }
+
+    .popup-content .popup-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .popup-content .popup-stats span {
+      color: var(--text-muted);
+    }
+
+    .popup-content .popup-stats strong {
+      color: var(--text-primary);
+    }
+
+    .popup-content button {
+      margin-top: 0.75rem;
+      width: 100%;
+      padding: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      background: var(--accent);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+
+    .popup-content button:hover {
+      opacity: 0.9;
+    }
+
+    /* Map Legend */
+    .map-legend {
+      position: absolute;
+      bottom: 24px;
+      left: 24px;
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      z-index: 10;
+    }
+
+    [data-theme="dark"] .map-legend {
+      background: rgba(26, 26, 26, 0.95);
+    }
+
+    .map-legend h4 {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.25rem;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.operational { background: #10B981; }
+    .legend-dot.pending { background: #3b82f6; }
+    .legend-dot.withdrawn { background: #ef4444; }
 
     /* Loading */
     .loading {
@@ -410,6 +600,166 @@
       color: var(--text-secondary);
     }
 
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal {
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      transform: translateY(20px);
+      transition: transform 0.2s ease;
+    }
+
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .modal-header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-header .modal-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+      transition: color 0.15s;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 1.5rem;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    .detail-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .detail-item.full-width {
+      grid-column: span 2;
+    }
+
+    .detail-label {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .detail-value {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+    }
+
+    .detail-value.mono {
+      font-family: var(--font-mono);
+    }
+
+    .detail-value.highlight {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+
+    .detail-value a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .detail-value a:hover {
+      text-decoration: underline;
+    }
+
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.75rem;
+    }
+
+    .modal-footer button {
+      padding: 0.5rem 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-secondary {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      border-color: var(--accent);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
     /* Footer */
     footer {
       margin-top: 3rem;
@@ -456,6 +806,18 @@
 
       th, td {
         padding: 0.5rem;
+      }
+
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-item.full-width {
+        grid-column: span 1;
+      }
+
+      #mapView {
+        height: 400px;
       }
     }
   </style>
@@ -525,13 +887,46 @@
       <div class="stats-left">
         <strong id="resultCount">0</strong> projects found
       </div>
-      <div class="stats-right" id="totalCapacity"></div>
+      <div class="stats-right">
+        <span class="total-capacity" id="totalCapacity"></span>
+        <div class="view-toggle">
+          <button id="tableViewBtn" class="active" onclick="setView('table')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <line x1="3" y1="9" x2="21" y2="9"/>
+              <line x1="3" y1="15" x2="21" y2="15"/>
+              <line x1="9" y1="3" x2="9" y2="21"/>
+            </svg>
+            Table
+          </button>
+          <button id="mapViewBtn" onclick="setView('map')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+              <line x1="8" y1="2" x2="8" y2="18"/>
+              <line x1="16" y1="6" x2="16" y2="22"/>
+            </svg>
+            Map
+          </button>
+        </div>
+      </div>
     </div>
 
-    <div id="content">
-      <div class="loading">
-        <div class="loading-spinner"></div>
-        <div>Loading 35,000+ interconnection projects...</div>
+    <div id="tableView">
+      <div id="content">
+        <div class="loading">
+          <div class="loading-spinner"></div>
+          <div>Loading 35,000+ interconnection projects...</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="mapView">
+      <div id="map" style="width: 100%; height: 100%;"></div>
+      <div class="map-legend">
+        <h4>Project Status</h4>
+        <div class="legend-item"><span class="legend-dot operational"></span> Operational/Active</div>
+        <div class="legend-item"><span class="legend-dot pending"></span> Pending/In Progress</div>
+        <div class="legend-item"><span class="legend-dot withdrawn"></span> Withdrawn</div>
       </div>
     </div>
 
@@ -547,13 +942,42 @@
     </footer>
   </div>
 
+  <!-- Project Detail Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2 id="modalTitle">Project Name</h2>
+          <div class="modal-subtitle" id="modalSubtitle">Queue ID • Region</div>
+        </div>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="detail-grid" id="modalContent">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal()">Close</button>
+        <button class="btn-primary" id="modalDeveloperLink" style="display: none;">View Developer Scorecard</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // Mapbox token
+    mapboxgl.accessToken = 'pk.eyJ1Ijoib3dlbi1jb29uYWhhbiIsImEiOiJjbWowdmR2a20wZDVtM2Vwem5idGFpYm5vIn0.cgIL7QDk0gaaueSLBi8cjQ';
+
     // State
     let projects = [];
     let filtered = [];
+    let stateCentroids = {};
     let currentPage = 1;
     let sortCol = 'mw';
     let sortAsc = false;
+    let currentView = 'table';
+    let map = null;
+    let mapLoaded = false;
     const pageSize = 100;
 
     // Column definitions
@@ -584,12 +1008,65 @@
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     document.documentElement.setAttribute('data-theme', savedTheme);
 
+    // URL State Management
+    function getUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      return {
+        search: params.get('q') || '',
+        region: params.get('region') || '',
+        type: params.get('type') || '',
+        status: params.get('status') || '',
+        state: params.get('state') || '',
+        minMW: params.get('minMW') || '',
+        view: params.get('view') || 'table'
+      };
+    }
+
+    function updateUrl() {
+      const params = new URLSearchParams();
+      const search = document.getElementById('searchInput').value;
+      const region = document.getElementById('filterRegion').value;
+      const type = document.getElementById('filterType').value;
+      const status = document.getElementById('filterStatus').value;
+      const state = document.getElementById('filterState').value;
+      const minMW = document.getElementById('filterMinMW').value;
+
+      if (search) params.set('q', search);
+      if (region) params.set('region', region);
+      if (type) params.set('type', type);
+      if (status) params.set('status', status);
+      if (state) params.set('state', state);
+      if (minMW) params.set('minMW', minMW);
+      if (currentView !== 'table') params.set('view', currentView);
+
+      const newUrl = params.toString() ? `?${params.toString()}` : window.location.pathname;
+      history.replaceState(null, '', newUrl);
+    }
+
+    function applyUrlParams() {
+      const params = getUrlParams();
+      document.getElementById('searchInput').value = params.search;
+      document.getElementById('filterRegion').value = params.region;
+      document.getElementById('filterType').value = params.type;
+      document.getElementById('filterStatus').value = params.status;
+      document.getElementById('filterState').value = params.state;
+      document.getElementById('filterMinMW').value = params.minMW;
+      if (params.view === 'map') {
+        setView('map', false);
+      }
+    }
+
     // Load data
     async function loadData() {
       try {
-        const response = await fetch('data/projects.min.json');
-        projects = await response.json();
+        const [projectsRes, centroidsRes] = await Promise.all([
+          fetch('data/projects.min.json'),
+          fetch('data/state-centroids.json')
+        ]);
+        projects = await projectsRes.json();
+        stateCentroids = await centroidsRes.json();
         initFilters();
+        applyUrlParams();
         applyFilters();
       } catch (err) {
         document.getElementById('content').innerHTML = `
@@ -651,7 +1128,12 @@
 
       sortData();
       currentPage = 1;
+      updateUrl();
       render();
+      
+      if (currentView === 'map') {
+        updateMap();
+      }
     }
 
     // Sort
@@ -682,6 +1164,267 @@
       }
       sortData();
       render();
+    }
+
+    // View Toggle
+    function setView(view, updateHistory = true) {
+      currentView = view;
+      document.getElementById('tableViewBtn').classList.toggle('active', view === 'table');
+      document.getElementById('mapViewBtn').classList.toggle('active', view === 'map');
+      document.getElementById('tableView').classList.toggle('hidden', view === 'map');
+      document.getElementById('mapView').classList.toggle('active', view === 'map');
+      document.getElementById('pagination').style.display = view === 'table' && filtered.length > pageSize ? 'flex' : 'none';
+      
+      if (view === 'map') {
+        initMap();
+      }
+      
+      if (updateHistory) {
+        updateUrl();
+      }
+    }
+
+    // Map
+    function initMap() {
+      if (map) {
+        updateMap();
+        return;
+      }
+
+      map = new mapboxgl.Map({
+        container: 'map',
+        style: 'mapbox://styles/mapbox/dark-v11',
+        center: [-98.5795, 39.8283],
+        zoom: 3.5
+      });
+
+      map.addControl(new mapboxgl.NavigationControl(), 'top-right');
+
+      map.on('load', () => {
+        mapLoaded = true;
+        setupMapLayers();
+        updateMap();
+      });
+    }
+
+    function setupMapLayers() {
+      // Add source
+      map.addSource('projects', {
+        type: 'geojson',
+        data: { type: 'FeatureCollection', features: [] },
+        cluster: true,
+        clusterMaxZoom: 8,
+        clusterRadius: 50
+      });
+
+      // Cluster circles
+      map.addLayer({
+        id: 'clusters',
+        type: 'circle',
+        source: 'projects',
+        filter: ['has', 'point_count'],
+        paint: {
+          'circle-color': '#3b82f6',
+          'circle-radius': [
+            'step',
+            ['get', 'point_count'],
+            15,
+            50, 20,
+            200, 25,
+            500, 30
+          ],
+          'circle-opacity': 0.8,
+          'circle-stroke-width': 2,
+          'circle-stroke-color': '#1e40af'
+        }
+      });
+
+      // Cluster count
+      map.addLayer({
+        id: 'cluster-count',
+        type: 'symbol',
+        source: 'projects',
+        filter: ['has', 'point_count'],
+        layout: {
+          'text-field': ['get', 'point_count_abbreviated'],
+          'text-font': ['DIN Pro Medium', 'Arial Unicode MS Bold'],
+          'text-size': 12
+        },
+        paint: {
+          'text-color': '#ffffff'
+        }
+      });
+
+      // Unclustered points
+      map.addLayer({
+        id: 'unclustered-point',
+        type: 'circle',
+        source: 'projects',
+        filter: ['!', ['has', 'point_count']],
+        paint: {
+          'circle-color': [
+            'match',
+            ['get', 'statusCategory'],
+            'operational', '#10B981',
+            'pending', '#3b82f6',
+            'withdrawn', '#ef4444',
+            '#71717A'
+          ],
+          'circle-radius': [
+            'interpolate', ['linear'], ['get', 'mw'],
+            0, 4,
+            100, 6,
+            500, 10,
+            1000, 14,
+            3000, 20
+          ],
+          'circle-opacity': 0.8,
+          'circle-stroke-width': 1,
+          'circle-stroke-color': '#000000',
+          'circle-stroke-opacity': 0.3
+        }
+      });
+
+      // Click on cluster
+      map.on('click', 'clusters', (e) => {
+        const features = map.queryRenderedFeatures(e.point, { layers: ['clusters'] });
+        const clusterId = features[0].properties.cluster_id;
+        map.getSource('projects').getClusterExpansionZoom(clusterId, (err, zoom) => {
+          if (err) return;
+          map.easeTo({
+            center: features[0].geometry.coordinates,
+            zoom: zoom
+          });
+        });
+      });
+
+      // Click on point
+      map.on('click', 'unclustered-point', (e) => {
+        const props = e.features[0].properties;
+        const project = JSON.parse(props.projectData);
+        showProjectModal(project);
+      });
+
+      // Cursor changes
+      map.on('mouseenter', 'clusters', () => map.getCanvas().style.cursor = 'pointer');
+      map.on('mouseleave', 'clusters', () => map.getCanvas().style.cursor = '');
+      map.on('mouseenter', 'unclustered-point', () => map.getCanvas().style.cursor = 'pointer');
+      map.on('mouseleave', 'unclustered-point', () => map.getCanvas().style.cursor = '');
+    }
+
+    function getStatusCategory(status) {
+      if (!status) return 'other';
+      const s = status.toLowerCase();
+      if (s.includes('operational') || s.includes('active') || s.includes('complete')) return 'operational';
+      if (s.includes('withdrawn') || s.includes('cancelled') || s.includes('terminated')) return 'withdrawn';
+      return 'pending';
+    }
+
+    function updateMap() {
+      if (!mapLoaded) return;
+
+      // Add jitter to avoid overlapping points at same state centroid
+      const stateOffsets = {};
+      
+      const features = filtered
+        .filter(p => p.st && stateCentroids[p.st])
+        .map(p => {
+          const centroid = stateCentroids[p.st];
+          
+          // Add small random offset to spread out points in same state
+          if (!stateOffsets[p.st]) stateOffsets[p.st] = { count: 0 };
+          const offset = stateOffsets[p.st];
+          offset.count++;
+          
+          // Spiral offset pattern
+          const angle = offset.count * 0.5;
+          const radius = Math.sqrt(offset.count) * 0.15;
+          const jitterLng = Math.cos(angle) * radius;
+          const jitterLat = Math.sin(angle) * radius;
+
+          return {
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [centroid.lng + jitterLng, centroid.lat + jitterLat]
+            },
+            properties: {
+              id: p.id,
+              name: p.n || 'Unnamed Project',
+              mw: p.mw || 0,
+              statusCategory: getStatusCategory(p.s),
+              projectData: JSON.stringify(p)
+            }
+          };
+        });
+
+      map.getSource('projects').setData({
+        type: 'FeatureCollection',
+        features
+      });
+    }
+
+    // Project Modal
+    function showProjectModal(project) {
+      const modal = document.getElementById('modalOverlay');
+      document.getElementById('modalTitle').textContent = project.n || 'Unnamed Project';
+      document.getElementById('modalSubtitle').textContent = `${project.id || '—'} • ${project.r || '—'}`;
+
+      const content = document.getElementById('modalContent');
+      content.innerHTML = `
+        <div class="detail-item">
+          <span class="detail-label">Capacity</span>
+          <span class="detail-value highlight">${project.mw ? project.mw.toLocaleString() + ' MW' : '—'}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Status</span>
+          <span class="detail-value"><span class="cell-status ${getStatusClass(project.s)}">${project.s || '—'}</span></span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Project Type</span>
+          <span class="detail-value">${project.t || '—'}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">State</span>
+          <span class="detail-value">${project.st || '—'}</span>
+        </div>
+        <div class="detail-item full-width">
+          <span class="detail-label">Developer</span>
+          <span class="detail-value">${project.d || '—'}</span>
+        </div>
+        <div class="detail-item full-width">
+          <span class="detail-label">Point of Interconnection</span>
+          <span class="detail-value">${project.p || '—'}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Queue Date</span>
+          <span class="detail-value mono">${formatDate(project.qd)}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Expected COD</span>
+          <span class="detail-value mono">${formatDate(project.cd)}</span>
+        </div>
+      `;
+
+      // Developer scorecard link
+      const devLink = document.getElementById('modalDeveloperLink');
+      if (project.d) {
+        devLink.style.display = 'block';
+        devLink.onclick = () => {
+          window.open(`../developer-scorecard/?developer=${encodeURIComponent(project.d)}`, '_blank');
+        };
+      } else {
+        devLink.style.display = 'none';
+      }
+
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(e) {
+      if (e && e.target !== e.currentTarget) return;
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.body.style.overflow = '';
     }
 
     // Render
@@ -722,8 +1465,8 @@
               </tr>
             </thead>
             <tbody>
-              ${pageData.map(p => `
-                <tr>
+              ${pageData.map((p, i) => `
+                <tr onclick="showProjectModal(filtered[${start + i}])">
                   <td class="cell-id">${p.id || '—'}</td>
                   <td><span class="cell-region">${p.r || '—'}</span></td>
                   <td class="cell-name" title="${escapeHtml(p.n || '')}">${p.n || '—'}</td>
@@ -745,7 +1488,7 @@
 
       // Pagination
       const pagination = document.getElementById('pagination');
-      if (totalPages > 1) {
+      if (totalPages > 1 && currentView === 'table') {
         pagination.style.display = 'flex';
         document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
         document.getElementById('prevPage').disabled = currentPage === 1;
@@ -789,6 +1532,11 @@
     document.getElementById('nextPage').addEventListener('click', () => {
       const totalPages = Math.ceil(filtered.length / pageSize);
       if (currentPage < totalPages) { currentPage++; render(); window.scrollTo(0, 0); }
+    });
+
+    // Close modal on escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeModal();
     });
 
     function debounce(fn, ms) {
