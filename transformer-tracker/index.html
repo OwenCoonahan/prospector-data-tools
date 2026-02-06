@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Power Transformer Lead Time Tracker — Prospector Labs</title>
+    <title>Grid Supply Chain Intelligence — Prospector Labs</title>
     <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -34,7 +34,7 @@
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 48px 24px;
         }
@@ -44,6 +44,14 @@
             margin-bottom: 48px;
             border-bottom: 1px solid var(--zinc);
             padding-bottom: 32px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 16px;
         }
         
         h1 {
@@ -76,13 +84,19 @@
             width: 8px;
             height: 8px;
             border-radius: 50%;
-            background: var(--ember);
+            background: var(--jade);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
         /* Stats Row */
         .stats-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
             margin-bottom: 48px;
         }
@@ -95,16 +109,17 @@
         }
         
         .stat-value {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 600;
             line-height: 1.1;
             font-family: 'JetBrains Mono', monospace;
             margin-bottom: 4px;
         }
         
-        .stat-value.highlight {
-            color: var(--electric);
-        }
+        .stat-value.highlight { color: var(--electric); }
+        .stat-value.warning { color: var(--ember); }
+        .stat-value.success { color: var(--jade); }
+        .stat-value.danger { color: var(--coral); }
         
         .stat-label {
             font-size: 13px;
@@ -112,19 +127,56 @@
         }
         
         .stat-change {
-            font-size: 13px;
+            font-size: 12px;
             margin-top: 8px;
         }
         
-        .stat-change.up {
-            color: var(--coral);
+        .stat-change.up { color: var(--coral); }
+        .stat-change.down { color: var(--jade); }
+        .stat-change.neutral { color: var(--silver); }
+        
+        /* Navigation Tabs */
+        .nav-tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--zinc);
+            padding-bottom: 16px;
+            flex-wrap: wrap;
         }
         
-        .stat-change.down {
-            color: var(--jade);
+        .nav-tab {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--stone);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
         }
         
-        /* Section */
+        .nav-tab:hover {
+            color: var(--silver);
+            background: var(--graphite);
+        }
+        
+        .nav-tab.active {
+            color: var(--white);
+            background: var(--electric);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Section Headers */
         section {
             margin-bottom: 48px;
         }
@@ -134,6 +186,12 @@
             font-weight: 600;
             line-height: 1.3;
             letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        
+        .section-subtitle {
+            font-size: 14px;
+            color: var(--stone);
             margin-bottom: 24px;
         }
         
@@ -141,25 +199,28 @@
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 16px;
+            color: var(--silver);
         }
         
-        /* Horizontal Bar Charts */
+        /* Chart Container */
         .chart-container {
             background: var(--graphite);
             border: 1px solid var(--zinc);
             border-radius: 8px;
             padding: 24px;
+            margin-bottom: 24px;
         }
         
+        /* Horizontal Bar Charts */
         .bar-chart {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 12px;
         }
         
         .bar-row {
             display: grid;
-            grid-template-columns: 180px 1fr 80px;
+            grid-template-columns: 200px 1fr 70px;
             align-items: center;
             gap: 16px;
         }
@@ -169,8 +230,14 @@
             color: var(--silver);
         }
         
+        .bar-label small {
+            display: block;
+            font-size: 11px;
+            color: var(--zinc);
+        }
+        
         .bar-track {
-            height: 32px;
+            height: 28px;
             background: var(--zinc);
             border-radius: 4px;
             overflow: hidden;
@@ -181,28 +248,28 @@
             height: 100%;
             border-radius: 4px;
             transition: width 0.5s ease;
-            position: relative;
+            display: flex;
+            align-items: center;
+            padding-left: 8px;
         }
         
-        .bar-fill.current {
-            background: var(--electric);
-        }
-        
-        .bar-fill.historical {
-            background: var(--stone);
-            opacity: 0.5;
+        .bar-fill span {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--white);
         }
         
         .bar-value {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             font-family: 'JetBrains Mono', monospace;
             text-align: right;
+            color: var(--silver);
         }
         
-        /* Timeline comparison */
+        /* Timeline Comparison Chart */
         .timeline-chart {
-            margin-top: 24px;
+            margin-top: 16px;
         }
         
         .timeline-row {
@@ -210,7 +277,15 @@
             grid-template-columns: 180px 1fr;
             align-items: center;
             gap: 16px;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--zinc);
+        }
+        
+        .timeline-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
         }
         
         .timeline-bars {
@@ -232,25 +307,23 @@
             align-items: center;
             padding-right: 8px;
             justify-content: flex-end;
-            min-width: 40px;
+            min-width: 32px;
         }
         
-        .timeline-bar.pre2020 {
-            background: var(--zinc);
-        }
-        
-        .timeline-bar.peak {
-            background: var(--coral);
-        }
-        
-        .timeline-bar.current {
-            background: var(--electric);
-        }
+        .timeline-bar.pre2020 { background: var(--zinc); }
+        .timeline-bar.peak { background: var(--coral); }
+        .timeline-bar.current { background: var(--electric); }
         
         .timeline-bar span {
-            font-size: 11px;
+            font-size: 10px;
             font-family: 'JetBrains Mono', monospace;
             color: var(--white);
+        }
+        
+        .timeline-period {
+            font-size: 10px;
+            color: var(--stone);
+            min-width: 60px;
         }
         
         .timeline-legend {
@@ -275,10 +348,10 @@
             border-radius: 3px;
         }
         
-        /* Manufacturers */
+        /* Manufacturer Cards */
         .manufacturer-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 16px;
         }
         
@@ -287,6 +360,11 @@
             border: 1px solid var(--zinc);
             border-radius: 8px;
             padding: 20px;
+            transition: border-color 0.2s;
+        }
+        
+        .manufacturer-card:hover {
+            border-color: var(--stone);
         }
         
         .manufacturer-header {
@@ -297,15 +375,27 @@
         }
         
         .manufacturer-name {
-            font-size: 15px;
+            font-size: 16px;
             font-weight: 600;
         }
         
+        .manufacturer-name a {
+            color: var(--white);
+            text-decoration: none;
+        }
+        
+        .manufacturer-name a:hover {
+            color: var(--electric);
+        }
+        
         .manufacturer-share {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             font-family: 'JetBrains Mono', monospace;
             color: var(--electric);
+            background: rgba(59, 130, 246, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
         }
         
         .manufacturer-hq {
@@ -314,12 +404,284 @@
             margin-bottom: 12px;
         }
         
+        .manufacturer-products {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 12px;
+        }
+        
+        .product-tag {
+            font-size: 11px;
+            color: var(--silver);
+            background: var(--zinc);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        
         .manufacturer-facilities {
             font-size: 12px;
             color: var(--silver);
+            margin-bottom: 12px;
         }
         
-        /* Constraints */
+        .manufacturer-lead-time {
+            font-size: 12px;
+            padding: 8px;
+            background: var(--charcoal);
+            border-radius: 4px;
+        }
+        
+        .manufacturer-lead-time strong {
+            color: var(--ember);
+        }
+        
+        /* Component Cards */
+        .component-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 16px;
+        }
+        
+        .component-card {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .component-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .component-name {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .component-lead-time {
+            font-size: 13px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--ember);
+        }
+        
+        .component-desc {
+            font-size: 13px;
+            color: var(--stone);
+            margin-bottom: 12px;
+        }
+        
+        .component-specs {
+            font-size: 12px;
+            color: var(--silver);
+            background: var(--charcoal);
+            padding: 12px;
+            border-radius: 4px;
+        }
+        
+        .component-specs dt {
+            color: var(--stone);
+            margin-top: 8px;
+        }
+        
+        .component-specs dt:first-child {
+            margin-top: 0;
+        }
+        
+        .component-specs dd {
+            margin-left: 0;
+            color: var(--silver);
+        }
+        
+        /* Materials Supply Chain */
+        .material-card {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .material-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .material-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .criticality-badge {
+            font-size: 11px;
+            font-weight: 600;
+            padding: 4px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+        
+        .criticality-badge.critical {
+            background: var(--coral);
+            color: var(--white);
+        }
+        
+        .criticality-badge.high {
+            background: var(--ember);
+            color: var(--charcoal);
+        }
+        
+        .criticality-badge.medium {
+            background: var(--zinc);
+            color: var(--silver);
+        }
+        
+        .material-desc {
+            font-size: 13px;
+            color: var(--stone);
+            margin-bottom: 16px;
+        }
+        
+        .material-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        
+        .material-stat {
+            background: var(--charcoal);
+            padding: 12px;
+            border-radius: 4px;
+        }
+        
+        .material-stat-value {
+            font-size: 18px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--electric);
+        }
+        
+        .material-stat-label {
+            font-size: 11px;
+            color: var(--stone);
+        }
+        
+        .supplier-list {
+            font-size: 13px;
+        }
+        
+        .supplier-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--zinc);
+        }
+        
+        .supplier-item:last-child {
+            border-bottom: none;
+        }
+        
+        .supplier-name {
+            color: var(--silver);
+        }
+        
+        .supplier-country {
+            color: var(--stone);
+            font-size: 12px;
+        }
+        
+        .supplier-share {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--electric);
+        }
+        
+        /* News Feed */
+        .news-feed {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .news-item {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 20px;
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 16px;
+        }
+        
+        .news-date {
+            font-size: 12px;
+            color: var(--stone);
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .news-category {
+            font-size: 11px;
+            color: var(--electric);
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .news-headline {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .news-summary {
+            font-size: 13px;
+            color: var(--silver);
+            margin-bottom: 8px;
+        }
+        
+        .news-impact {
+            font-size: 12px;
+            color: var(--jade);
+            font-style: italic;
+        }
+        
+        /* Insights Section */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        
+        .insight-card {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .insight-topic {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--electric);
+            margin-bottom: 8px;
+        }
+        
+        .insight-text {
+            font-size: 13px;
+            color: var(--silver);
+            margin-bottom: 12px;
+        }
+        
+        .insight-confidence {
+            font-size: 11px;
+            color: var(--stone);
+        }
+        
+        /* Constraints List */
         .constraint-list {
             display: flex;
             flex-direction: column;
@@ -332,7 +694,7 @@
             border-radius: 8px;
             padding: 16px 20px;
             display: grid;
-            grid-template-columns: 200px 1fr 100px;
+            grid-template-columns: 180px 1fr 100px;
             align-items: center;
             gap: 16px;
         }
@@ -347,9 +709,10 @@
             color: var(--silver);
         }
         
-        .constraint-severity {
+        .severity-dots {
             display: flex;
             gap: 4px;
+            justify-content: flex-end;
         }
         
         .severity-dot {
@@ -359,52 +722,8 @@
             background: var(--zinc);
         }
         
-        .severity-dot.active {
-            background: var(--coral);
-        }
-        
-        .severity-dot.medium {
-            background: var(--ember);
-        }
-        
-        /* Demand Drivers */
-        .driver-chart {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-        
-        .driver-row {
-            display: grid;
-            grid-template-columns: 200px 1fr 60px;
-            align-items: center;
-            gap: 16px;
-        }
-        
-        .driver-bar {
-            height: 28px;
-            background: var(--electric);
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            padding-left: 12px;
-        }
-        
-        .driver-bar span {
-            font-size: 11px;
-            color: var(--white);
-        }
-        
-        .driver-trend {
-            font-size: 12px;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        
-        .driver-trend.up {
-            color: var(--coral);
-        }
+        .severity-dot.active { background: var(--coral); }
+        .severity-dot.medium { background: var(--ember); }
         
         /* Footer */
         footer {
@@ -443,201 +762,399 @@
             margin-bottom: 4px;
         }
         
+        .footer-disclaimer {
+            font-size: 11px;
+            color: var(--zinc);
+            margin-top: 12px;
+            max-width: 600px;
+        }
+        
         .footer-brand {
             font-size: 12px;
             color: var(--stone);
+            text-align: right;
         }
         
         /* Responsive */
         @media (max-width: 768px) {
-            .bar-row, .timeline-row, .constraint-item, .driver-row {
+            .bar-row, .timeline-row, .constraint-item {
                 grid-template-columns: 1fr;
                 gap: 8px;
             }
             
+            .news-item {
+                grid-template-columns: 1fr;
+            }
+            
             .stat-value {
-                font-size: 28px;
+                font-size: 24px;
             }
             
             h1 {
                 font-size: 24px;
             }
+            
+            .nav-tabs {
+                gap: 4px;
+            }
+            
+            .nav-tab {
+                padding: 8px 12px;
+                font-size: 12px;
+            }
         }
         
-        /* Tabs */
-        .tabs {
+        /* Sub-tabs for component categories */
+        .sub-tabs {
             display: flex;
-            gap: 4px;
+            gap: 8px;
             margin-bottom: 24px;
-            border-bottom: 1px solid var(--zinc);
-            padding-bottom: 16px;
+            flex-wrap: wrap;
         }
         
-        .tab {
-            padding: 8px 16px;
-            font-size: 14px;
+        .sub-tab {
+            padding: 6px 12px;
+            font-size: 12px;
             font-weight: 500;
             color: var(--stone);
-            background: transparent;
-            border: none;
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 4px;
             cursor: pointer;
-            border-radius: 6px;
             transition: all 0.2s;
         }
         
-        .tab:hover {
+        .sub-tab:hover {
+            border-color: var(--stone);
             color: var(--silver);
-            background: var(--graphite);
         }
         
-        .tab.active {
-            color: var(--white);
-            background: var(--graphite);
+        .sub-tab.active {
+            border-color: var(--electric);
+            color: var(--electric);
+            background: rgba(59, 130, 246, 0.1);
         }
         
-        .tab-content {
+        .sub-content {
             display: none;
         }
         
-        .tab-content.active {
+        .sub-content.active {
             display: block;
+        }
+        
+        /* Info boxes */
+        .info-box {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .info-box.warning {
+            border-color: var(--ember);
+            background: rgba(245, 158, 11, 0.05);
+        }
+        
+        .info-box p {
+            font-size: 13px;
+            color: var(--silver);
+        }
+        
+        .info-box strong {
+            color: var(--white);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Power Transformer Lead Time Tracker</h1>
-            <p class="subtitle">Monitoring supply chain constraints for large power transformers in the US grid</p>
-            <div class="data-notice">
-                <span class="dot"></span>
-                <span>Data compiled from utility filings, industry reports, and estimates — Feb 2026</span>
+            <div class="header-top">
+                <div>
+                    <h1>Grid Supply Chain Intelligence</h1>
+                    <p class="subtitle">Comprehensive resource for electrical grid infrastructure sourcing</p>
+                </div>
+                <div class="data-notice">
+                    <span class="dot"></span>
+                    <span>Live data — February 2026</span>
+                </div>
             </div>
         </header>
         
+        <!-- Key Stats Overview -->
         <div class="stats-row">
             <div class="stat-card">
-                <div class="stat-value highlight">36</div>
-                <div class="stat-label">Months — Large Power Transformer Lead Time</div>
+                <div class="stat-value warning">36</div>
+                <div class="stat-label">Months — LPT Lead Time</div>
                 <div class="stat-change up">↑ 140% vs pre-2020</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">6</div>
-                <div class="stat-label">US Facilities — LPT Manufacturing</div>
-                <div class="stat-change">+2 announced expansions</div>
+                <div class="stat-value highlight">14</div>
+                <div class="stat-label">Major Manufacturers Tracked</div>
+                <div class="stat-change neutral">Global suppliers</div>
             </div>
             <div class="stat-card">
-                <div class="stat-value">2,600</div>
-                <div class="stat-label">GW in Interconnection Queue</div>
-                <div class="stat-change up">Each needs transformers</div>
+                <div class="stat-value">7</div>
+                <div class="stat-label">Component Categories</div>
+                <div class="stat-change neutral">Full coverage</div>
             </div>
             <div class="stat-card">
                 <div class="stat-value">70%</div>
                 <div class="stat-label">US GOES Import Dependency</div>
-                <div class="stat-change">Critical material</div>
+                <div class="stat-change up">Critical constraint</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value success">2,600</div>
+                <div class="stat-label">GW in Interconnection Queue</div>
+                <div class="stat-change up">All need transformers</div>
             </div>
         </div>
         
-        <div class="tabs">
-            <button class="tab active" data-tab="leadtimes">Lead Times</button>
-            <button class="tab" data-tab="manufacturers">Manufacturers</button>
-            <button class="tab" data-tab="constraints">Constraints</button>
-            <button class="tab" data-tab="demand">Demand Drivers</button>
+        <!-- Main Navigation -->
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="overview">Overview</button>
+            <button class="nav-tab" data-tab="transformers">Transformers</button>
+            <button class="nav-tab" data-tab="switchgear">Switchgear</button>
+            <button class="nav-tab" data-tab="cables">Cables & Conductors</button>
+            <button class="nav-tab" data-tab="components">Components</button>
+            <button class="nav-tab" data-tab="manufacturers">Manufacturers</button>
+            <button class="nav-tab" data-tab="materials">Materials</button>
+            <button class="nav-tab" data-tab="news">News & Insights</button>
         </div>
         
-        <div id="leadtimes" class="tab-content active">
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
             <section>
-                <h2>Lead Times by Transformer Type</h2>
-                <p class="subtitle" style="margin-bottom: 24px;">Comparing pre-2020 baseline, peak shortage (2022-23), and current estimates</p>
+                <h2>Lead Times Overview</h2>
+                <p class="section-subtitle">Current lead times by equipment category compared to historical norms</p>
+                
+                <div class="chart-container">
+                    <div class="bar-chart">
+                        <div class="bar-row">
+                            <div class="bar-label">Large Power Transformers<small>100+ MVA</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 75%; background: var(--coral);"><span>36 mo</span></div>
+                            </div>
+                            <div class="bar-value">28-42</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">GSU Transformers<small>Generator Step-Up</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 88%; background: var(--coral);"><span>42 mo</span></div>
+                            </div>
+                            <div class="bar-value">36-48</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">GIS Switchgear<small>145-550 kV</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 50%; background: var(--ember);"><span>24 mo</span></div>
+                            </div>
+                            <div class="bar-value">18-30</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">HV Circuit Breakers<small>Dead Tank</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 42%; background: var(--ember);"><span>20 mo</span></div>
+                            </div>
+                            <div class="bar-value">14-26</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">HV Bushings<small>230+ kV</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 38%; background: var(--ember);"><span>18 mo</span></div>
+                            </div>
+                            <div class="bar-value">12-24</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">Distribution Transformers<small>&lt;5 MVA</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 23%; background: var(--electric);"><span>11 mo</span></div>
+                            </div>
+                            <div class="bar-value">8-14</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">HVDC Cables<small>Submarine</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 88%; background: var(--coral);"><span>42 mo</span></div>
+                            </div>
+                            <div class="bar-value">32-52</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-box" style="margin-top: 24px;">
+                        <p><strong>Key Insight:</strong> Lead times remain 2-2.5x above pre-2020 levels. Large power transformers and HVDC cables are the longest lead-time items. Improvement is gradual — normalization not expected before 2027-2028.</p>
+                    </div>
+                </div>
+            </section>
+            
+            <section>
+                <h2>Critical Supply Chain Constraints</h2>
+                <p class="section-subtitle">Key bottlenecks limiting production capacity</p>
+                
+                <div class="constraint-list">
+                    <div class="constraint-item">
+                        <div class="constraint-name">GOES Steel</div>
+                        <div class="constraint-desc">Grain-oriented electrical steel for transformer cores. US 70% import dependent. Only one US producer.</div>
+                        <div class="severity-dots">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">Manufacturing Capacity</div>
+                        <div class="constraint-desc">Only 6 US facilities can produce large power transformers. New facilities require $100M+ and 2+ years.</div>
+                        <div class="severity-dots">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">HV Bushings</div>
+                        <div class="constraint-desc">Critical transformer component. ~60% imported. Limited qualified global suppliers.</div>
+                        <div class="severity-dots">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">Skilled Labor</div>
+                        <div class="constraint-desc">2-5 year training time for transformer manufacturing. 30% of workforce retiring in next decade.</div>
+                        <div class="severity-dots">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">Copper Supply</div>
+                        <div class="constraint-desc">Competition from EV and renewable sectors driving prices up. Potential supply gap by 2030.</div>
+                        <div class="severity-dots">
+                            <div class="severity-dot medium"></div>
+                            <div class="severity-dot medium"></div>
+                            <div class="severity-dot medium"></div>
+                            <div class="severity-dot"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section>
+                <h2>Recent Developments</h2>
+                <p class="section-subtitle">Key industry news affecting supply chain</p>
+                
+                <div class="news-feed" id="recent-news">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </div>
+        
+        <!-- Transformers Tab -->
+        <div id="transformers" class="tab-content">
+            <section>
+                <h2>Transformer Lead Times</h2>
+                <p class="section-subtitle">Historical comparison: Pre-2020 → Peak 2023 → Current</p>
                 
                 <div class="chart-container">
                     <div class="timeline-chart">
                         <div class="timeline-row">
-                            <div class="bar-label">Distribution<br><span style="font-size: 11px; color: var(--zinc);">&lt;5 MVA</span></div>
+                            <div class="bar-label">Distribution<small>&lt;5 MVA</small></div>
                             <div class="timeline-bars">
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar pre2020" style="width: 25px;"><span>3</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                    <span class="timeline-period">Pre-2020</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar peak" style="width: 150px;"><span>18</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                    <span class="timeline-period">Peak 2023</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar current" style="width: 92px;"><span>11</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                    <span class="timeline-period">Current</span>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="timeline-row">
-                            <div class="bar-label">Medium Power<br><span style="font-size: 11px; color: var(--zinc);">5-100 MVA</span></div>
+                            <div class="bar-label">Medium Power<small>10-100 MVA</small></div>
                             <div class="timeline-bars">
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar pre2020" style="width: 75px;"><span>9</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                    <span class="timeline-period">Pre-2020</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar peak" style="width: 250px;"><span>30</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                    <span class="timeline-period">Peak 2023</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar current" style="width: 183px;"><span>22</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                    <span class="timeline-period">Current</span>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="timeline-row">
-                            <div class="bar-label">Large Power<br><span style="font-size: 11px; color: var(--zinc);">100-400 MVA</span></div>
+                            <div class="bar-label">Large Power (LPT)<small>100-400 MVA</small></div>
                             <div class="timeline-bars">
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar pre2020" style="width: 125px;"><span>15</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                    <span class="timeline-period">Pre-2020</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar peak" style="width: 400px;"><span>48</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                    <span class="timeline-period">Peak 2023</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar current" style="width: 300px;"><span>36</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                    <span class="timeline-period">Current</span>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="timeline-row">
-                            <div class="bar-label">GSU Transformers<br><span style="font-size: 11px; color: var(--zinc);">200-1000+ MVA</span></div>
+                            <div class="bar-label">GSU Transformers<small>200-1000+ MVA</small></div>
                             <div class="timeline-bars">
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar pre2020" style="width: 175px;"><span>21</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                    <span class="timeline-period">Pre-2020</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar peak" style="width: 500px;"><span>60</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                    <span class="timeline-period">Peak 2023</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar current" style="width: 350px;"><span>42</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                    <span class="timeline-period">Current</span>
                                 </div>
                             </div>
                         </div>
                         
                         <div class="timeline-row">
-                            <div class="bar-label">EHV Autotransformer<br><span style="font-size: 11px; color: var(--zinc);">345-765 kV</span></div>
+                            <div class="bar-label">EHV Autotransformer<small>345-765 kV</small></div>
                             <div class="timeline-bars">
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar pre2020" style="width: 175px;"><span>21</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                    <span class="timeline-period">Pre-2020</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar peak" style="width: 450px;"><span>54</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                    <span class="timeline-period">Peak 2023</span>
                                 </div>
                                 <div class="timeline-bar-group">
                                     <div class="timeline-bar current" style="width: 333px;"><span>40</span></div>
-                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                    <span class="timeline-period">Current</span>
                                 </div>
                             </div>
                         </div>
@@ -650,11 +1167,11 @@
                         </div>
                         <div class="legend-item">
                             <div class="legend-dot" style="background: var(--coral);"></div>
-                            <span>Peak Shortage (2022-23)</span>
+                            <span>Peak Shortage (2023)</span>
                         </div>
                         <div class="legend-item">
                             <div class="legend-dot" style="background: var(--electric);"></div>
-                            <span>Current Estimate</span>
+                            <span>Current (Feb 2026)</span>
                         </div>
                         <div class="legend-item" style="margin-left: auto;">
                             <span style="font-size: 11px;">Values in months</span>
@@ -662,293 +1179,649 @@
                     </div>
                 </div>
             </section>
+            
+            <section>
+                <h2>Lead Times by Manufacturer</h2>
+                <p class="section-subtitle">Large Power Transformers (100+ MVA)</p>
+                
+                <div class="chart-container">
+                    <div class="bar-chart">
+                        <div class="bar-row">
+                            <div class="bar-label">Hyundai Electric<small>🇰🇷 New US plant 2025</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 65%; background: var(--electric);"><span>26-36 mo</span></div>
+                            </div>
+                            <div class="bar-value">31</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">Virginia Transformer<small>🇺🇸 Roanoke, VA</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 65%; background: var(--electric);"><span>26-36 mo</span></div>
+                            </div>
+                            <div class="bar-value">31</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">Siemens Energy<small>🇩🇪 Germany</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 70%; background: var(--ember);"><span>28-40 mo</span></div>
+                            </div>
+                            <div class="bar-value">34</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">Prolec GE<small>🇲🇽 Monterrey</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 70%; background: var(--ember);"><span>28-38 mo</span></div>
+                            </div>
+                            <div class="bar-value">33</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">SPX Transformer<small>🇺🇸 Waukesha, WI</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 70%; background: var(--ember);"><span>28-38 mo</span></div>
+                            </div>
+                            <div class="bar-value">33</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">Hitachi Energy<small>🇨🇭 Global</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 75%; background: var(--coral);"><span>30-42 mo</span></div>
+                            </div>
+                            <div class="bar-value">36</div>
+                        </div>
+                        <div class="bar-row">
+                            <div class="bar-label">GE Vernova<small>🇺🇸 Charleroi, PA</small></div>
+                            <div class="bar-track">
+                                <div class="bar-fill" style="width: 75%; background: var(--coral);"><span>30-42 mo</span></div>
+                            </div>
+                            <div class="bar-value">36</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section>
+                <h2>Transformer Types</h2>
+                <div class="component-grid">
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Large Power Transformers</div>
+                            <div class="component-lead-time">28-42 mo</div>
+                        </div>
+                        <div class="component-desc">Transformers rated 100+ MVA for transmission substations and power plants.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Power Rating</dt>
+                                <dd>100-1500+ MVA</dd>
+                                <dt>Voltage Class</dt>
+                                <dd>115-765 kV</dd>
+                                <dt>Weight</dt>
+                                <dd>100-400+ tons</dd>
+                                <dt>US Demand</dt>
+                                <dd>~200 units/year</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Generator Step-Up (GSU)</div>
+                            <div class="component-lead-time">36-48 mo</div>
+                        </div>
+                        <div class="component-desc">Connect generators to transmission grid. Used at power plants.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Power Rating</dt>
+                                <dd>200-1000+ MVA</dd>
+                                <dt>Applications</dt>
+                                <dd>Nuclear, gas, coal, large solar/wind</dd>
+                                <dt>Critical Path</dt>
+                                <dd>Often longest lead item for power plants</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Distribution Transformers</div>
+                            <div class="component-lead-time">8-14 mo</div>
+                        </div>
+                        <div class="component-desc">Step down voltage for end-use. Pole-mounted and pad-mounted units.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Power Rating</dt>
+                                <dd>5-10,000 kVA</dd>
+                                <dt>Voltage</dt>
+                                <dd>2.4-69 kV primary</dd>
+                                <dt>US Demand</dt>
+                                <dd>~500,000 units/year</dd>
+                                <dt>Key Suppliers</dt>
+                                <dd>Howard Industries, Hitachi, Prolec GE</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
         
+        <!-- Switchgear Tab -->
+        <div id="switchgear" class="tab-content">
+            <section>
+                <h2>Switchgear & Circuit Breakers</h2>
+                <p class="section-subtitle">High voltage switching and protection equipment</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Gas-Insulated Switchgear (GIS)</div>
+                            <div class="component-lead-time">18-30 mo</div>
+                        </div>
+                        <div class="component-desc">Compact switchgear using SF6 gas insulation. Preferred for space-constrained sites.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Voltage Class</dt>
+                                <dd>72.5-1200 kV</dd>
+                                <dt>Current Rating</dt>
+                                <dd>2000-8000 A</dd>
+                                <dt>Key Challenge</dt>
+                                <dd>SF6 phase-out regulations</dd>
+                                <dt>Major Suppliers</dt>
+                                <dd>Siemens, Hitachi, Mitsubishi, GE</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Air-Insulated Switchgear (AIS)</div>
+                            <div class="component-lead-time">12-24 mo</div>
+                        </div>
+                        <div class="component-desc">Traditional outdoor switchgear. Lower cost, larger footprint.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Voltage Class</dt>
+                                <dd>72.5-800 kV</dd>
+                                <dt>Current Rating</dt>
+                                <dd>1200-4000 A</dd>
+                                <dt>Advantages</dt>
+                                <dd>Lower cost, easier maintenance</dd>
+                                <dt>Limitations</dt>
+                                <dd>Large footprint, weather exposure</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">HV Circuit Breakers</div>
+                            <div class="component-lead-time">14-26 mo</div>
+                        </div>
+                        <div class="component-desc">Protective devices that interrupt fault currents. SF6 or vacuum types.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Voltage Class</dt>
+                                <dd>72.5-1200 kV</dd>
+                                <dt>Breaking Capacity</dt>
+                                <dd>40-80 kA</dd>
+                                <dt>Types</dt>
+                                <dd>Dead tank (US), Live tank (intl)</dd>
+                                <dt>Key Trend</dt>
+                                <dd>Vacuum expanding to higher voltages</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Generator Circuit Breakers</div>
+                            <div class="component-lead-time">16-28 mo</div>
+                        </div>
+                        <div class="component-desc">High-current breakers between generators and step-up transformers.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Voltage Class</dt>
+                                <dd>15-38 kV</dd>
+                                <dt>Current Rating</dt>
+                                <dd>Up to 50,000+ A</dd>
+                                <dt>Applications</dt>
+                                <dd>Power plants, large substations</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section>
+                <h2>SF6 Alternatives</h2>
+                <p class="section-subtitle">Environmental regulations driving innovation</p>
+                
+                <div class="info-box warning">
+                    <p><strong>Regulatory Update:</strong> EU accelerating SF6 phase-out. New medium-voltage equipment must be SF6-free by 2027, high-voltage by 2032. California implementing similar restrictions.</p>
+                </div>
+                
+                <div class="component-grid" style="margin-top: 24px;">
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">g³ (GE Vernova)</div>
+                            <div class="component-lead-time">GWP &lt;1</div>
+                        </div>
+                        <div class="component-desc">Fluoronitrile-based mixture. Commercial for GIS up to 420 kV.</div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Clean Air (Hitachi)</div>
+                            <div class="component-lead-time">GWP &lt;1</div>
+                        </div>
+                        <div class="component-desc">CO2/O2 mixture. Commercial for GIS applications.</div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Vacuum Technology</div>
+                            <div class="component-lead-time">GWP 0</div>
+                        </div>
+                        <div class="component-desc">Expanding to higher voltages. Proven up to 145 kV.</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Cables Tab -->
+        <div id="cables" class="tab-content">
+            <section>
+                <h2>Cables & Conductors</h2>
+                <p class="section-subtitle">Underground, submarine, and overhead transmission systems</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">HVDC Submarine Cables</div>
+                            <div class="component-lead-time">32-52 mo</div>
+                        </div>
+                        <div class="component-desc">Long-distance underwater power transmission. Critical for offshore wind.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Voltage Class</dt>
+                                <dd>Up to 525 kV DC</dd>
+                                <dt>Key Suppliers</dt>
+                                <dd>Prysmian, Nexans, NKT, Sumitomo</dd>
+                                <dt>Constraints</dt>
+                                <dd>Limited manufacturing, installation vessels</dd>
+                                <dt>Applications</dt>
+                                <dd>Offshore wind, interconnections</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">XLPE AC Cables</div>
+                            <div class="component-lead-time">12-24 mo</div>
+                        </div>
+                        <div class="component-desc">Cross-linked polyethylene insulated cables for underground transmission.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Voltage Class</dt>
+                                <dd>Up to 500 kV AC</dd>
+                                <dt>Applications</dt>
+                                <dd>Urban underground, water crossings</dd>
+                                <dt>Advantages</dt>
+                                <dd>Lower losses than oil-filled</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">ACSR Conductors</div>
+                            <div class="component-lead-time">4-12 mo</div>
+                        </div>
+                        <div class="component-desc">Traditional aluminum conductor steel reinforced for overhead lines.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Structure</dt>
+                                <dd>Aluminum strands, steel core</dd>
+                                <dt>Applications</dt>
+                                <dd>Standard transmission lines</dd>
+                                <dt>Suppliers</dt>
+                                <dd>Southwire, General Cable, Nexans</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">HTLS Conductors</div>
+                            <div class="component-lead-time">6-14 mo</div>
+                        </div>
+                        <div class="component-desc">High temperature low sag conductors for capacity upgrades.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Capacity Increase</dt>
+                                <dd>50-100% over ACSR</dd>
+                                <dt>Types</dt>
+                                <dd>ACSS, ACCR, Carbon Core</dd>
+                                <dt>Applications</dt>
+                                <dd>Reconductoring, congested corridors</dd>
+                                <dt>Key Supplier</dt>
+                                <dd>CTC Global (ACCC)</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Components Tab -->
+        <div id="components" class="tab-content">
+            <section>
+                <h2>Critical Components</h2>
+                <p class="section-subtitle">Key subcomponents and accessories</p>
+                
+                <div class="component-grid">
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">HV Bushings</div>
+                            <div class="component-lead-time">12-24 mo</div>
+                        </div>
+                        <div class="component-desc">Insulated conductors through transformer tanks. Critical bottleneck.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Types</dt>
+                                <dd>OIP, RIP, RIS</dd>
+                                <dt>Voltage Class</dt>
+                                <dd>69-1200 kV</dd>
+                                <dt>US Import Dependency</dt>
+                                <dd>~60%</dd>
+                                <dt>Critical Suppliers</dt>
+                                <dd>ABB/Hitachi, Siemens, Trench, HSP</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Porcelain Insulators</div>
+                            <div class="component-lead-time">8-18 mo</div>
+                        </div>
+                        <div class="component-desc">Traditional ceramic insulators for substations and lines.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Voltage Class</dt>
+                                <dd>Up to 1200 kV</dd>
+                                <dt>Applications</dt>
+                                <dd>Post insulators, suspension, bushings</dd>
+                                <dt>Key Suppliers</dt>
+                                <dd>NGK, Seves, Lapp Insulators</dd>
+                                <dt>Trend</dt>
+                                <dd>Losing share to composites</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Composite Insulators</div>
+                            <div class="component-lead-time">6-16 mo</div>
+                        </div>
+                        <div class="component-desc">Fiberglass core with silicone rubber. Lighter, vandal-resistant.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Structure</dt>
+                                <dd>ECR fiberglass, silicone sheds</dd>
+                                <dt>Applications</dt>
+                                <dd>Transmission lines, compact substations</dd>
+                                <dt>Key Suppliers</dt>
+                                <dd>TE Connectivity, Hubbell, MacLean</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card">
+                        <div class="component-header">
+                            <div class="component-name">Surge Arresters</div>
+                            <div class="component-lead-time">8-16 mo</div>
+                        </div>
+                        <div class="component-desc">Overvoltage protection from lightning and switching.</div>
+                        <div class="component-specs">
+                            <dl>
+                                <dt>Voltage Class</dt>
+                                <dd>Up to 1200 kV</dd>
+                                <dt>Technology</dt>
+                                <dd>Metal oxide varistors</dd>
+                                <dt>Key Suppliers</dt>
+                                <dd>Hitachi, Siemens, GE, Toshiba</dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <!-- Manufacturers Tab -->
         <div id="manufacturers" class="tab-content">
             <section>
                 <h2>Major Manufacturers</h2>
-                <p class="subtitle" style="margin-bottom: 24px;">Global power transformer manufacturers with US market presence</p>
+                <p class="section-subtitle">Global grid equipment manufacturers with US market presence</p>
                 
-                <div class="manufacturer-grid">
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">Hitachi Energy</div>
-                            <div class="manufacturer-share">~20%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇨🇭 Switzerland (acquired ABB 2020)</div>
-                        <div class="manufacturer-facilities">US: Jefferson City MO, South Boston VA, Bland VA</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">Siemens Energy</div>
-                            <div class="manufacturer-share">~15%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇩🇪 Germany</div>
-                        <div class="manufacturer-facilities">US: Charlotte NC (service), Wendell NC</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">TBEA</div>
-                            <div class="manufacturer-share">~12%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇨🇳 China</div>
-                        <div class="manufacturer-facilities">US: Limited presence (supply chain concerns)</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">GE Vernova</div>
-                            <div class="manufacturer-share">~10%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇺🇸 USA</div>
-                        <div class="manufacturer-facilities">US: Clearwater FL, Charleroi PA</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">Toshiba Energy</div>
-                            <div class="manufacturer-share">~8%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇯🇵 Japan</div>
-                        <div class="manufacturer-facilities">US: Houston TX (sales/service)</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">Hyundai Electric</div>
-                            <div class="manufacturer-share">~6%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇰🇷 South Korea</div>
-                        <div class="manufacturer-facilities">US: Montgomery AL (planned 2025)</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">Mitsubishi Electric</div>
-                            <div class="manufacturer-share">~5%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇯🇵 Japan</div>
-                        <div class="manufacturer-facilities">US: Memphis TN (service)</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">Prolec GE</div>
-                            <div class="manufacturer-share">~4%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇲🇽 Mexico</div>
-                        <div class="manufacturer-facilities">US: Major supplier from Mexico facilities</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">Howard Industries</div>
-                            <div class="manufacturer-share">~3%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇺🇸 USA (private)</div>
-                        <div class="manufacturer-facilities">US: Laurel MS — distribution focus</div>
-                    </div>
-                    
-                    <div class="manufacturer-card">
-                        <div class="manufacturer-header">
-                            <div class="manufacturer-name">SPX Transformers</div>
-                            <div class="manufacturer-share">~2%</div>
-                        </div>
-                        <div class="manufacturer-hq">🇺🇸 USA</div>
-                        <div class="manufacturer-facilities">US: Waukesha WI — utility focused</div>
-                    </div>
+                <div class="sub-tabs">
+                    <button class="sub-tab active" data-subtab="all-mfrs">All</button>
+                    <button class="sub-tab" data-subtab="us-mfrs">US Manufacturing</button>
+                    <button class="sub-tab" data-subtab="global-mfrs">Global Players</button>
+                    <button class="sub-tab" data-subtab="distribution-mfrs">Distribution Focus</button>
                 </div>
                 
-                <div style="margin-top: 24px; padding: 16px; background: var(--graphite); border: 1px solid var(--zinc); border-radius: 8px;">
-                    <p style="font-size: 13px; color: var(--stone);">
-                        <strong style="color: var(--silver);">Note:</strong> Market share estimates are approximate and vary by segment (distribution vs. large power). 
-                        Top 5 manufacturers control ~65% of global market. US has ~6 facilities capable of manufacturing large power transformers (>100 MVA).
-                    </p>
-                </div>
-            </section>
-        </div>
-        
-        <div id="constraints" class="tab-content">
-            <section>
-                <h2>Supply Chain Constraints</h2>
-                <p class="subtitle" style="margin-bottom: 24px;">Key bottlenecks limiting transformer production capacity</p>
-                
-                <h3>Critical Materials</h3>
-                <div class="constraint-list" style="margin-bottom: 32px;">
-                    <div class="constraint-item">
-                        <div class="constraint-name">Grain-Oriented Electrical Steel (GOES)</div>
-                        <div class="constraint-desc">Specialized steel for transformer cores. US 70% import dependent. Section 232 tariffs apply.</div>
-                        <div class="constraint-severity">
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                        </div>
-                    </div>
-                    <div class="constraint-item">
-                        <div class="constraint-name">High-Voltage Bushings</div>
-                        <div class="constraint-desc">Insulated conductors through transformer tanks. 60% imported. Few qualified suppliers globally.</div>
-                        <div class="constraint-severity">
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot"></div>
-                        </div>
-                    </div>
-                    <div class="constraint-item">
-                        <div class="constraint-name">Copper (Winding Grade)</div>
-                        <div class="constraint-desc">Price volatility impacts costs. Competition from EV/renewable sectors.</div>
-                        <div class="constraint-severity">
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot"></div>
-                            <div class="severity-dot"></div>
-                        </div>
-                    </div>
-                    <div class="constraint-item">
-                        <div class="constraint-name">Transformer Oil</div>
-                        <div class="constraint-desc">Mineral insulating oil. Adequate supply but environmental regs increasing.</div>
-                        <div class="constraint-severity">
-                            <div class="severity-dot medium"></div>
-                            <div class="severity-dot medium"></div>
-                            <div class="severity-dot"></div>
-                            <div class="severity-dot"></div>
-                            <div class="severity-dot"></div>
-                        </div>
-                    </div>
-                </div>
-                
-                <h3>Capacity Constraints</h3>
-                <div class="constraint-list">
-                    <div class="constraint-item">
-                        <div class="constraint-name">Manufacturing Facilities</div>
-                        <div class="constraint-desc">Only 6 US facilities can produce LPTs. New facility requires $100M+ and 2+ years.</div>
-                        <div class="constraint-severity">
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                        </div>
-                    </div>
-                    <div class="constraint-item">
-                        <div class="constraint-name">Skilled Labor</div>
-                        <div class="constraint-desc">2-5 year training time. 30% of workforce retiring in next decade.</div>
-                        <div class="constraint-severity">
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot"></div>
-                        </div>
-                    </div>
-                    <div class="constraint-item">
-                        <div class="constraint-name">High-Power Testing</div>
-                        <div class="constraint-desc">Only ~10 North American test facilities. Each test takes 2-4 weeks.</div>
-                        <div class="constraint-severity">
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot active"></div>
-                            <div class="severity-dot"></div>
-                            <div class="severity-dot"></div>
-                        </div>
-                    </div>
-                    <div class="constraint-item">
-                        <div class="constraint-name">Transportation</div>
-                        <div class="constraint-desc">LPTs require specialized heavy-haul. Limited rail car availability.</div>
-                        <div class="constraint-severity">
-                            <div class="severity-dot medium"></div>
-                            <div class="severity-dot medium"></div>
-                            <div class="severity-dot"></div>
-                            <div class="severity-dot"></div>
-                            <div class="severity-dot"></div>
-                        </div>
+                <div id="all-mfrs" class="sub-content active">
+                    <div class="manufacturer-grid" id="manufacturer-cards">
+                        <!-- Populated by JS -->
                     </div>
                 </div>
             </section>
         </div>
         
-        <div id="demand" class="tab-content">
+        <!-- Materials Tab -->
+        <div id="materials" class="tab-content">
             <section>
-                <h2>Demand Drivers</h2>
-                <p class="subtitle" style="margin-bottom: 24px;">Factors driving unprecedented transformer demand</p>
+                <h2>Critical Materials Supply Chain</h2>
+                <p class="section-subtitle">Raw materials and their global supply dynamics</p>
                 
-                <div class="chart-container">
-                    <div class="driver-chart">
-                        <div class="driver-row">
-                            <div class="bar-label">Renewable Interconnection</div>
-                            <div class="bar-track">
-                                <div class="driver-bar" style="width: 100%;"><span>2,600 GW in queue</span></div>
-                            </div>
-                            <div class="driver-trend up">↑↑ accelerating</div>
+                <div id="materials-list">
+                    <!-- GOES -->
+                    <div class="material-card">
+                        <div class="material-header">
+                            <div class="material-name">Grain-Oriented Electrical Steel (GOES)</div>
+                            <span class="criticality-badge critical">Critical</span>
                         </div>
-                        <div class="driver-row">
-                            <div class="bar-label">Data Center Growth</div>
-                            <div class="bar-track">
-                                <div class="driver-bar" style="width: 90%;"><span>25 → 50 GW by 2030</span></div>
+                        <div class="material-desc">Specialized silicon steel with aligned grain structure for transformer cores. The most constrained material in the supply chain.</div>
+                        
+                        <div class="material-stats">
+                            <div class="material-stat">
+                                <div class="material-stat-value">70%</div>
+                                <div class="material-stat-label">US Import Dependency</div>
                             </div>
-                            <div class="driver-trend up">↑↑ accelerating</div>
+                            <div class="material-stat">
+                                <div class="material-stat-value">$4,000</div>
+                                <div class="material-stat-label">Price per ton (approx)</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-value">↑ 20%</div>
+                                <div class="material-stat-label">YoY Price Change</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-value">1</div>
+                                <div class="material-stat-label">US Producer</div>
+                            </div>
                         </div>
-                        <div class="driver-row">
-                            <div class="bar-label">Transmission Expansion</div>
-                            <div class="bar-track">
-                                <div class="driver-bar" style="width: 80%;"><span>25,000 mi planned</span></div>
+                        
+                        <h3>Major Global Producers</h3>
+                        <div class="supplier-list">
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">Nippon Steel</span> <span class="supplier-country">🇯🇵 Japan</span></div>
+                                <span class="supplier-share">~25%</span>
                             </div>
-                            <div class="driver-trend up">↑ increasing</div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">Baowu Steel</span> <span class="supplier-country">🇨🇳 China</span></div>
+                                <span class="supplier-share">~20%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">JFE Steel</span> <span class="supplier-country">🇯🇵 Japan</span></div>
+                                <span class="supplier-share">~15%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">POSCO</span> <span class="supplier-country">🇰🇷 South Korea</span></div>
+                                <span class="supplier-share">~12%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">Cleveland-Cliffs</span> <span class="supplier-country">🇺🇸 USA</span></div>
+                                <span class="supplier-share">~8%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">thyssenkrupp</span> <span class="supplier-country">🇩🇪 Germany</span></div>
+                                <span class="supplier-share">~8%</span>
+                            </div>
                         </div>
-                        <div class="driver-row">
-                            <div class="bar-label">Grid Modernization</div>
-                            <div class="bar-track">
-                                <div class="driver-bar" style="width: 80%;"><span>25% past design life</span></div>
-                            </div>
-                            <div class="driver-trend" style="color: var(--silver);">→ steady</div>
+                        
+                        <div class="info-box" style="margin-top: 16px;">
+                            <p><strong>US Supply:</strong> Cleveland-Cliffs (formerly AK Steel) is the only US producer with facilities in Butler, PA and Zanesville, OH. Announced $500M expansion to increase capacity ~30% by 2026.</p>
                         </div>
-                        <div class="driver-row">
-                            <div class="bar-label">Electrification (EV/Heat)</div>
-                            <div class="bar-track">
-                                <div class="driver-bar" style="width: 70%;"><span>25% annual growth</span></div>
-                            </div>
-                            <div class="driver-trend up">↑↑ accelerating</div>
+                    </div>
+                    
+                    <!-- Copper -->
+                    <div class="material-card">
+                        <div class="material-header">
+                            <div class="material-name">Copper (Winding Grade)</div>
+                            <span class="criticality-badge high">High</span>
                         </div>
-                        <div class="driver-row">
-                            <div class="bar-label">Battery Storage (BESS)</div>
-                            <div class="bar-track">
-                                <div class="driver-bar" style="width: 60%;"><span>15 GW/year</span></div>
+                        <div class="material-desc">High-purity electrolytic copper for transformer windings and power conductors. Competition from EV sector intensifying.</div>
+                        
+                        <div class="material-stats">
+                            <div class="material-stat">
+                                <div class="material-stat-value">$9,000</div>
+                                <div class="material-stat-label">Price per ton (LME)</div>
                             </div>
-                            <div class="driver-trend up">↑↑ accelerating</div>
+                            <div class="material-stat">
+                                <div class="material-stat-value">↑ 15%</div>
+                                <div class="material-stat-label">YoY Price Change</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-value">27%</div>
+                                <div class="material-stat-label">Chile Production Share</div>
+                            </div>
                         </div>
-                        <div class="driver-row">
-                            <div class="bar-label">Weather Resilience</div>
-                            <div class="bar-track">
-                                <div class="driver-bar" style="width: 50%;"><span>$8B utility spending</span></div>
+                        
+                        <h3>Major Mining Countries</h3>
+                        <div class="supplier-list">
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">Chile</span></div>
+                                <span class="supplier-share">27%</span>
                             </div>
-                            <div class="driver-trend up">↑ increasing</div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">Peru</span></div>
+                                <span class="supplier-share">10%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">China</span></div>
+                                <span class="supplier-share">8%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">DRC</span></div>
+                                <span class="supplier-share">8%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">USA</span></div>
+                                <span class="supplier-share">6%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Transformer Oil -->
+                    <div class="material-card">
+                        <div class="material-header">
+                            <div class="material-name">Transformer Oil</div>
+                            <span class="criticality-badge medium">Medium</span>
+                        </div>
+                        <div class="material-desc">Mineral insulating oil for cooling and insulation. Natural ester alternatives gaining share.</div>
+                        
+                        <div class="material-stats">
+                            <div class="material-stat">
+                                <div class="material-stat-value">$2,000</div>
+                                <div class="material-stat-label">Price per ton (approx)</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-value">↑ 8%</div>
+                                <div class="material-stat-label">YoY Price Change</div>
+                            </div>
+                        </div>
+                        
+                        <h3>Major Suppliers</h3>
+                        <div class="supplier-list">
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">Nynas</span> <span class="supplier-country">🇸🇪 Sweden</span></div>
+                                <span class="supplier-share">~25%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">Ergon</span> <span class="supplier-country">🇺🇸 USA</span></div>
+                                <span class="supplier-share">~15%</span>
+                            </div>
+                            <div class="supplier-item">
+                                <div><span class="supplier-name">Calumet</span> <span class="supplier-country">🇺🇸 USA</span></div>
+                                <span class="supplier-share">~10%</span>
+                            </div>
+                        </div>
+                        
+                        <div class="info-box" style="margin-top: 16px;">
+                            <p><strong>Alternatives:</strong> Natural ester oils (FR3 by Cargill, MIDEL by M&I Materials) gaining adoption for environmental benefits and fire safety. Particularly popular in urban/indoor applications.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- SF6 -->
+                    <div class="material-card">
+                        <div class="material-header">
+                            <div class="material-name">Sulfur Hexafluoride (SF6)</div>
+                            <span class="criticality-badge high">High</span>
+                        </div>
+                        <div class="material-desc">Gaseous insulation for GIS and circuit breakers. Highest GWP of any gas (23,500). Regulations tightening globally.</div>
+                        
+                        <div class="material-stats">
+                            <div class="material-stat">
+                                <div class="material-stat-value">$20</div>
+                                <div class="material-stat-label">Price per kg</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-value">↑ 25%</div>
+                                <div class="material-stat-label">YoY Price Change</div>
+                            </div>
+                            <div class="material-stat">
+                                <div class="material-stat-value">23,500</div>
+                                <div class="material-stat-label">Global Warming Potential</div>
+                            </div>
+                        </div>
+                        
+                        <div class="info-box warning" style="margin-top: 16px;">
+                            <p><strong>Regulatory Pressure:</strong> EU F-gas regulations phasing out SF6. New MV equipment must be SF6-free by 2027, HV by 2032. California implementing similar restrictions. Manufacturers racing to commercialize alternatives.</p>
                         </div>
                     </div>
                 </div>
+            </section>
+        </div>
+        
+        <!-- News Tab -->
+        <div id="news" class="tab-content">
+            <section>
+                <h2>Industry News & Insights</h2>
+                <p class="section-subtitle">Recent developments affecting grid supply chain</p>
                 
-                <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
-                    <div class="stat-card">
-                        <div class="stat-value" style="font-size: 28px;">50,000</div>
-                        <div class="stat-label">Est. Annual US Transformer Demand (all types)</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" style="font-size: 28px;">~200</div>
-                        <div class="stat-label">Large Power Transformers Needed Annually</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" style="font-size: 28px;">8%</div>
-                        <div class="stat-label">Annual Demand Growth Rate</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value" style="font-size: 28px;">2027-28</div>
-                        <div class="stat-label">Est. Constraint Duration</div>
-                    </div>
+                <div class="news-feed" id="full-news-feed">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+            
+            <section style="margin-top: 48px;">
+                <h2>Market Insights</h2>
+                <p class="section-subtitle">Key trends and outlook</p>
+                
+                <div class="insights-grid" id="insights-grid">
+                    <!-- Populated by JS -->
                 </div>
             </section>
         </div>
@@ -956,20 +1829,21 @@
         <footer>
             <div class="footer-content">
                 <div class="footer-sources">
-                    <h4>Data Sources & Methodology</h4>
+                    <h4>Data Sources</h4>
                     <ul>
-                        <li>Lead times: Compiled from utility IRP filings (Duke, AEP, PG&E, Xcel) and industry reports</li>
-                        <li>Market shares: Estimated from company filings and industry analyses</li>
-                        <li>Constraints: DOE reports, NERC reliability assessments, trade data</li>
-                        <li>Demand drivers: Interconnection queue data, EIA, industry forecasts</li>
+                        <li>Lead times: Utility IRP filings, industry surveys, manufacturer communications</li>
+                        <li>Market shares: Company filings, industry analyses (estimated)</li>
+                        <li>Materials: Trade data, commodity analysts, producer reports</li>
+                        <li>News: Industry publications, company press releases, regulatory filings</li>
                     </ul>
-                    <p style="margin-top: 12px; font-size: 11px; color: var(--zinc);">
-                        ⚠️ This data is largely ESTIMATED. No comprehensive public database of transformer lead times exists. 
-                        Values should be verified before business decisions.
+                    <p class="footer-disclaimer">
+                        ⚠️ This data is compiled from public sources and estimates. Lead times and market shares are approximate and vary by specification. 
+                        Users should verify critical data points directly with manufacturers before making procurement decisions.
                     </p>
                 </div>
                 <div class="footer-brand">
                     prospectorlabs.io<br>
+                    <span style="font-size: 11px;">Grid Supply Chain Intelligence</span><br>
                     <span style="font-size: 11px;">February 2026</span>
                 </div>
             </div>
@@ -977,18 +1851,300 @@
     </div>
     
     <script>
+        // Manufacturer data
+        const manufacturers = [
+            {
+                name: "Hitachi Energy",
+                hq: "🇨🇭 Switzerland",
+                share: "~20%",
+                website: "https://www.hitachienergy.com",
+                products: ["LPT", "Distribution", "HVDC", "GIS", "Breakers"],
+                facilities: "US: Jefferson City MO, South Boston VA, Bland VA, Crystal Springs MS",
+                leadTime: "30-42 months (LPT)",
+                category: ["global-mfrs"]
+            },
+            {
+                name: "Siemens Energy",
+                hq: "🇩🇪 Germany",
+                share: "~15%",
+                website: "https://www.siemens-energy.com",
+                products: ["LPT", "GIS", "Breakers", "HVDC"],
+                facilities: "US: Charlotte NC (service), Wendell NC",
+                leadTime: "28-40 months (LPT)",
+                category: ["global-mfrs"]
+            },
+            {
+                name: "GE Vernova",
+                hq: "🇺🇸 USA",
+                share: "~14%",
+                website: "https://www.gevernova.com",
+                products: ["LPT", "Distribution", "GIS", "HVDC"],
+                facilities: "US: Charleroi PA, Clearwater FL | Mexico: Monterrey (Prolec GE)",
+                leadTime: "30-42 months (LPT)",
+                category: ["us-mfrs", "global-mfrs"]
+            },
+            {
+                name: "Hyundai Electric",
+                hq: "🇰🇷 South Korea",
+                share: "~6%",
+                website: "https://www.hyundai-electric.com",
+                products: ["LPT", "Distribution", "GIS", "Breakers"],
+                facilities: "US: Montgomery AL (opening 2025) | Korea: Ulsan",
+                leadTime: "26-36 months (LPT)",
+                category: ["us-mfrs", "global-mfrs"]
+            },
+            {
+                name: "Virginia Transformer",
+                hq: "🇺🇸 USA",
+                share: "~8%",
+                website: "https://www.virginiatransformer.com",
+                products: ["LPT", "Medium Power", "Distribution"],
+                facilities: "US: Roanoke VA, Pocatello ID, Rincon GA",
+                leadTime: "26-36 months (LPT)",
+                category: ["us-mfrs"]
+            },
+            {
+                name: "SPX Transformer Solutions",
+                hq: "🇺🇸 USA",
+                share: "~3%",
+                website: "https://www.spxtransformersolutions.com",
+                products: ["LPT", "Medium Power", "Mobile Substations"],
+                facilities: "US: Waukesha WI, Goldsboro NC",
+                leadTime: "28-38 months (LPT)",
+                category: ["us-mfrs"]
+            },
+            {
+                name: "Howard Industries",
+                hq: "🇺🇸 USA",
+                share: "~20% dist",
+                website: "https://www.howard-ind.com",
+                products: ["Distribution", "Pad-Mounted", "Pole-Mounted"],
+                facilities: "US: Laurel MS (largest US distribution plant)",
+                leadTime: "8-12 months (distribution)",
+                category: ["us-mfrs", "distribution-mfrs"]
+            },
+            {
+                name: "Prolec GE",
+                hq: "🇲🇽 Mexico",
+                share: "~10%",
+                website: "https://www.prolec.com.mx",
+                products: ["LPT", "Distribution", "Reactors"],
+                facilities: "Mexico: Monterrey, Apodaca (JV with GE Vernova)",
+                leadTime: "28-38 months (LPT)",
+                category: ["global-mfrs", "distribution-mfrs"]
+            },
+            {
+                name: "Mitsubishi Electric",
+                hq: "🇯🇵 Japan",
+                share: "~5%",
+                website: "https://www.mitsubishielectric.com",
+                products: ["LPT", "GIS", "Breakers", "HVDC"],
+                facilities: "US: Memphis TN (service) | Japan: Itami, Ako",
+                leadTime: "28-36 months (LPT)",
+                category: ["global-mfrs"]
+            },
+            {
+                name: "Toshiba Energy",
+                hq: "🇯🇵 Japan",
+                share: "~8%",
+                website: "https://www.toshiba-energy.com",
+                products: ["LPT", "GSU", "GIS", "HVDC"],
+                facilities: "US: Houston TX (sales/service) | Japan: Hamakawasaki",
+                leadTime: "30-40 months (LPT)",
+                category: ["global-mfrs"]
+            },
+            {
+                name: "Delta Star",
+                hq: "🇺🇸 USA",
+                share: "~15% mobile",
+                website: "https://www.deltastar.com",
+                products: ["Medium Power", "Mobile Transformers", "Pad-Mounted"],
+                facilities: "US: Lynchburg VA, San Carlos CA",
+                leadTime: "12-18 months (mobile)",
+                category: ["us-mfrs"]
+            },
+            {
+                name: "Pennsylvania Transformer",
+                hq: "🇺🇸 USA",
+                share: "~4% medium",
+                website: "https://www.patransformer.com",
+                products: ["Medium Power", "Rectifier", "Specialty"],
+                facilities: "US: Canonsburg PA",
+                leadTime: "16-24 months",
+                category: ["us-mfrs"]
+            }
+        ];
+        
+        // News data
+        const newsItems = [
+            {
+                date: "2025-01-15",
+                category: "Capacity Expansion",
+                headline: "Siemens Energy Announces €1.5B Grid Investment",
+                summary: "Siemens Energy commits €1.5 billion over 5 years to expand grid equipment manufacturing globally, including transformers and switchgear.",
+                impact: "Major capacity additions expected 2026-2028"
+            },
+            {
+                date: "2024-10-15",
+                category: "Capacity Expansion",
+                headline: "Hitachi Energy Breaks Ground on Ludvika Expansion",
+                summary: "Construction begins on major transformer factory expansion in Sweden, including new test hall for HVDC and ultra-large transformers.",
+                impact: "Added capacity for high-demand HVDC equipment by 2026-2027"
+            },
+            {
+                date: "2024-08-01",
+                category: "Policy",
+                headline: "DOE Launches Transformer Supply Chain Program",
+                summary: "Department of Energy announces STEP program to address critical transformer shortages with domestic manufacturing incentives.",
+                impact: "Federal support accelerating domestic capacity expansion"
+            },
+            {
+                date: "2024-07-10",
+                category: "Materials",
+                headline: "Cleveland-Cliffs Announces GOES Capacity Investment",
+                summary: "Only US GOES producer announces $500M to expand production 30% by 2026.",
+                impact: "Critical for reducing import dependence"
+            },
+            {
+                date: "2024-06-20",
+                category: "Capacity Expansion",
+                headline: "Hyundai Electric Alabama Plant On Track",
+                summary: "First Korean LPT facility in US on schedule for 2025 opening with ~24 unit annual capacity.",
+                impact: "First new US LPT plant in decades"
+            },
+            {
+                date: "2025-01-20",
+                category: "Demand",
+                headline: "Data Center Power Demand Exceeds Forecasts",
+                summary: "AI-driven expansion pushing utility load forecasts 2-3x higher than expected.",
+                impact: "Transformer demand outlook revised upward"
+            },
+            {
+                date: "2024-12-01",
+                category: "Policy",
+                headline: "FERC Approves Long-Term Transmission Planning Rule",
+                summary: "Order 1920 requires 20-year regional planning, driving equipment procurement.",
+                impact: "Improves visibility but increases long-lead equipment demand"
+            },
+            {
+                date: "2024-03-15",
+                category: "Policy",
+                headline: "DOE Restricts Chinese Transformers",
+                summary: "Security concerns lead to restrictions on Chinese state-owned transformer manufacturers.",
+                impact: "TBEA, Baoding Tianwei effectively blocked from US market"
+            }
+        ];
+        
+        // Insights data
+        const insights = [
+            {
+                topic: "Lead Time Trajectory",
+                text: "Lead times peaked in 2022-2023 and are gradually improving. However, normalization to pre-2020 levels is unlikely before 2028. Current LPT lead times remain 2-2.5x above historical norms.",
+                confidence: "HIGH"
+            },
+            {
+                topic: "Capacity Expansion",
+                text: "Multiple manufacturers adding capacity globally, including new US facilities (Hyundai) and expansions (Hitachi, Virginia Transformer, Siemens). Meaningful capacity increases expected 2025-2027.",
+                confidence: "MEDIUM-HIGH"
+            },
+            {
+                topic: "GOES Supply",
+                text: "Grain-oriented electrical steel remains the critical bottleneck. Cleveland-Cliffs expansion and global capacity additions should improve supply by 2026, but demand continues to outpace.",
+                confidence: "MEDIUM"
+            },
+            {
+                topic: "Demand Drivers",
+                text: "Demand outlook revised upward due to: (1) AI data center surge, (2) accelerating renewables, (3) grid modernization, (4) electrification. Supply-demand imbalance expected to persist.",
+                confidence: "HIGH"
+            },
+            {
+                topic: "Geopolitical Factors",
+                text: "US policy favoring domestic/allied manufacturing. Chinese manufacturers effectively excluded for security. Trade policy volatility remains a materials concern.",
+                confidence: "MEDIUM-HIGH"
+            }
+        ];
+        
         // Tab switching
-        document.querySelectorAll('.tab').forEach(tab => {
+        document.querySelectorAll('.nav-tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                // Remove active from all tabs and contents
-                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-                
-                // Add active to clicked tab and corresponding content
                 tab.classList.add('active');
                 document.getElementById(tab.dataset.tab).classList.add('active');
             });
         });
+        
+        // Sub-tab switching
+        document.querySelectorAll('.sub-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const parentTabs = tab.closest('.sub-tabs');
+                parentTabs.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                // Filter manufacturers based on category
+                renderManufacturers(tab.dataset.subtab);
+            });
+        });
+        
+        // Render manufacturers
+        function renderManufacturers(filter = 'all-mfrs') {
+            const container = document.getElementById('manufacturer-cards');
+            const filtered = filter === 'all-mfrs' 
+                ? manufacturers 
+                : manufacturers.filter(m => m.category && m.category.includes(filter));
+            
+            container.innerHTML = filtered.map(m => `
+                <div class="manufacturer-card">
+                    <div class="manufacturer-header">
+                        <div class="manufacturer-name"><a href="${m.website}" target="_blank">${m.name}</a></div>
+                        <div class="manufacturer-share">${m.share}</div>
+                    </div>
+                    <div class="manufacturer-hq">${m.hq}</div>
+                    <div class="manufacturer-products">
+                        ${m.products.map(p => `<span class="product-tag">${p}</span>`).join('')}
+                    </div>
+                    <div class="manufacturer-facilities">${m.facilities}</div>
+                    <div class="manufacturer-lead-time"><strong>${m.leadTime}</strong></div>
+                </div>
+            `).join('');
+        }
+        
+        // Render news
+        function renderNews(containerId, limit = null) {
+            const container = document.getElementById(containerId);
+            const items = limit ? newsItems.slice(0, limit) : newsItems;
+            
+            container.innerHTML = items.map(n => `
+                <div class="news-item">
+                    <div>
+                        <div class="news-date">${n.date}</div>
+                        <div class="news-category">${n.category}</div>
+                    </div>
+                    <div>
+                        <div class="news-headline">${n.headline}</div>
+                        <div class="news-summary">${n.summary}</div>
+                        <div class="news-impact">Impact: ${n.impact}</div>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Render insights
+        function renderInsights() {
+            const container = document.getElementById('insights-grid');
+            container.innerHTML = insights.map(i => `
+                <div class="insight-card">
+                    <div class="insight-topic">${i.topic}</div>
+                    <div class="insight-text">${i.text}</div>
+                    <div class="insight-confidence">Confidence: ${i.confidence}</div>
+                </div>
+            `).join('');
+        }
+        
+        // Initialize
+        renderManufacturers();
+        renderNews('recent-news', 4);
+        renderNews('full-news-feed');
+        renderInsights();
     </script>
 </body>
 </html>

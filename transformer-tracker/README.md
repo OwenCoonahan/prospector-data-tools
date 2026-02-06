@@ -1,112 +1,104 @@
-# Power Transformer Lead Time Tracker
+# Grid Supply Chain Intelligence
 
-Interactive visualization tracking the power transformer supply chain constraints affecting the US electric grid.
+**Comprehensive resource for electrical grid infrastructure sourcing**
 
-![Screenshot](screenshots/lead-times.png)
+A centralized intelligence tool for anyone sourcing grid infrastructure components — covering manufacturers, lead times, materials, and supply chain constraints.
 
-## Overview
+## Live Demo
 
-Power transformers are a critical bottleneck for grid modernization, renewable energy interconnection, and data center expansion. Lead times for large power transformers have extended from 12-18 months pre-2020 to 36-48+ months at peak shortage.
+Open `index.html` in a browser to explore the interactive visualization.
 
-This tracker visualizes:
-- **Lead times** by transformer type (distribution, medium power, large power, GSU)
-- **Manufacturer market share** and US manufacturing presence
-- **Supply chain constraints** (materials, capacity, labor, testing)
-- **Demand drivers** (renewables, data centers, grid modernization)
+## What's Covered
 
-## Data Quality Warning ⚠️
+### Components (7 Categories)
 
-**This data is largely ESTIMATED.** No comprehensive public database of transformer lead times exists. Data was compiled from:
+1. **Large Power Transformers (LPT)** — 100+ MVA transmission transformers
+2. **Distribution Transformers** — <10 MVA for end-use delivery
+3. **High Voltage Bushings** — Critical transformer components
+4. **Switchgear** — GIS (gas-insulated) and AIS (air-insulated)
+5. **Circuit Breakers** — HV protection devices
+6. **Cables & Conductors** — HVDC, XLPE, overhead lines
+7. **Insulators** — Porcelain and composite
 
-- Utility IRP filings (Duke, AEP, PG&E, Xcel)
-- NERC reliability assessments
-- Industry publications (T&D World, Power Engineering)
-- Company investor presentations
-- Trade data (US Census/ITC HS codes)
+### Critical Materials
 
-See [RESEARCH.md](RESEARCH.md) for detailed methodology and data quality assessment.
+- **Grain-Oriented Electrical Steel (GOES)** — Transformer cores (70% US import dependent)
+- **Copper** — Windings and conductors
+- **Transformer Oil** — Insulation and cooling
+- **Aluminum** — Overhead conductors
+- **SF6 Gas** — Switchgear insulation (regulatory pressure)
+- **Porcelain/Composite** — Insulators
 
-## Key Findings
+### Manufacturers Tracked (14+)
 
-### Lead Times (Current Estimates)
-| Type | Pre-2020 | Peak (2022-23) | Current |
-|------|----------|----------------|---------|
-| Distribution (<5 MVA) | 2-3 mo | 12-18 mo | 8-14 mo |
-| Medium Power (5-100 MVA) | 6-12 mo | 24-36 mo | 16-28 mo |
-| Large Power (100-400 MVA) | 12-18 mo | 36-60 mo | 28-44 mo |
-| GSU (200-1000+ MVA) | 18-24 mo | 48-72 mo | 32-50 mo |
+| Manufacturer | HQ | US Market Share | Key Products |
+|-------------|-----|-----------------|--------------|
+| Hitachi Energy | 🇨🇭 Switzerland | ~20% | LPT, HVDC, GIS |
+| Siemens Energy | 🇩🇪 Germany | ~15% | LPT, GIS, Breakers |
+| GE Vernova | 🇺🇸 USA | ~14% | LPT, Distribution |
+| Hyundai Electric | 🇰🇷 South Korea | ~6% | LPT (new US plant 2025) |
+| Virginia Transformer | 🇺🇸 USA | ~8% | LPT, Medium Power |
+| Howard Industries | 🇺🇸 USA | ~20% (dist) | Distribution |
+| Prolec GE | 🇲🇽 Mexico | ~10% | LPT, Distribution |
+| SPX Transformer | 🇺🇸 USA | ~3% | LPT, Mobile |
+| + 6 more... | | | |
 
-### Manufacturing Landscape
-- **6** US facilities capable of producing large power transformers
-- **Top 5 manufacturers** control ~65% of global market
-- **Hitachi Energy** (~20%), **Siemens** (~15%), **TBEA** (~12%), **GE Vernova** (~10%)
-- Several capacity expansions announced (Hyundai AL, Hitachi expansions)
+## Current Lead Times (Feb 2026)
 
-### Critical Constraints
-1. **Grain-Oriented Electrical Steel (GOES)** - US 70% import dependent
-2. **Manufacturing Capacity** - Limited facilities, $100M+ to build new
-3. **Skilled Labor** - 30% of workforce retiring in 10 years
-4. **Testing Facilities** - Only ~10 in North America
+| Equipment | Pre-2020 | Peak 2023 | Current |
+|-----------|----------|-----------|---------|
+| Large Power Transformers | 12-18 mo | 36-60 mo | 28-42 mo |
+| GSU Transformers | 18-24 mo | 48-72 mo | 36-48 mo |
+| Distribution Transformers | 2-6 mo | 12-24 mo | 8-14 mo |
+| GIS Switchgear | 12-20 mo | 24-36 mo | 18-30 mo |
+| HV Circuit Breakers | 8-16 mo | 18-30 mo | 14-26 mo |
+| HVDC Cables | 24-48 mo | 36-60 mo | 32-52 mo |
 
-### Demand Drivers
-- 2,600 GW in interconnection queues (each project needs transformers)
-- Data center load projected to double by 2030
-- 25% of grid transformers past design life
-- IRA/clean energy driving record deployment
+**Outlook:** Lead times improving but still 2-2.5x pre-pandemic. Normalization not expected before 2027-2028.
 
-## Project Structure
+## Data Structure
 
 ```
-transformer-tracker/
-├── index.html          # Interactive visualization
-├── README.md           # This file
-├── RESEARCH.md         # Detailed research findings
-└── data/
-    ├── lead_times.json     # Lead time data by transformer type
-    ├── manufacturers.json  # Manufacturer profiles and market share
-    ├── constraints.json    # Supply chain constraints
-    └── demand_drivers.json # Demand driver analysis
+data/
+├── manufacturers.json   # 14+ manufacturer profiles
+├── components.json      # 11 component types with specs
+├── materials.json       # 8 critical materials with supply chain
+├── lead-times.json      # Historical and current lead times
+└── news.json            # Recent industry news/insights
 ```
 
-## Running Locally
+## Key Insights
 
-Simply open `index.html` in a browser. No build step required.
-
-## Data Gaps & Future Work
-
-Key data that doesn't exist publicly:
-- Real-time order backlog by manufacturer
-- Manufacturing capacity utilization rates
-- Inventory levels at utilities
-- Failure/replacement rates
-
-Potential approaches:
-- FOIA requests to DOE for survey data
-- Systematic scraping of utility IRP filings
-- Monitoring manufacturer earnings calls
-- Building industry relationships
-
-## Design
-
-Follows [DESIGN_SYSTEM.md](../DESIGN_SYSTEM.md):
-- Dark mode interface
-- Horizontal bar charts for comparisons
-- Single accent color (Electric blue #3B82F6)
-- Inter + JetBrains Mono typography
-- Minimal, data-forward design
+1. **GOES Steel** is the critical bottleneck — Cleveland-Cliffs is the only US producer
+2. **Only ~6 US facilities** can manufacture large power transformers
+3. **2,600 GW** in US interconnection queue, each project needs transformers
+4. **Data center demand** exceeding forecasts by 2-3x
+5. **Capacity expansion** underway (Hyundai AL, Hitachi Sweden, Virginia Transformer)
+6. **SF6 regulations** driving switchgear innovation
 
 ## Sources
 
-- DOE Large Power Transformer Study (2014)
-- NERC Long-Term Reliability Assessment (2024)
-- Various utility IRP filings
-- T&D World, Power Engineering coverage
-- Company investor presentations
+See [SOURCES.md](SOURCES.md) for full methodology and data sources including:
+- DOE reports and programs
+- Utility IRP filings
+- NERC reliability assessments
+- Industry publications (T&D World, Power Engineering)
+- Manufacturer press releases
+- Trade data
 
-## License
+## Design
 
-Data compiled for research purposes. Original sources retain their copyright.
+Built following [DESIGN_SYSTEM.md](../../DESIGN_SYSTEM.md):
+- Dark mode (Charcoal background)
+- Geist font family
+- Horizontal bar charts
+- Single accent color (Electric blue)
+- Mobile responsive
+
+## Disclaimer
+
+This data is compiled from public sources and estimates. Lead times and market shares are approximate and vary by specification, relationship, and market conditions. Users should verify critical data points directly with manufacturers before making procurement decisions.
 
 ---
 
-*Prospector Labs — February 2026*
+*prospectorlabs.io — Grid Supply Chain Intelligence — February 2026*
