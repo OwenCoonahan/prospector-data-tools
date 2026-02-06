@@ -350,6 +350,173 @@
       gap: 0.75rem;
     }
 
+    /* Side Panel */
+    .side-panel-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.3);
+      z-index: 1100;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.25s ease;
+    }
+
+    .side-panel-overlay.active { opacity: 1; visibility: visible; }
+
+    .side-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 420px;
+      max-width: 90vw;
+      height: 100vh;
+      background: var(--bg-secondary);
+      box-shadow: -4px 0 24px rgba(0,0,0,0.1);
+      transform: translateX(100%);
+      transition: transform 0.25s ease;
+      z-index: 1101;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-panel-overlay.active .side-panel { transform: translateX(0); }
+
+    .side-panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-tertiary);
+    }
+
+    .side-panel-header h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+
+    .side-panel-header .subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .side-panel-close {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+    }
+
+    .side-panel-close:hover { border-color: var(--danger); color: var(--danger); }
+
+    .side-panel-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .dev-stat-card {
+      background: var(--bg-tertiary);
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .dev-stat-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+
+    .dev-stat-row:last-child { margin-bottom: 0; }
+
+    .dev-stat-label {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .dev-stat-value {
+      font-family: var(--font-mono);
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .dev-stat-big {
+      font-size: 2rem;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .dev-stat-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .dev-breakdown {
+      display: flex;
+      gap: 3px;
+      height: 8px;
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 0.75rem 0;
+    }
+
+    .dev-breakdown-seg {
+      height: 100%;
+      transition: opacity 0.15s;
+    }
+
+    .dev-breakdown-seg:hover { opacity: 0.8; }
+
+    .dev-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      font-size: 0.7rem;
+      color: var(--text-secondary);
+    }
+
+    .dev-legend-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .dev-legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    .side-panel-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem;
+      color: var(--text-muted);
+    }
+
+    .side-panel-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
     .btn {
       padding: 0.625rem 1rem;
       font-size: 0.875rem;
@@ -520,6 +687,26 @@
         <div class="detail-grid" id="modalContent"></div>
       </div>
       <div class="modal-footer" id="modalFooter"></div>
+    </div>
+  </div>
+
+  <!-- Developer Side Panel -->
+  <div class="side-panel-overlay" id="sidePanelOverlay">
+    <div class="side-panel">
+      <div class="side-panel-header">
+        <div>
+          <h3 id="sidePanelTitle">Developer Scorecard</h3>
+          <div class="subtitle">Portfolio Summary</div>
+        </div>
+        <button class="side-panel-close" onclick="closeSidePanel()">✕</button>
+      </div>
+      <div class="side-panel-body" id="sidePanelBody">
+        <div class="side-panel-loading">
+          <div class="loading-spinner"></div>
+          <div>Loading developer data...</div>
+        </div>
+      </div>
+      <div class="side-panel-footer" id="sidePanelFooter"></div>
     </div>
   </div>
 
@@ -742,14 +929,148 @@
         <div class="detail-item"><div class="detail-label">Expected COD</div><div class="detail-value">${formatDate(p.cd)}</div></div>
       `;
 
-      const devParam = p.d ? encodeURIComponent(p.d) : '';
-      document.getElementById('modalFooter').innerHTML = p.d ? `<a href="../developer-scorecard/?q=${devParam}" class="btn btn-secondary">View Developer Scorecard →</a>` : '';
+      document.getElementById('modalFooter').innerHTML = p.d ? `<button class="btn btn-secondary" onclick="openDeveloperPanel('${escapeAttr(p.d)}')">View Developer Scorecard →</button>` : '';
 
       document.getElementById('modalOverlay').classList.add('active');
     }
 
     function closeModal() {
       document.getElementById('modalOverlay').classList.remove('active');
+    }
+
+    function openDeveloperPanel(developerName) {
+      const panel = document.getElementById('sidePanelOverlay');
+      document.getElementById('sidePanelTitle').textContent = developerName;
+      panel.classList.add('active');
+      
+      // Compute developer stats from projects
+      const devProjects = projects.filter(p => p.d === developerName);
+      
+      if (devProjects.length === 0) {
+        document.getElementById('sidePanelBody').innerHTML = `<div class="side-panel-loading"><div>No data found for this developer.</div></div>`;
+        return;
+      }
+
+      // Calculate stats
+      const totalMW = devProjects.reduce((sum, p) => sum + (p.mw || 0), 0);
+      const regions = [...new Set(devProjects.map(p => p.r).filter(Boolean))];
+      const types = [...new Set(devProjects.map(p => p.t).filter(Boolean))];
+      const states = [...new Set(devProjects.map(p => p.st).filter(Boolean))];
+      
+      // Status breakdown
+      const statusCounts = { operational: 0, active: 0, withdrawn: 0, other: 0 };
+      const statusMW = { operational: 0, active: 0, withdrawn: 0, other: 0 };
+      devProjects.forEach(p => {
+        const status = (p.s || '').toLowerCase();
+        const mw = p.mw || 0;
+        if (status.includes('operational') || status.includes('complete')) {
+          statusCounts.operational++;
+          statusMW.operational += mw;
+        } else if (status.includes('active')) {
+          statusCounts.active++;
+          statusMW.active += mw;
+        } else if (status.includes('withdrawn') || status.includes('cancelled') || status.includes('terminated')) {
+          statusCounts.withdrawn++;
+          statusMW.withdrawn += mw;
+        } else {
+          statusCounts.other++;
+          statusMW.other += mw;
+        }
+      });
+
+      const successRate = devProjects.length > 0 ? ((statusCounts.operational / devProjects.length) * 100).toFixed(1) : 0;
+      const withdrawnRate = devProjects.length > 0 ? ((statusCounts.withdrawn / devProjects.length) * 100).toFixed(1) : 0;
+
+      // Type breakdown
+      const typeBreakdown = {};
+      devProjects.forEach(p => {
+        const t = p.t || 'Unknown';
+        if (!typeBreakdown[t]) typeBreakdown[t] = { count: 0, mw: 0 };
+        typeBreakdown[t].count++;
+        typeBreakdown[t].mw += (p.mw || 0);
+      });
+
+      const typeColors = {
+        'Solar': '#f59e0b',
+        'Wind': '#06b6d4',
+        'Storage': '#8b5cf6',
+        'Gas': '#6b7280',
+        'Solar + Storage': '#10b981',
+        'Hybrid': '#10b981'
+      };
+
+      // Build HTML
+      let html = `
+        <div class="dev-stat-card">
+          <div class="dev-stat-big">${totalMW >= 1000 ? (totalMW / 1000).toFixed(1) + ' GW' : totalMW.toLocaleString() + ' MW'}</div>
+          <div class="dev-stat-subtitle">Total Portfolio Capacity</div>
+        </div>
+
+        <div class="dev-stat-card">
+          <div class="dev-stat-row">
+            <span class="dev-stat-label">Total Projects</span>
+            <span class="dev-stat-value">${devProjects.length}</span>
+          </div>
+          <div class="dev-stat-row">
+            <span class="dev-stat-label">Regions</span>
+            <span class="dev-stat-value">${regions.join(', ') || '—'}</span>
+          </div>
+          <div class="dev-stat-row">
+            <span class="dev-stat-label">States</span>
+            <span class="dev-stat-value">${states.length} state${states.length !== 1 ? 's' : ''}</span>
+          </div>
+        </div>
+
+        <div class="dev-stat-card">
+          <div class="dev-stat-row">
+            <span class="dev-stat-label">Success Rate</span>
+            <span class="dev-stat-value" style="color: #10b981;">${successRate}%</span>
+          </div>
+          <div class="dev-stat-row">
+            <span class="dev-stat-label">Withdrawn Rate</span>
+            <span class="dev-stat-value" style="color: #ef4444;">${withdrawnRate}%</span>
+          </div>
+          <div class="dev-breakdown">
+            ${statusMW.operational > 0 ? `<div class="dev-breakdown-seg" style="flex: ${statusMW.operational}; background: #10b981;" title="Operational: ${formatMW(statusMW.operational)}"></div>` : ''}
+            ${statusMW.active > 0 ? `<div class="dev-breakdown-seg" style="flex: ${statusMW.active}; background: #3b82f6;" title="Active: ${formatMW(statusMW.active)}"></div>` : ''}
+            ${statusMW.other > 0 ? `<div class="dev-breakdown-seg" style="flex: ${statusMW.other}; background: #a1a1aa;" title="Other: ${formatMW(statusMW.other)}"></div>` : ''}
+            ${statusMW.withdrawn > 0 ? `<div class="dev-breakdown-seg" style="flex: ${statusMW.withdrawn}; background: #ef4444;" title="Withdrawn: ${formatMW(statusMW.withdrawn)}"></div>` : ''}
+          </div>
+          <div class="dev-legend">
+            <div class="dev-legend-item"><div class="dev-legend-dot" style="background: #10b981;"></div>Operational (${statusCounts.operational})</div>
+            <div class="dev-legend-item"><div class="dev-legend-dot" style="background: #3b82f6;"></div>Active (${statusCounts.active})</div>
+            <div class="dev-legend-item"><div class="dev-legend-dot" style="background: #ef4444;"></div>Withdrawn (${statusCounts.withdrawn})</div>
+          </div>
+        </div>
+
+        <div class="dev-stat-card">
+          <div style="font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 0.75rem;">Technology Mix</div>
+          ${Object.entries(typeBreakdown).sort((a, b) => b[1].mw - a[1].mw).slice(0, 5).map(([type, data]) => `
+            <div class="dev-stat-row">
+              <span class="dev-stat-label" style="display: flex; align-items: center; gap: 6px;">
+                <div class="dev-legend-dot" style="background: ${typeColors[type] || '#94a3b8'};"></div>
+                ${type}
+              </span>
+              <span class="dev-stat-value">${formatMW(data.mw)}</span>
+            </div>
+          `).join('')}
+        </div>
+      `;
+
+      document.getElementById('sidePanelBody').innerHTML = html;
+
+      // Footer with link to full scorecard
+      const devParam = encodeURIComponent(developerName);
+      document.getElementById('sidePanelFooter').innerHTML = `<a href="../developer-scorecard/?q=${devParam}" class="btn btn-secondary" style="width: 100%; justify-content: center;">Open Full Scorecard →</a>`;
+    }
+
+    function formatMW(mw) {
+      if (mw >= 1000) return (mw / 1000).toFixed(1) + ' GW';
+      return mw.toLocaleString() + ' MW';
+    }
+
+    function closeSidePanel() {
+      document.getElementById('sidePanelOverlay').classList.remove('active');
     }
 
     // Events
@@ -771,8 +1092,15 @@
       if (e.target.id === 'modalOverlay') closeModal();
     });
 
+    document.getElementById('sidePanelOverlay').addEventListener('click', (e) => {
+      if (e.target.id === 'sidePanelOverlay') closeSidePanel();
+    });
+
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeModal();
+      if (e.key === 'Escape') {
+        closeModal();
+        closeSidePanel();
+      }
     });
 
     function debounce(fn, ms) {

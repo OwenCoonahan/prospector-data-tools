@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Critical Minerals Intelligence — Supply Chain Risk Analysis</title>
+    <title>Critical Minerals Intelligence — Global Supply Chain Analysis</title>
     <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://d3js.org/d3.v7.min.js"></script>
@@ -22,12 +22,12 @@
             --text-tertiary: #71717a;
             --text-muted: #52525b;
             
-            --china-red: #dc2626;
-            --china-red-glow: rgba(220, 38, 38, 0.3);
-            --risk-critical: #ef4444;
-            --risk-high: #f59e0b;
-            --risk-moderate: #3b82f6;
-            --risk-low: #10b981;
+            --concentration-high: #f59e0b;
+            --concentration-glow: rgba(245, 158, 11, 0.3);
+            --level-critical: #ef4444;
+            --level-high: #f59e0b;
+            --level-moderate: #3b82f6;
+            --level-low: #10b981;
             
             --accent-blue: #3b82f6;
             --accent-cyan: #06b6d4;
@@ -95,7 +95,7 @@
         }
         
         .classification {
-            background: var(--china-red);
+            background: var(--accent-blue);
             color: white;
             padding: 4px 10px;
             border-radius: 2px;
@@ -253,44 +253,40 @@
         .stat-change.positive { color: var(--accent-green); }
         .stat-change.negative { color: var(--risk-critical); }
         
-        /* China Risk Indicator */
-        .china-risk {
+        /* Market Concentration Indicator */
+        .concentration-card {
             position: relative;
-            background: linear-gradient(135deg, rgba(220, 38, 38, 0.15) 0%, rgba(220, 38, 38, 0.05) 100%);
-            border: 1px solid rgba(220, 38, 38, 0.3);
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(59, 130, 246, 0.05) 100%);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: 8px;
             padding: 20px;
             overflow: hidden;
         }
         
-        .china-risk::before {
+        .concentration-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
             right: 0;
             height: 3px;
-            background: var(--china-red);
+            background: var(--accent-blue);
         }
         
-        .china-flag {
-            width: 20px;
-            height: 14px;
-            background: #de2910;
-            position: relative;
+        .country-flag {
+            font-size: 16px;
             margin-right: 8px;
-            border-radius: 2px;
         }
         
-        .china-risk-value {
+        .concentration-value {
             font-size: 48px;
             font-weight: 700;
             font-family: 'JetBrains Mono', monospace;
-            color: var(--china-red);
+            color: var(--accent-blue);
             line-height: 1;
         }
         
-        .china-risk-label {
+        .concentration-label {
             font-size: 12px;
             color: var(--text-secondary);
             margin-top: 4px;
@@ -332,8 +328,8 @@
             transition: width 0.5s ease;
         }
         
-        .conc-bar-fill.china { background: linear-gradient(90deg, var(--china-red) 0%, #f87171 100%); }
-        .conc-bar-fill.drc { background: linear-gradient(90deg, var(--risk-high) 0%, #fbbf24 100%); }
+        .conc-bar-fill.high { background: linear-gradient(90deg, var(--level-high) 0%, #fbbf24 100%); }
+        .conc-bar-fill.moderate { background: linear-gradient(90deg, var(--level-moderate) 0%, #60a5fa 100%); }
         .conc-bar-fill.indonesia { background: linear-gradient(90deg, var(--accent-orange) 0%, #fb923c 100%); }
         .conc-bar-fill.other { background: linear-gradient(90deg, var(--accent-blue) 0%, #60a5fa 100%); }
         
@@ -371,9 +367,9 @@
             stroke: none;
         }
         
-        .sankey .node.china rect {
-            fill: var(--china-red) !important;
-            filter: drop-shadow(0 0 10px var(--china-red-glow));
+        .sankey .node.concentrated rect {
+            fill: var(--concentration-high) !important;
+            filter: drop-shadow(0 0 10px var(--concentration-glow));
         }
         
         .sankey .node text {
@@ -420,7 +416,7 @@
             border-radius: 3px;
         }
         
-        .legend-color.china { background: var(--china-red); }
+        .legend-color.concentrated { background: var(--concentration-high); }
         .legend-color.mining { background: var(--accent-cyan); }
         .legend-color.processing { background: var(--accent-purple); }
         .legend-color.manufacturing { background: var(--accent-blue); }
@@ -573,7 +569,7 @@
             position: absolute;
             top: -10px;
             left: 12px;
-            background: var(--china-red);
+            background: var(--concentration-high);
             color: white;
             font-size: 9px;
             font-weight: 700;
@@ -621,8 +617,8 @@
             font-weight: 600;
         }
         
-        .flow-country-share.china {
-            color: var(--china-red);
+        .flow-country-share.concentrated {
+            color: var(--concentration-high);
         }
         
         .flow-arrow {
@@ -846,8 +842,8 @@
                     <span class="classification">SUPPLY CHAIN INTELLIGENCE</span>
                 </div>
             </div>
-            <h1 class="display">Critical Minerals Risk Analysis</h1>
-            <p class="subtitle body">Mapping global supply chain concentration risks across battery metals, semiconductors, and strategic minerals. Visualizing where single-country dominance creates strategic vulnerabilities.</p>
+            <h1 class="display">Critical Minerals Supply Chains</h1>
+            <p class="subtitle body">Mapping global supply chain flows across battery metals, semiconductors, and strategic minerals. Understanding market concentration and production geography.</p>
             <div class="update-badge">
                 <span class="dot"></span>
                 <span>Data updated: February 6, 2026</span>
@@ -889,10 +885,10 @@
                 <!-- Key Risk Summary -->
                 <div class="section">
                     <div class="grid grid-5" style="margin-bottom: 24px;">
-                        <div class="china-risk">
-                            <p class="card-title" style="color: rgba(255,255,255,0.7);">China Processing Dominance</p>
-                            <p class="china-risk-value">78%</p>
-                            <p class="china-risk-label">Average across battery materials</p>
+                        <div class="concentration-card">
+                            <p class="card-title" style="color: rgba(255,255,255,0.7);">Top Producer Share</p>
+                            <p class="concentration-value">78%</p>
+                            <p class="concentration-label">Average processing concentration</p>
                         </div>
                         <div class="card">
                             <p class="card-title">Critical Bottlenecks</p>
@@ -917,10 +913,10 @@
                     </div>
                 </div>
                 
-                <!-- Concentration Risk Bars -->
+                <!-- Concentration Bars -->
                 <div class="section">
-                    <h2 class="h2" style="margin-bottom: 16px;">Single-Country Supply Chain Control</h2>
-                    <p class="small" style="margin-bottom: 20px;">Percentage of global supply controlled by dominant country — red indicates China</p>
+                    <h2 class="h2" style="margin-bottom: 16px;">Market Concentration by Stage</h2>
+                    <p class="small" style="margin-bottom: 20px;">Percentage of global supply controlled by dominant producer — higher values indicate more concentrated markets</p>
                     
                     <div class="card">
                         <div id="concentrationBars"></div>
@@ -929,13 +925,13 @@
                 
                 <!-- Overview Treemap -->
                 <div class="section">
-                    <h2 class="h2" style="margin-bottom: 16px;">China's Critical Mineral Processing Share</h2>
+                    <h2 class="h2" style="margin-bottom: 16px;">Global Processing Market Share</h2>
                     <div id="overviewTreemap" class="treemap-container"></div>
                 </div>
                 
                 <!-- Mineral Cards Grid -->
                 <div class="section">
-                    <h2 class="h2" style="margin-bottom: 16px;">Minerals by Risk Level</h2>
+                    <h2 class="h2" style="margin-bottom: 16px;">Minerals by Concentration Level</h2>
                     <div class="overview-grid" id="mineralCardsGrid"></div>
                 </div>
             </section>
@@ -951,7 +947,7 @@
                         </div>
                     </div>
                     <div>
-                        <span class="risk-badge risk-critical" id="detailRisk">CRITICAL RISK</span>
+                        <span class="risk-badge risk-critical" id="detailRisk">HIGH CONCENTRATION</span>
                     </div>
                 </div>
                 
@@ -972,17 +968,17 @@
                         <p class="stat-value" id="statReserves">—</p>
                         <p class="small" id="statReservesUnit">tonnes</p>
                     </div>
-                    <div class="china-risk" id="chinaRiskCard">
-                        <p class="card-title" style="color: rgba(255,255,255,0.7);">China Processing</p>
-                        <p class="china-risk-value" id="statChinaShare">72%</p>
-                        <p class="china-risk-label">of global refining capacity</p>
+                    <div class="concentration-card" id="topProducerCard">
+                        <p class="card-title" style="color: rgba(255,255,255,0.7);">Top Producer</p>
+                        <p class="concentration-value" id="statTopShare">72%</p>
+                        <p class="concentration-label" id="statTopProducer">of global refining capacity</p>
                     </div>
                 </div>
                 
                 <!-- Supply Chain Flow -->
                 <div class="section">
                     <h3 class="h2" style="margin-bottom: 16px;">Supply Chain Flow</h3>
-                    <p class="small" style="margin-bottom: 16px;">From mine to end product — red stages indicate China dominance</p>
+                    <p class="small" style="margin-bottom: 16px;">From mine to end product — highlighted stages indicate high market concentration</p>
                     <div class="flow-diagram" id="flowDiagram"></div>
                 </div>
                 
@@ -992,10 +988,6 @@
                     <p class="sankey-subtitle">Mining → Processing → Manufacturing → End Use. Width indicates volume flow.</p>
                     <div class="sankey" id="sankeyDiagram"></div>
                     <div class="sankey-legend">
-                        <div class="legend-item">
-                            <div class="legend-color china"></div>
-                            <span>China-controlled</span>
-                        </div>
                         <div class="legend-item">
                             <div class="legend-color mining"></div>
                             <span>Mining</span>

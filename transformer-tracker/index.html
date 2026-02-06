@@ -117,7 +117,7 @@
         
         /* Sidebar Navigation */
         .sidebar {
-            width: 240px;
+            width: 200px;
             background: var(--bg-secondary);
             border-right: 1px solid var(--border);
             padding: 16px 0;
@@ -129,16 +129,6 @@
         
         .nav-section {
             padding: 0 12px;
-            margin-bottom: 24px;
-        }
-        
-        .nav-section-title {
-            font-size: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            color: var(--text-muted);
-            padding: 0 12px;
             margin-bottom: 8px;
         }
         
@@ -146,13 +136,14 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            padding: 10px 12px;
+            padding: 12px 14px;
             font-size: 13px;
             color: var(--text-secondary);
             text-decoration: none;
             border-radius: 6px;
             cursor: pointer;
             transition: all 0.15s;
+            margin-bottom: 4px;
         }
         
         .nav-item:hover {
@@ -202,7 +193,7 @@
         /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 16px;
             margin-bottom: 32px;
         }
@@ -229,10 +220,9 @@
         .stat-card.warning::before { background: var(--accent-yellow); }
         .stat-card.danger::before { background: var(--accent-red); }
         .stat-card.success::before { background: var(--accent-green); }
-        .stat-card.purple::before { background: var(--accent-purple); }
         
         .stat-value {
-            font-size: 36px;
+            font-size: 32px;
             font-weight: 600;
             font-family: 'Geist Mono', monospace;
             line-height: 1.1;
@@ -245,7 +235,7 @@
         .stat-value.green { color: var(--accent-green); }
         
         .stat-label {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
         }
         
@@ -253,7 +243,7 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-size: 11px;
+            font-size: 10px;
             font-family: 'Geist Mono', monospace;
             margin-top: 8px;
             padding: 2px 6px;
@@ -263,11 +253,6 @@
         .stat-change.up {
             color: var(--accent-red);
             background: rgba(239, 68, 68, 0.1);
-        }
-        
-        .stat-change.down {
-            color: var(--accent-green);
-            background: rgba(16, 185, 129, 0.1);
         }
         
         /* Chart Containers */
@@ -351,7 +336,7 @@
         /* Treemap */
         .treemap-container {
             width: 100%;
-            height: 300px;
+            height: 280px;
         }
         
         .treemap-cell {
@@ -370,12 +355,12 @@
         .lead-time-chart {
             display: flex;
             flex-direction: column;
-            gap: 16px;
+            gap: 14px;
         }
         
         .lead-time-row {
             display: grid;
-            grid-template-columns: 180px 1fr 80px;
+            grid-template-columns: 160px 1fr 60px;
             align-items: center;
             gap: 16px;
         }
@@ -393,17 +378,11 @@
         }
         
         .lead-time-track {
-            height: 32px;
+            height: 28px;
             background: var(--bg-tertiary);
             border-radius: 4px;
             position: relative;
             overflow: hidden;
-        }
-        
-        .lead-time-segments {
-            display: flex;
-            height: 100%;
-            position: relative;
         }
         
         .lead-time-segment {
@@ -418,69 +397,16 @@
             position: relative;
         }
         
-        .lead-time-segment.pre2020 {
-            background: var(--text-muted);
-        }
-        
-        .lead-time-segment.peak {
-            background: var(--accent-red);
-        }
-        
         .lead-time-segment.current {
             background: var(--accent-blue);
         }
         
         .lead-time-value {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             font-family: 'Geist Mono', monospace;
             text-align: right;
             color: var(--text-secondary);
-        }
-        
-        /* Horizontal Timeline Bars */
-        .timeline-bar-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-        
-        .timeline-bar-row {
-            display: grid;
-            grid-template-columns: 160px 1fr;
-            gap: 16px;
-            align-items: flex-start;
-        }
-        
-        .timeline-bar-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-        }
-        
-        .timeline-bar-wrapper {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .timeline-bar {
-            height: 20px;
-            border-radius: 3px;
-            display: flex;
-            align-items: center;
-            padding: 0 8px;
-            font-size: 10px;
-            font-family: 'Geist Mono', monospace;
-            color: white;
-            min-width: 40px;
-            justify-content: center;
-        }
-        
-        .timeline-period-label {
-            font-size: 10px;
-            color: var(--text-muted);
-            width: 60px;
         }
         
         /* Import Dependency Badges */
@@ -490,7 +416,7 @@
             gap: 6px;
             padding: 4px 10px;
             border-radius: 4px;
-            font-size: 12px;
+            font-size: 11px;
             font-family: 'Geist Mono', monospace;
             font-weight: 600;
         }
@@ -519,99 +445,10 @@
             border: 1px solid rgba(16, 185, 129, 0.3);
         }
         
-        /* Manufacturer Cards */
-        .manufacturer-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 16px;
-        }
-        
-        .manufacturer-card {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 20px;
-            transition: border-color 0.15s;
-        }
-        
-        .manufacturer-card:hover {
-            border-color: var(--border-hover);
-        }
-        
-        .mfg-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        
-        .mfg-name {
-            font-size: 16px;
-            font-weight: 600;
-        }
-        
-        .mfg-name a {
-            color: var(--text-primary);
-            text-decoration: none;
-        }
-        
-        .mfg-name a:hover {
-            color: var(--accent-blue);
-        }
-        
-        .mfg-share {
-            font-size: 14px;
-            font-weight: 600;
-            font-family: 'Geist Mono', monospace;
-            color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.1);
-            padding: 4px 10px;
-            border-radius: 4px;
-        }
-        
-        .mfg-meta {
-            display: flex;
-            gap: 16px;
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-bottom: 12px;
-        }
-        
-        .mfg-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 12px;
-        }
-        
-        .mfg-tag {
-            font-size: 10px;
-            color: var(--text-secondary);
-            background: var(--bg-tertiary);
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
-        
-        .mfg-lead-time {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            background: var(--bg-tertiary);
-            border-radius: 6px;
-            font-size: 13px;
-        }
-        
-        .mfg-lead-value {
-            font-weight: 600;
-            font-family: 'Geist Mono', monospace;
-            color: var(--accent-yellow);
-        }
-        
         /* Bottleneck Cards */
         .bottleneck-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 16px;
         }
         
@@ -619,21 +456,21 @@
             background: var(--bg-secondary);
             border: 1px solid var(--border);
             border-radius: 8px;
-            padding: 20px;
+            padding: 18px;
             position: relative;
         }
         
         .bottleneck-severity {
             position: absolute;
-            top: 16px;
-            right: 16px;
+            top: 14px;
+            right: 14px;
             display: flex;
             gap: 3px;
         }
         
         .severity-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background: var(--bg-tertiary);
         }
@@ -647,14 +484,14 @@
         }
         
         .bottleneck-name {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
-            margin-bottom: 8px;
-            padding-right: 80px;
+            margin-bottom: 6px;
+            padding-right: 70px;
         }
         
         .bottleneck-desc {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--text-secondary);
             line-height: 1.5;
         }
@@ -681,6 +518,113 @@
             }
         }
         
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+        
+        .filter-tab {
+            padding: 8px 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: transparent;
+            border: 1px solid transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+        }
+        
+        .filter-tab:hover {
+            color: var(--text-primary);
+            background: var(--bg-tertiary);
+        }
+        
+        .filter-tab.active {
+            color: var(--accent-blue);
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        /* Equipment Cards */
+        .equipment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 16px;
+        }
+        
+        .equipment-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: border-color 0.15s;
+        }
+        
+        .equipment-card:hover {
+            border-color: var(--border-hover);
+        }
+        
+        .equipment-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .equipment-name {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .equipment-meta {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+            flex-wrap: wrap;
+        }
+        
+        .equipment-tag {
+            font-size: 10px;
+            color: var(--text-secondary);
+            background: var(--bg-tertiary);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        
+        .equipment-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        
+        .equipment-stat {
+            text-align: center;
+            padding: 10px 6px;
+            background: var(--bg-tertiary);
+            border-radius: 6px;
+        }
+        
+        .equipment-stat-value {
+            font-size: 16px;
+            font-weight: 600;
+            font-family: 'Geist Mono', monospace;
+            color: var(--accent-blue);
+        }
+        
+        .equipment-stat-label {
+            font-size: 9px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
         /* Material Flow Cards */
         .material-card {
             background: var(--bg-secondary);
@@ -698,7 +642,7 @@
         }
         
         .material-name {
-            font-size: 18px;
+            font-size: 17px;
             font-weight: 600;
         }
         
@@ -717,7 +661,7 @@
         }
         
         .material-stat-value {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 600;
             font-family: 'Geist Mono', monospace;
             color: var(--accent-blue);
@@ -769,10 +713,11 @@
         .info-box {
             background: var(--bg-tertiary);
             border-radius: 6px;
-            padding: 16px;
-            font-size: 13px;
+            padding: 14px;
+            font-size: 12px;
             color: var(--text-secondary);
             margin-top: 16px;
+            line-height: 1.5;
         }
         
         .info-box strong {
@@ -787,80 +732,7 @@
             border-left: 3px solid var(--accent-red);
         }
         
-        /* Category Tabs */
-        .category-tabs {
-            display: flex;
-            gap: 4px;
-            margin-bottom: 24px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-            overflow-x: auto;
-        }
-        
-        .category-tab {
-            padding: 8px 16px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-secondary);
-            background: transparent;
-            border: 1px solid transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.15s;
-        }
-        
-        .category-tab:hover {
-            color: var(--text-primary);
-            background: var(--bg-tertiary);
-        }
-        
-        .category-tab.active {
-            color: var(--accent-blue);
-            background: rgba(59, 130, 246, 0.1);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-        
-        /* Responsive */
-        @media (max-width: 900px) {
-            .sidebar {
-                display: none;
-            }
-            
-            .content {
-                padding: 16px;
-            }
-            
-            .lead-time-row {
-                grid-template-columns: 1fr;
-                gap: 8px;
-            }
-            
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-        
-        /* Scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: var(--bg-primary);
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: var(--border);
-            border-radius: 4px;
-        }
-        
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--border-hover);
-        }
-        
-        /* Capacity Gap Visualization */
+        /* Capacity Gap */
         .capacity-gap {
             display: flex;
             flex-direction: column;
@@ -920,6 +792,45 @@
                 transparent 10px
             );
         }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .sidebar {
+                display: none;
+            }
+            
+            .content {
+                padding: 16px;
+            }
+            
+            .lead-time-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--border-hover);
+        }
     </style>
 </head>
 <body>
@@ -927,12 +838,12 @@
     <header class="header-bar">
         <div class="logo">
             <div class="logo-icon">⚡</div>
-            <div class="logo-text">Grid Supply Chain Intelligence <span>by Prospector Labs</span></div>
+            <div class="logo-text">Grid Supply Chain <span>by Prospector Labs</span></div>
         </div>
         <div class="header-right">
             <div class="live-indicator">
                 <div class="live-dot"></div>
-                <span>Live Data — February 2026</span>
+                <span>February 2026</span>
             </div>
         </div>
     </header>
@@ -941,42 +852,17 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="nav-section">
-                <div class="nav-section-title">Overview</div>
                 <div class="nav-item active" data-tab="overview">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    Market Overview
+                    Overview
                 </div>
-            </div>
-            
-            <div class="nav-section">
-                <div class="nav-section-title">Equipment Categories</div>
-                <div class="nav-item" data-tab="transformers">
+                <div class="nav-item" data-tab="equipment">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 1v6m0 6v10M1 12h6m6 0h10"/></svg>
-                    Transformers
+                    Grid Equipment
                 </div>
-                <div class="nav-item" data-tab="switchgear">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-                    Switchgear
-                </div>
-                <div class="nav-item" data-tab="cables">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="9" x2="20" y2="9"/><line x1="4" y1="15" x2="20" y2="15"/><line x1="10" y1="3" x2="8" y2="21"/><line x1="16" y1="3" x2="14" y2="21"/></svg>
-                    Cables & Conductors
-                </div>
-                <div class="nav-item" data-tab="components">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4"/><line x1="4.93" y1="4.93" x2="9.17" y2="9.17"/><line x1="14.83" y1="14.83" x2="19.07" y2="19.07"/><line x1="14.83" y1="9.17" x2="19.07" y2="4.93"/><line x1="4.93" y1="19.07" x2="9.17" y2="14.83"/></svg>
-                    Components
-                </div>
-            </div>
-            
-            <div class="nav-section">
-                <div class="nav-section-title">Supply Chain</div>
                 <div class="nav-item" data-tab="materials">
                     <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
                     Materials
-                </div>
-                <div class="nav-item" data-tab="manufacturers">
-                    <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M3 7v1a3 3 0 006 0V7m0 1a3 3 0 006 0V7m0 1a3 3 0 006 0V7H3l2-4h14l2 4M5 21V10.87M19 21V10.87"/></svg>
-                    Manufacturers
                 </div>
             </div>
         </nav>
@@ -987,7 +873,7 @@
             <div id="overview" class="tab-content active">
                 <div class="section-header">
                     <h1 class="section-title">US Grid Equipment Market</h1>
-                    <p class="section-subtitle">Comprehensive supply chain intelligence for electrical grid infrastructure</p>
+                    <p class="section-subtitle">Supply chain intelligence for electrical grid infrastructure</p>
                 </div>
                 
                 <!-- Key Stats -->
@@ -1007,11 +893,7 @@
                     </div>
                     <div class="stat-card success">
                         <div class="stat-value green">2,600</div>
-                        <div class="stat-label">GW in Interconnection Queue</div>
-                    </div>
-                    <div class="stat-card purple">
-                        <div class="stat-value" style="color: var(--accent-purple)">6</div>
-                        <div class="stat-label">US LPT Manufacturing Sites</div>
+                        <div class="stat-label">GW Interconnection Queue</div>
                     </div>
                 </div>
                 
@@ -1020,35 +902,33 @@
                     <div class="chart-header">
                         <div>
                             <div class="chart-title">US Grid Equipment Market Flow</div>
-                            <div class="chart-subtitle">Equipment categories → Subcategories → Import vs Domestic ($B)</div>
+                            <div class="chart-subtitle">Equipment categories → Import vs Domestic ($B)</div>
                         </div>
                         <div class="chart-legend">
-                            <div class="legend-item"><div class="legend-dot" style="background: var(--accent-blue)"></div>Domestic</div>
+                            <div class="legend-item"><div class="legend-dot" style="background: var(--accent-green)"></div>Domestic</div>
                             <div class="legend-item"><div class="legend-dot" style="background: var(--accent-orange)"></div>Imported</div>
                         </div>
                     </div>
-                    <div id="market-sankey" class="sankey-container" style="height: 450px;"></div>
+                    <div id="market-sankey" class="sankey-container" style="height: 380px;"></div>
                 </div>
                 
-                <!-- Two Column: Import Dependency + Bottlenecks -->
+                <!-- Two Column: Import Dependency + Capacity Gap -->
                 <div class="two-col">
-                    <!-- Import Dependency -->
                     <div class="chart-container">
                         <div class="chart-header">
                             <div>
-                                <div class="chart-title">US Import Dependency by Category</div>
-                                <div class="chart-subtitle">Percentage of equipment sourced from imports</div>
+                                <div class="chart-title">Import Dependency by Category</div>
+                                <div class="chart-subtitle">Percentage sourced from imports</div>
                             </div>
                         </div>
                         <div id="import-treemap" class="treemap-container"></div>
                     </div>
                     
-                    <!-- Capacity Gap -->
                     <div class="chart-container">
                         <div class="chart-header">
                             <div>
                                 <div class="chart-title">LPT Capacity Gap</div>
-                                <div class="chart-subtitle">US demand vs domestic manufacturing capacity</div>
+                                <div class="chart-subtitle">US demand vs domestic manufacturing</div>
                             </div>
                         </div>
                         <div class="capacity-gap">
@@ -1066,7 +946,7 @@
                                 </div>
                             </div>
                             <div class="info-box warning" style="margin-top: 16px;">
-                                <strong>50 unit gap</strong> — Must be filled by imports from Germany, Japan, South Korea, and Mexico. New Hyundai facility (AL) adds 24 units/year in 2025.
+                                <strong>50 unit gap</strong> — filled by imports from Germany, Japan, South Korea, Mexico. Hyundai (AL) adds 24 units/year in 2025.
                             </div>
                         </div>
                     </div>
@@ -1090,7 +970,7 @@
                                 <div class="severity-dot active"></div>
                             </div>
                             <div class="bottleneck-name">GOES Steel</div>
-                            <div class="bottleneck-desc">Grain-oriented electrical steel for transformer cores. US 70% import dependent. Only one US producer (Cleveland-Cliffs). 18-24 month lead for new capacity.</div>
+                            <div class="bottleneck-desc">Grain-oriented electrical steel for transformer cores. US 70% import dependent. Only one US producer (Cleveland-Cliffs).</div>
                         </div>
                         <div class="bottleneck-card">
                             <div class="bottleneck-severity">
@@ -1100,8 +980,8 @@
                                 <div class="severity-dot active"></div>
                                 <div class="severity-dot active"></div>
                             </div>
-                            <div class="bottleneck-name">LPT Manufacturing Capacity</div>
-                            <div class="bottleneck-desc">Only 6 US facilities can produce large power transformers. New facilities require $100M+ and 2+ years to build. 150 units/year domestic capacity vs 200+ demand.</div>
+                            <div class="bottleneck-name">LPT Manufacturing</div>
+                            <div class="bottleneck-desc">Only 6 US facilities can produce large power transformers. New facilities require $100M+ and 2+ years to build.</div>
                         </div>
                         <div class="bottleneck-card">
                             <div class="bottleneck-severity">
@@ -1112,7 +992,7 @@
                                 <div class="severity-dot"></div>
                             </div>
                             <div class="bottleneck-name">HV Bushings</div>
-                            <div class="bottleneck-desc">Critical transformer component. ~60% imported to US. Limited qualified global suppliers. Long qualification process for new suppliers.</div>
+                            <div class="bottleneck-desc">Critical transformer component. ~60% imported. Limited qualified global suppliers. Long qualification process.</div>
                         </div>
                         <div class="bottleneck-card">
                             <div class="bottleneck-severity">
@@ -1123,7 +1003,7 @@
                                 <div class="severity-dot"></div>
                             </div>
                             <div class="bottleneck-name">Skilled Labor</div>
-                            <div class="bottleneck-desc">2-5 year training time for transformer manufacturing. 30% of workforce retiring in next decade. Limited training programs.</div>
+                            <div class="bottleneck-desc">2-5 year training for transformer manufacturing. 30% of workforce retiring in next decade.</div>
                         </div>
                         <div class="bottleneck-card">
                             <div class="bottleneck-severity">
@@ -1134,7 +1014,7 @@
                                 <div class="severity-dot"></div>
                             </div>
                             <div class="bottleneck-name">Copper Supply</div>
-                            <div class="bottleneck-desc">Competition from EV and renewable sectors. Potential 5-10M ton supply gap by 2030. Prices up 10-20% YoY.</div>
+                            <div class="bottleneck-desc">Competition from EV and renewables. Potential 5-10M ton supply gap by 2030. Prices up 15% YoY.</div>
                         </div>
                         <div class="bottleneck-card">
                             <div class="bottleneck-severity">
@@ -1145,542 +1025,52 @@
                                 <div class="severity-dot"></div>
                             </div>
                             <div class="bottleneck-name">SF6 Regulations</div>
-                            <div class="bottleneck-desc">EU F-gas phase-out. California restrictions. GWP of 23,500. Alternatives (g3, vacuum) still maturing for high voltage.</div>
+                            <div class="bottleneck-desc">EU F-gas phase-out. California restrictions. GWP of 23,500. Alternatives still maturing for HV.</div>
                         </div>
                     </div>
                 </div>
             </div>
             
-            <!-- Transformers Tab -->
-            <div id="transformers" class="tab-content">
+            <!-- Grid Equipment Tab -->
+            <div id="equipment" class="tab-content">
                 <div class="section-header">
-                    <h1 class="section-title">Transformers</h1>
-                    <p class="section-subtitle">Large power, generator step-up, and distribution transformer supply chain</p>
+                    <h1 class="section-title">Grid Equipment</h1>
+                    <p class="section-subtitle">Transformers, switchgear, cables, and key components</p>
                 </div>
                 
-                <!-- Sub-tabs -->
-                <div class="category-tabs">
-                    <button class="category-tab active" data-subtab="xfmr-overview">Overview</button>
-                    <button class="category-tab" data-subtab="xfmr-lpt">Large Power (LPT)</button>
-                    <button class="category-tab" data-subtab="xfmr-gsu">Generator Step-Up</button>
-                    <button class="category-tab" data-subtab="xfmr-dist">Distribution</button>
+                <!-- Filter Tabs -->
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All Equipment</button>
+                    <button class="filter-tab" data-filter="transformers">Transformers</button>
+                    <button class="filter-tab" data-filter="switchgear">Switchgear</button>
+                    <button class="filter-tab" data-filter="cables">Cables</button>
                 </div>
                 
-                <div id="xfmr-overview" class="subtab-content active">
-                    <!-- Market Breakdown -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value blue">$28B</div>
-                            <div class="stat-label">US Transformer Market</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="stat-value yellow">71%</div>
-                            <div class="stat-label">Import Dependency</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">~200</div>
-                            <div class="stat-label">LPT Units/Year (US Demand)</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">~500K</div>
-                            <div class="stat-label">Distribution Units/Year</div>
-                        </div>
-                    </div>
-                    
-                    <!-- Transformer Supply Flow Sankey -->
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <div>
-                                <div class="chart-title">LPT Supply Flow</div>
-                                <div class="chart-subtitle">Global production → US imports → End users</div>
-                            </div>
-                        </div>
-                        <div id="transformer-sankey" class="sankey-container" style="height: 400px;"></div>
-                    </div>
-                    
-                    <!-- Lead Times Comparison -->
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <div>
-                                <div class="chart-title">Lead Times: Historical Comparison</div>
-                                <div class="chart-subtitle">Pre-2020 → Peak 2023 → Current (months)</div>
-                            </div>
-                            <div class="chart-legend">
-                                <div class="legend-item"><div class="legend-dot" style="background: var(--text-muted)"></div>Pre-2020</div>
-                                <div class="legend-item"><div class="legend-dot" style="background: var(--accent-red)"></div>Peak 2023</div>
-                                <div class="legend-item"><div class="legend-dot" style="background: var(--accent-blue)"></div>Current</div>
-                            </div>
-                        </div>
-                        <div class="timeline-bar-container">
-                            <div class="timeline-bar-row">
-                                <div class="lead-time-label">Distribution<small>&lt;5 MVA</small></div>
-                                <div class="timeline-bar-group">
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 30px; background: var(--text-muted);">3</div>
-                                        <span class="timeline-period-label">Pre-2020</span>
-                                    </div>
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 180px; background: var(--accent-red);">18</div>
-                                        <span class="timeline-period-label">Peak 2023</span>
-                                    </div>
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 110px; background: var(--accent-blue);">11</div>
-                                        <span class="timeline-period-label">Current</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="timeline-bar-row">
-                                <div class="lead-time-label">Medium Power<small>10-100 MVA</small></div>
-                                <div class="timeline-bar-group">
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 90px; background: var(--text-muted);">9</div>
-                                        <span class="timeline-period-label">Pre-2020</span>
-                                    </div>
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 300px; background: var(--accent-red);">30</div>
-                                        <span class="timeline-period-label">Peak 2023</span>
-                                    </div>
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 220px; background: var(--accent-blue);">22</div>
-                                        <span class="timeline-period-label">Current</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="timeline-bar-row">
-                                <div class="lead-time-label">Large Power (LPT)<small>100-400 MVA</small></div>
-                                <div class="timeline-bar-group">
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 150px; background: var(--text-muted);">15</div>
-                                        <span class="timeline-period-label">Pre-2020</span>
-                                    </div>
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 480px; background: var(--accent-red);">48</div>
-                                        <span class="timeline-period-label">Peak 2023</span>
-                                    </div>
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 360px; background: var(--accent-blue);">36</div>
-                                        <span class="timeline-period-label">Current</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="timeline-bar-row">
-                                <div class="lead-time-label">GSU<small>200-1000+ MVA</small></div>
-                                <div class="timeline-bar-group">
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 210px; background: var(--text-muted);">21</div>
-                                        <span class="timeline-period-label">Pre-2020</span>
-                                    </div>
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 600px; background: var(--accent-red);">60</div>
-                                        <span class="timeline-period-label">Peak 2023</span>
-                                    </div>
-                                    <div class="timeline-bar-wrapper">
-                                        <div class="timeline-bar" style="width: 420px; background: var(--accent-blue);">42</div>
-                                        <span class="timeline-period-label">Current</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Lead Times by Manufacturer -->
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <div>
-                                <div class="chart-title">LPT Lead Times by Manufacturer</div>
-                                <div class="chart-subtitle">Current quoted lead times (100+ MVA units)</div>
-                            </div>
-                        </div>
-                        <div id="mfg-lead-times" class="lead-time-chart"></div>
-                    </div>
+                <!-- Equipment Cards Grid -->
+                <div class="equipment-grid" id="equipment-grid">
+                    <!-- Populated by JS -->
                 </div>
                 
-                <div id="xfmr-lpt" class="subtab-content">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value blue">$3.2B</div>
-                            <div class="stat-label">US LPT Market</div>
-                        </div>
-                        <div class="stat-card danger">
-                            <div class="stat-value red">75%</div>
-                            <div class="stat-label">Imported</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="stat-value yellow">36</div>
-                            <div class="stat-label">Months Lead Time</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">6</div>
-                            <div class="stat-label">US Manufacturing Sites</div>
+                <!-- Lead Times Chart -->
+                <div class="chart-container" style="margin-top: 24px;">
+                    <div class="chart-header">
+                        <div>
+                            <div class="chart-title">Current Lead Times</div>
+                            <div class="chart-subtitle">Quoted lead times by equipment category</div>
                         </div>
                     </div>
-                    
-                    <div class="info-box danger">
-                        <strong>Critical Infrastructure:</strong> Large power transformers (100+ MVA) are custom-engineered, weigh 100-400+ tons, and cannot be easily stockpiled. Failure of a single LPT can cause widespread outages lasting months. The US has limited surge capacity for emergency replacement.
-                    </div>
+                    <div id="lead-times-chart" class="lead-time-chart"></div>
                 </div>
                 
-                <div id="xfmr-gsu" class="subtab-content">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value blue">$2.1B</div>
-                            <div class="stat-label">US GSU Market</div>
-                        </div>
-                        <div class="stat-card danger">
-                            <div class="stat-value red">81%</div>
-                            <div class="stat-label">Imported</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="stat-value yellow">42</div>
-                            <div class="stat-label">Months Lead Time</div>
-                        </div>
-                    </div>
-                    
-                    <div class="info-box warning">
-                        <strong>Longest Lead Item:</strong> Generator Step-Up transformers connect power plants to the grid. They are the critical path item for new nuclear, gas, and large renewable projects. Planning horizons of 4-5 years are now required.
-                    </div>
-                </div>
-                
-                <div id="xfmr-dist" class="subtab-content">
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-value blue">$17.9B</div>
-                            <div class="stat-label">US Distribution Market</div>
-                        </div>
-                        <div class="stat-card warning">
-                            <div class="stat-value yellow">70%</div>
-                            <div class="stat-label">Imported</div>
-                        </div>
-                        <div class="stat-card success">
-                            <div class="stat-value green">11</div>
-                            <div class="stat-label">Months Lead Time</div>
-                        </div>
-                        <div class="stat-card">
-                            <div class="stat-value">~500K</div>
-                            <div class="stat-label">Units/Year</div>
-                        </div>
-                    </div>
-                    
-                    <div class="info-box">
-                        <strong>Improving:</strong> Distribution transformer lead times have improved significantly from peak of 18 months in 2023. Howard Industries (MS) and others have expanded capacity. Still elevated vs pre-2020 norm of 3 months.
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Switchgear Tab -->
-            <div id="switchgear" class="tab-content">
-                <div class="section-header">
-                    <h1 class="section-title">Switchgear</h1>
-                    <p class="section-subtitle">Gas-insulated, air-insulated switchgear and circuit breakers</p>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value blue">$22B</div>
-                        <div class="stat-label">US Switchgear Market</div>
-                    </div>
-                    <div class="stat-card warning">
-                        <div class="stat-value yellow">73%</div>
-                        <div class="stat-label">Import Dependency</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">24</div>
-                        <div class="stat-label">Months — GIS Lead Time</div>
-                    </div>
-                </div>
-                
-                <!-- GIS vs AIS Breakdown -->
-                <div class="two-col">
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <div>
-                                <div class="chart-title">Market Breakdown</div>
-                                <div class="chart-subtitle">Switchgear subcategories</div>
-                            </div>
-                        </div>
-                        <div id="switchgear-treemap" class="treemap-container"></div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <div>
-                                <div class="chart-title">SF6 Alternatives Trend</div>
-                                <div class="chart-subtitle">Phase-out driven by environmental regulations</div>
-                            </div>
-                        </div>
-                        <div style="padding: 16px 0;">
-                            <div style="margin-bottom: 20px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span style="font-size: 13px;">g3 (GE Vernova)</span>
-                                    <span class="import-badge low">GWP &lt;1</span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted);">Fluoronitrile mixture. Commercial deployment. Up to 420 kV.</div>
-                            </div>
-                            <div style="margin-bottom: 20px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span style="font-size: 13px;">Clean Air (Hitachi Energy)</span>
-                                    <span class="import-badge low">GWP &lt;1</span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted);">CO2/O2 mixture with fluoronitrile. Commercial. Up to 420 kV.</div>
-                            </div>
-                            <div style="margin-bottom: 20px;">
-                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                                    <span style="font-size: 13px;">Vacuum Technology</span>
-                                    <span class="import-badge low">GWP 0</span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted);">Proven up to 145 kV. Expanding to higher voltages. No gas required.</div>
-                            </div>
-                            <div class="info-box warning">
-                                <strong>SF6 GWP: 23,500</strong> — EU F-gas Regulation targeting phase-out. California restrictions in effect. Reclamation requirements increasing costs.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Lead Times -->
+                <!-- Supply Flow Sankey -->
                 <div class="chart-container">
                     <div class="chart-header">
                         <div>
-                            <div class="chart-title">Switchgear Lead Times</div>
-                            <div class="chart-subtitle">Current quoted lead times by category</div>
+                            <div class="chart-title">LPT Supply Flow</div>
+                            <div class="chart-subtitle">Source countries → US end users</div>
                         </div>
                     </div>
-                    <div class="lead-time-chart">
-                        <div class="lead-time-row">
-                            <div class="lead-time-label">GIS (145-550 kV)</div>
-                            <div class="lead-time-track">
-                                <div class="lead-time-segment current" style="width: 60%;"><span>24 mo</span></div>
-                            </div>
-                            <div class="lead-time-value">18-30</div>
-                        </div>
-                        <div class="lead-time-row">
-                            <div class="lead-time-label">AIS (145-550 kV)</div>
-                            <div class="lead-time-track">
-                                <div class="lead-time-segment current" style="width: 45%;"><span>18 mo</span></div>
-                            </div>
-                            <div class="lead-time-value">12-24</div>
-                        </div>
-                        <div class="lead-time-row">
-                            <div class="lead-time-label">HV Circuit Breakers</div>
-                            <div class="lead-time-track">
-                                <div class="lead-time-segment current" style="width: 50%;"><span>20 mo</span></div>
-                            </div>
-                            <div class="lead-time-value">14-26</div>
-                        </div>
-                        <div class="lead-time-row">
-                            <div class="lead-time-label">Generator CB</div>
-                            <div class="lead-time-track">
-                                <div class="lead-time-segment current" style="width: 55%;"><span>22 mo</span></div>
-                            </div>
-                            <div class="lead-time-value">16-28</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Cables Tab -->
-            <div id="cables" class="tab-content">
-                <div class="section-header">
-                    <h1 class="section-title">Cables & Conductors</h1>
-                    <p class="section-subtitle">HVDC, XLPE underground cables, and overhead conductors</p>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value blue">$18B</div>
-                        <div class="stat-label">US Cables Market</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value yellow">33%</div>
-                        <div class="stat-label">Import Dependency</div>
-                    </div>
-                    <div class="stat-card danger">
-                        <div class="stat-value red">42</div>
-                        <div class="stat-label">Months — HVDC Lead Time</div>
-                    </div>
-                </div>
-                
-                <div class="two-col">
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <div>
-                                <div class="chart-title">Cable Types by Import Dependency</div>
-                            </div>
-                        </div>
-                        <div style="padding: 16px 0;">
-                            <div style="margin-bottom: 20px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                    <span style="font-size: 14px; font-weight: 500;">HVDC Submarine</span>
-                                    <span class="import-badge critical">90% Import</span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted);">$4.2B market. Only 4 global manufacturers. Installation vessel constraints.</div>
-                            </div>
-                            <div style="margin-bottom: 20px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                    <span style="font-size: 14px; font-weight: 500;">XLPE Underground</span>
-                                    <span class="import-badge medium">40% Import</span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted);">$5.8B market. Growing domestic production. Prysmian, Nexans, Southwire.</div>
-                            </div>
-                            <div style="margin-bottom: 20px;">
-                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                                    <span style="font-size: 14px; font-weight: 500;">Overhead Conductors</span>
-                                    <span class="import-badge low">0% Import</span>
-                                </div>
-                                <div style="font-size: 12px; color: var(--text-muted);">$8.0B market. Fully domestic production. ACSR, HTLS, carbon core.</div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="chart-container">
-                        <div class="chart-header">
-                            <div>
-                                <div class="chart-title">HVDC Cable Producers</div>
-                                <div class="chart-subtitle">Global market share (submarine)</div>
-                            </div>
-                        </div>
-                        <div id="hvdc-treemap" class="treemap-container"></div>
-                    </div>
-                </div>
-                
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">Cable Lead Times</div>
-                        </div>
-                    </div>
-                    <div class="lead-time-chart">
-                        <div class="lead-time-row">
-                            <div class="lead-time-label">HVDC Submarine<small>320-525 kV DC</small></div>
-                            <div class="lead-time-track">
-                                <div class="lead-time-segment" style="width: 88%; background: var(--accent-red);"><span>42 mo</span></div>
-                            </div>
-                            <div class="lead-time-value">32-52</div>
-                        </div>
-                        <div class="lead-time-row">
-                            <div class="lead-time-label">Underground XLPE<small>138-345 kV</small></div>
-                            <div class="lead-time-track">
-                                <div class="lead-time-segment current" style="width: 45%;"><span>18 mo</span></div>
-                            </div>
-                            <div class="lead-time-value">12-24</div>
-                        </div>
-                        <div class="lead-time-row">
-                            <div class="lead-time-label">Overhead Conductors<small>ACSR/HTLS</small></div>
-                            <div class="lead-time-track">
-                                <div class="lead-time-segment" style="width: 20%; background: var(--accent-green);"><span>8 mo</span></div>
-                            </div>
-                            <div class="lead-time-value">4-12</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Components Tab -->
-            <div id="components" class="tab-content">
-                <div class="section-header">
-                    <h1 class="section-title">Substation Components</h1>
-                    <p class="section-subtitle">HV bushings, insulators, and surge arresters</p>
-                </div>
-                
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value blue">$12B</div>
-                        <div class="stat-label">US Components Market</div>
-                    </div>
-                    <div class="stat-card warning">
-                        <div class="stat-value yellow">67%</div>
-                        <div class="stat-label">Import Dependency</div>
-                    </div>
-                </div>
-                
-                <!-- HV Bushings -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">HV Bushings</div>
-                            <div class="chart-subtitle">Critical transformer component — $2.5B market</div>
-                        </div>
-                        <span class="import-badge high">60% Import</span>
-                    </div>
-                    <div class="two-col">
-                        <div id="bushing-sankey" class="sankey-container" style="height: 250px;"></div>
-                        <div>
-                            <div class="lead-time-chart">
-                                <div class="lead-time-row">
-                                    <div class="lead-time-label">HV Bushings<small>230+ kV RIP/RIS</small></div>
-                                    <div class="lead-time-track">
-                                        <div class="lead-time-segment" style="width: 45%; background: var(--accent-orange);"><span>18 mo</span></div>
-                                    </div>
-                                    <div class="lead-time-value">12-24</div>
-                                </div>
-                                <div class="lead-time-row">
-                                    <div class="lead-time-label">EHV Bushings<small>500+ kV</small></div>
-                                    <div class="lead-time-track">
-                                        <div class="lead-time-segment" style="width: 60%; background: var(--accent-red);"><span>24 mo</span></div>
-                                    </div>
-                                    <div class="lead-time-value">16-30</div>
-                                </div>
-                            </div>
-                            <div class="info-box warning" style="margin-top: 16px;">
-                                <strong>Critical Bottleneck:</strong> Limited qualified global suppliers. Long qualification process (2+ years). Bushing failures are a leading cause of transformer outages.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Insulators -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">Insulators</div>
-                            <div class="chart-subtitle">Porcelain and composite insulators — $1.8B market</div>
-                        </div>
-                        <span class="import-badge high">72% Import</span>
-                    </div>
-                    <div class="two-col">
-                        <div id="insulator-sankey" class="sankey-container" style="height: 250px;"></div>
-                        <div>
-                            <div class="lead-time-chart">
-                                <div class="lead-time-row">
-                                    <div class="lead-time-label">Station Post<small>345-765 kV</small></div>
-                                    <div class="lead-time-track">
-                                        <div class="lead-time-segment current" style="width: 35%;"><span>14 mo</span></div>
-                                    </div>
-                                    <div class="lead-time-value">8-18</div>
-                                </div>
-                                <div class="lead-time-row">
-                                    <div class="lead-time-label">Composite Line<small>Polymer</small></div>
-                                    <div class="lead-time-track">
-                                        <div class="lead-time-segment" style="width: 30%; background: var(--accent-green);"><span>12 mo</span></div>
-                                    </div>
-                                    <div class="lead-time-value">6-16</div>
-                                </div>
-                            </div>
-                            <div class="info-box">
-                                <strong>Trend:</strong> Polymer/composite insulators gaining share over porcelain. Lighter weight, vandal resistant. China dominates porcelain production.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Surge Arresters -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">Surge Arresters</div>
-                            <div class="chart-subtitle">Overvoltage protection — $1.2B market</div>
-                        </div>
-                        <span class="import-badge high">67% Import</span>
-                    </div>
-                    <div class="lead-time-chart">
-                        <div class="lead-time-row">
-                            <div class="lead-time-label">Station Class<small>Up to 1200 kV</small></div>
-                            <div class="lead-time-track">
-                                <div class="lead-time-segment current" style="width: 35%;"><span>14 mo</span></div>
-                            </div>
-                            <div class="lead-time-value">8-16</div>
-                        </div>
-                    </div>
+                    <div id="equipment-sankey" class="sankey-container" style="height: 350px;"></div>
                 </div>
             </div>
             
@@ -1726,16 +1116,12 @@
                             <div class="supplier-share">~15%</div>
                         </div>
                         <div class="supplier-row">
-                            <div><span class="supplier-name">POSCO</span> <span class="supplier-country">South Korea</span></div>
-                            <div class="supplier-share">~12%</div>
-                        </div>
-                        <div class="supplier-row">
                             <div><span class="supplier-name">Cleveland-Cliffs</span> <span class="supplier-country">USA 🇺🇸</span></div>
                             <div class="supplier-share">~8%</div>
                         </div>
                     </div>
                     <div class="info-box danger" style="margin-top: 16px;">
-                        <strong>Single Point of Failure:</strong> Cleveland-Cliffs (Butler, PA & Zanesville, OH) is the only US GOES producer. Section 232 tariffs (25%) apply to imports. Capacity expansion underway but takes 18-24 months.
+                        <strong>Single Point of Failure:</strong> Cleveland-Cliffs is the only US GOES producer. Section 232 tariffs (25%) apply to imports.
                     </div>
                 </div>
                 
@@ -1774,7 +1160,7 @@
                         </div>
                     </div>
                     <div class="info-box warning" style="margin-top: 16px;">
-                        <strong>Competition Intensifying:</strong> EV sector, data centers, and renewables all competing for copper. Potential 5-10M ton supply gap by 2030. Mining permits increasingly difficult.
+                        <strong>Competition Intensifying:</strong> EV sector, data centers, and renewables all competing for copper. Potential 5-10M ton supply gap by 2030.
                     </div>
                 </div>
                 
@@ -1811,148 +1197,44 @@
                             <div><span class="supplier-name">Honeywell</span> <span class="supplier-country">USA 🇺🇸</span></div>
                             <div class="supplier-share">~15%</div>
                         </div>
-                        <div class="supplier-row">
-                            <div><span class="supplier-name">Linde</span> <span class="supplier-country">Germany</span></div>
-                            <div class="supplier-share">~15%</div>
-                        </div>
                     </div>
                     <div class="info-box warning" style="margin-top: 16px;">
-                        <strong>Phase-Out Underway:</strong> EU F-gas Regulation targeting elimination. California restrictions active. Price up 20-30% YoY. Alternatives (g3, vacuum) gaining traction but not yet proven at highest voltages.
+                        <strong>Phase-Out Underway:</strong> EU F-gas Regulation targeting elimination. California restrictions active. Alternatives (g3, vacuum) gaining traction.
                     </div>
-                </div>
-            </div>
-            
-            <!-- Manufacturers Tab -->
-            <div id="manufacturers" class="tab-content">
-                <div class="section-header">
-                    <h1 class="section-title">Manufacturers</h1>
-                    <p class="section-subtitle">Major grid equipment manufacturers serving the US market</p>
-                </div>
-                
-                <!-- Market Share Treemap -->
-                <div class="chart-container">
-                    <div class="chart-header">
-                        <div>
-                            <div class="chart-title">US LPT Market Share</div>
-                            <div class="chart-subtitle">Large power transformer manufacturers</div>
-                        </div>
-                    </div>
-                    <div id="lpt-market-treemap" class="treemap-container" style="height: 250px;"></div>
-                </div>
-                
-                <!-- Manufacturer Cards -->
-                <div class="manufacturer-grid" id="manufacturer-grid">
-                    <!-- Populated by JS -->
                 </div>
             </div>
         </main>
     </div>
     
     <script>
-        // Data
-        const marketFlows = {
-            categories: [
-                {name: "Transformers", value: 28, domestic: 8, imported: 20},
-                {name: "Switchgear", value: 22, domestic: 6, imported: 16},
-                {name: "Cables", value: 18, domestic: 12, imported: 6},
-                {name: "Components", value: 12, domestic: 4, imported: 8},
-                {name: "Materials", value: 5, domestic: 1.5, imported: 3.5}
-            ]
-        };
-        
-        const manufacturerLeadTimes = [
-            {name: "Hyundai Electric", location: "🇰🇷 South Korea + AL (2025)", min: 26, max: 36, avg: 31},
-            {name: "Virginia Transformer", location: "🇺🇸 Roanoke, VA", min: 26, max: 36, avg: 31},
-            {name: "Prolec GE", location: "🇲🇽 Monterrey", min: 28, max: 38, avg: 33},
-            {name: "SPX Transformer", location: "🇺🇸 Waukesha, WI", min: 28, max: 38, avg: 33},
-            {name: "Siemens Energy", location: "🇩🇪 Germany", min: 28, max: 40, avg: 34},
-            {name: "GE Vernova", location: "🇺🇸 Charleroi, PA", min: 30, max: 42, avg: 36},
-            {name: "Hitachi Energy", location: "🇨🇭 Switzerland + MO", min: 30, max: 42, avg: 36}
+        // Equipment Data
+        const equipmentData = [
+            // Transformers
+            { category: 'transformers', name: 'Large Power (LPT)', size: '100-400+ MVA', market: '$3.2B', import: 75, leadTime: '30-42', leadAvg: 36 },
+            { category: 'transformers', name: 'Generator Step-Up', size: '200-1000+ MVA', market: '$2.1B', import: 81, leadTime: '36-48', leadAvg: 42 },
+            { category: 'transformers', name: 'Medium Power', size: '10-100 MVA', market: '$4.8B', import: 68, leadTime: '18-26', leadAvg: 22 },
+            { category: 'transformers', name: 'Distribution', size: '<5 MVA', market: '$17.9B', import: 70, leadTime: '8-14', leadAvg: 11 },
+            // Switchgear
+            { category: 'switchgear', name: 'Gas Insulated (GIS)', size: '145-550 kV', market: '$8.5B', import: 78, leadTime: '18-30', leadAvg: 24 },
+            { category: 'switchgear', name: 'Air Insulated (AIS)', size: '145-550 kV', market: '$5.2B', import: 65, leadTime: '12-24', leadAvg: 18 },
+            { category: 'switchgear', name: 'HV Circuit Breakers', size: '145+ kV', market: '$4.8B', import: 72, leadTime: '14-26', leadAvg: 20 },
+            // Cables
+            { category: 'cables', name: 'HVDC Submarine', size: '320-525 kV DC', market: '$4.2B', import: 90, leadTime: '32-52', leadAvg: 42 },
+            { category: 'cables', name: 'Underground XLPE', size: '138-345 kV', market: '$5.8B', import: 40, leadTime: '12-24', leadAvg: 18 },
+            { category: 'cables', name: 'Overhead Conductors', size: 'ACSR/HTLS', market: '$8.0B', import: 0, leadTime: '4-12', leadAvg: 8 },
         ];
         
-        const manufacturers = [
-            {
-                name: "Hitachi Energy",
-                share: "20%",
-                hq: "Switzerland",
-                usPlants: "Jefferson City MO, South Boston VA, Bland VA",
-                products: ["LPT", "Distribution", "HVDC", "GIS"],
-                leadTime: "30-42 months",
-                notes: "Largest global player. Strong HVDC position."
-            },
-            {
-                name: "Siemens Energy",
-                share: "15%",
-                hq: "Germany",
-                usPlants: "Charlotte NC (service), Wendell NC",
-                products: ["LPT", "GIS", "Circuit Breakers"],
-                leadTime: "28-40 months",
-                notes: "GIS market leader. Limited US LPT mfg."
-            },
-            {
-                name: "GE Vernova",
-                share: "14%",
-                hq: "USA",
-                usPlants: "Charleroi PA, Clearwater FL",
-                products: ["LPT", "GIS", "HVDC", "Grid Automation"],
-                leadTime: "30-42 months",
-                notes: "Spun off 2024. Owns Prolec GE (Mexico)."
-            },
-            {
-                name: "Virginia Transformer",
-                share: "8%",
-                hq: "USA",
-                usPlants: "Roanoke VA, Pocatello ID, Rincon GA",
-                products: ["LPT", "Medium Power", "Distribution"],
-                leadTime: "26-36 months",
-                notes: "Largest private US manufacturer. 100% domestic."
-            },
-            {
-                name: "Hyundai Electric",
-                share: "6%",
-                hq: "South Korea",
-                usPlants: "Montgomery AL (2025)",
-                products: ["LPT", "Distribution", "GIS"],
-                leadTime: "26-36 months",
-                notes: "New US plant adds 24 units/year capacity."
-            },
-            {
-                name: "Howard Industries",
-                share: "20% (dist)",
-                hq: "USA",
-                usPlants: "Laurel MS, Ellisville MS",
-                products: ["Distribution", "Pad-Mount"],
-                leadTime: "8-12 months",
-                notes: "Largest US distribution transformer mfg. Employee-owned."
-            }
-        ];
-        
-        const lptMarketShare = [
-            {name: "Hitachi", value: 20, color: "#3b82f6"},
-            {name: "Siemens", value: 15, color: "#22d3ee"},
-            {name: "GE Vernova", value: 14, color: "#10b981"},
-            {name: "Prolec GE", value: 10, color: "#f59e0b"},
-            {name: "Virginia", value: 8, color: "#f97316"},
-            {name: "Toshiba", value: 8, color: "#a855f7"},
-            {name: "Hyundai", value: 6, color: "#ec4899"},
-            {name: "Mitsubishi", value: 5, color: "#6366f1"},
-            {name: "SPX", value: 3, color: "#64748b"},
-            {name: "Others", value: 11, color: "#374151"}
-        ];
-        
-        const switchgearMarket = [
-            {name: "GIS (145+ kV)", value: 8.5, color: "#3b82f6"},
-            {name: "AIS (145+ kV)", value: 5.2, color: "#22d3ee"},
-            {name: "HV Breakers", value: 4.8, color: "#10b981"},
-            {name: "MV Switchgear", value: 3.5, color: "#f59e0b"}
-        ];
-        
-        const hvdcProducers = [
-            {name: "Prysmian (IT)", value: 35, color: "#3b82f6"},
-            {name: "Nexans (FR)", value: 30, color: "#22d3ee"},
-            {name: "NKT (DK)", value: 20, color: "#10b981"},
-            {name: "Sumitomo (JP)", value: 10, color: "#f59e0b"},
-            {name: "Other", value: 5, color: "#64748b"}
+        // Lead time chart data
+        const leadTimeData = [
+            { name: 'HVDC Submarine', size: '320-525 kV DC', min: 32, max: 52, avg: 42, color: 'var(--accent-red)' },
+            { name: 'GSU Transformer', size: '200-1000+ MVA', min: 36, max: 48, avg: 42, color: 'var(--accent-red)' },
+            { name: 'Large Power (LPT)', size: '100-400 MVA', min: 30, max: 42, avg: 36, color: 'var(--accent-orange)' },
+            { name: 'GIS Switchgear', size: '145-550 kV', min: 18, max: 30, avg: 24, color: 'var(--accent-blue)' },
+            { name: 'Medium Power Xfmr', size: '10-100 MVA', min: 18, max: 26, avg: 22, color: 'var(--accent-blue)' },
+            { name: 'HV Circuit Breakers', size: '145+ kV', min: 14, max: 26, avg: 20, color: 'var(--accent-blue)' },
+            { name: 'Underground XLPE', size: '138-345 kV', min: 12, max: 24, avg: 18, color: 'var(--accent-blue)' },
+            { name: 'Distribution Xfmr', size: '<5 MVA', min: 8, max: 14, avg: 11, color: 'var(--accent-green)' },
+            { name: 'Overhead Conductors', size: 'ACSR/HTLS', min: 4, max: 12, avg: 8, color: 'var(--accent-green)' },
         ];
         
         // Navigation
@@ -1965,68 +1247,74 @@
             });
         });
         
-        // Sub-tabs
-        document.querySelectorAll('.category-tab').forEach(tab => {
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
             tab.addEventListener('click', () => {
-                const parent = tab.closest('.tab-content');
-                parent.querySelectorAll('.category-tab').forEach(t => t.classList.remove('active'));
-                parent.querySelectorAll('.subtab-content').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
-                parent.querySelector(`#${tab.dataset.subtab}`).classList.add('active');
+                renderEquipmentGrid(tab.dataset.filter);
             });
         });
         
-        // Render Lead Times by Manufacturer
-        function renderMfgLeadTimes() {
-            const container = document.getElementById('mfg-lead-times');
-            const maxTime = 48;
+        // Render Equipment Grid
+        function renderEquipmentGrid(filter = 'all') {
+            const container = document.getElementById('equipment-grid');
+            container.innerHTML = '';
             
-            manufacturerLeadTimes.forEach(mfg => {
-                const row = document.createElement('div');
-                row.className = 'lead-time-row';
-                const width = (mfg.avg / maxTime) * 100;
-                const color = mfg.avg <= 32 ? 'var(--accent-blue)' : mfg.avg <= 35 ? 'var(--accent-orange)' : 'var(--accent-red)';
+            const filtered = filter === 'all' ? equipmentData : equipmentData.filter(e => e.category === filter);
+            
+            filtered.forEach(equip => {
+                const card = document.createElement('div');
+                card.className = 'equipment-card';
                 
-                row.innerHTML = `
-                    <div class="lead-time-label">${mfg.name}<small>${mfg.location}</small></div>
-                    <div class="lead-time-track">
-                        <div class="lead-time-segment" style="width: ${width}%; background: ${color};"><span>${mfg.min}-${mfg.max} mo</span></div>
+                const importClass = equip.import >= 70 ? 'critical' : equip.import >= 40 ? 'high' : 'low';
+                
+                card.innerHTML = `
+                    <div class="equipment-header">
+                        <div class="equipment-name">${equip.name}</div>
+                        <span class="import-badge ${importClass}">${equip.import}% Import</span>
                     </div>
-                    <div class="lead-time-value">${mfg.avg}</div>
+                    <div class="equipment-meta">
+                        <span class="equipment-tag">${equip.size}</span>
+                        <span class="equipment-tag">${equip.category}</span>
+                    </div>
+                    <div class="equipment-stats">
+                        <div class="equipment-stat">
+                            <div class="equipment-stat-value">${equip.market}</div>
+                            <div class="equipment-stat-label">US Market</div>
+                        </div>
+                        <div class="equipment-stat">
+                            <div class="equipment-stat-value" style="color: ${equip.leadAvg >= 30 ? 'var(--accent-red)' : equip.leadAvg >= 18 ? 'var(--accent-yellow)' : 'var(--accent-green)'}">${equip.leadAvg}</div>
+                            <div class="equipment-stat-label">Months Lead</div>
+                        </div>
+                        <div class="equipment-stat">
+                            <div class="equipment-stat-value">${equip.leadTime}</div>
+                            <div class="equipment-stat-label">Range</div>
+                        </div>
+                    </div>
                 `;
-                container.appendChild(row);
+                container.appendChild(card);
             });
         }
         
-        // Render Manufacturer Cards
-        function renderManufacturerCards() {
-            const container = document.getElementById('manufacturer-grid');
+        // Render Lead Times Chart
+        function renderLeadTimes() {
+            const container = document.getElementById('lead-times-chart');
+            const maxTime = 55;
             
-            manufacturers.forEach(mfg => {
-                const card = document.createElement('div');
-                card.className = 'manufacturer-card';
+            leadTimeData.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'lead-time-row';
+                const width = (item.avg / maxTime) * 100;
                 
-                card.innerHTML = `
-                    <div class="mfg-header">
-                        <div class="mfg-name">${mfg.name}</div>
-                        <div class="mfg-share">${mfg.share}</div>
+                row.innerHTML = `
+                    <div class="lead-time-label">${item.name}<small>${item.size}</small></div>
+                    <div class="lead-time-track">
+                        <div class="lead-time-segment" style="width: ${width}%; background: ${item.color};"><span>${item.avg} mo</span></div>
                     </div>
-                    <div class="mfg-meta">
-                        <span>HQ: ${mfg.hq}</span>
-                    </div>
-                    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">
-                        <strong>US Plants:</strong> ${mfg.usPlants}
-                    </div>
-                    <div class="mfg-tags">
-                        ${mfg.products.map(p => `<span class="mfg-tag">${p}</span>`).join('')}
-                    </div>
-                    <div class="mfg-lead-time">
-                        <span>LPT Lead Time</span>
-                        <span class="mfg-lead-value">${mfg.leadTime}</span>
-                    </div>
-                    <div style="font-size: 11px; color: var(--text-muted); margin-top: 12px;">${mfg.notes}</div>
+                    <div class="lead-time-value">${item.min}-${item.max}</div>
                 `;
-                container.appendChild(card);
+                container.appendChild(row);
             });
         }
         
@@ -2083,7 +1371,7 @@
             if (!container) return;
             
             const width = container.clientWidth || 900;
-            const height = 450;
+            const height = 380;
             
             const svg = d3.select('#market-sankey')
                 .append('svg')
@@ -2091,14 +1379,12 @@
                 .attr('height', height)
                 .attr('viewBox', `0 0 ${width} ${height}`);
             
-            // Build nodes and links
             const nodes = [
                 {name: "US Grid Market\n$85B"},
                 {name: "Transformers\n$28B"},
                 {name: "Switchgear\n$22B"},
                 {name: "Cables\n$18B"},
                 {name: "Components\n$12B"},
-                {name: "Materials\n$5B"},
                 {name: "Domestic\n$31.5B"},
                 {name: "Imported\n$53.5B"}
             ];
@@ -2108,17 +1394,14 @@
                 {source: 0, target: 2, value: 22},
                 {source: 0, target: 3, value: 18},
                 {source: 0, target: 4, value: 12},
-                {source: 0, target: 5, value: 5},
-                {source: 1, target: 6, value: 8},
-                {source: 1, target: 7, value: 20},
-                {source: 2, target: 6, value: 6},
-                {source: 2, target: 7, value: 16},
-                {source: 3, target: 6, value: 12},
-                {source: 3, target: 7, value: 6},
-                {source: 4, target: 6, value: 4},
-                {source: 4, target: 7, value: 8},
-                {source: 5, target: 6, value: 1.5},
-                {source: 5, target: 7, value: 3.5}
+                {source: 1, target: 5, value: 8},
+                {source: 1, target: 6, value: 20},
+                {source: 2, target: 5, value: 6},
+                {source: 2, target: 6, value: 16},
+                {source: 3, target: 5, value: 12},
+                {source: 3, target: 6, value: 6},
+                {source: 4, target: 5, value: 4},
+                {source: 4, target: 6, value: 8}
             ];
             
             const sankey = d3.sankey()
@@ -2132,8 +1415,8 @@
             });
             
             const colorScale = d3.scaleOrdinal()
-                .domain(["US Grid Market", "Transformers", "Switchgear", "Cables", "Components", "Materials", "Domestic", "Imported"])
-                .range(["#3b82f6", "#22d3ee", "#10b981", "#f59e0b", "#a855f7", "#ec4899", "#10b981", "#f97316"]);
+                .domain(["US Grid Market", "Transformers", "Switchgear", "Cables", "Components", "Domestic", "Imported"])
+                .range(["#3b82f6", "#22d3ee", "#10b981", "#f59e0b", "#a855f7", "#10b981", "#f97316"]);
             
             svg.append('g')
                 .selectAll('path')
@@ -2178,15 +1461,15 @@
                 .style('font-family', 'Geist Mono, monospace');
         }
         
-        // Transformer Supply Sankey
-        function renderTransformerSankey() {
-            const container = document.getElementById('transformer-sankey');
-            if (!container) return;
+        // Equipment Supply Sankey
+        function renderEquipmentSankey() {
+            const container = document.getElementById('equipment-sankey');
+            if (!container || container.querySelector('svg')) return;
             
             const width = container.clientWidth || 800;
-            const height = 400;
+            const height = 350;
             
-            const svg = d3.select('#transformer-sankey')
+            const svg = d3.select('#equipment-sankey')
                 .append('svg')
                 .attr('width', '100%')
                 .attr('height', height)
@@ -2201,7 +1484,6 @@
                 {name: "LPT Pool"},
                 {name: "IOUs"},
                 {name: "Public Power"},
-                {name: "Co-ops"},
                 {name: "Industrial"},
                 {name: "Renewables/IPP"}
             ];
@@ -2214,14 +1496,13 @@
                 {source: 4, target: 5, value: 12},
                 {source: 5, target: 6, value: 41},
                 {source: 5, target: 7, value: 16},
-                {source: 5, target: 8, value: 11},
-                {source: 5, target: 9, value: 14},
-                {source: 5, target: 10, value: 10}
+                {source: 5, target: 8, value: 18},
+                {source: 5, target: 9, value: 17}
             ];
             
             const sankey = d3.sankey()
                 .nodeWidth(18)
-                .nodePadding(20)
+                .nodePadding(18)
                 .extent([[1, 1], [width - 1, height - 6]]);
             
             const {nodes: sankeyNodes, links: sankeyLinks} = sankey({
@@ -2238,7 +1519,6 @@
                 "LPT Pool": "#64748b",
                 "IOUs": "#22d3ee",
                 "Public Power": "#22d3ee",
-                "Co-ops": "#22d3ee",
                 "Industrial": "#22d3ee",
                 "Renewables/IPP": "#22d3ee"
             };
@@ -2276,22 +1556,10 @@
                 .style('fill', '#fafafa');
         }
         
-        // Import Dependency Treemap
-        function renderImportTreemap() {
-            const data = [
-                {name: "Transformers 71%", value: 71, color: "#ef4444"},
-                {name: "Switchgear 73%", value: 73, color: "#f97316"},
-                {name: "Components 67%", value: 67, color: "#f59e0b"},
-                {name: "Materials 70%", value: 70, color: "#ef4444"},
-                {name: "Cables 33%", value: 33, color: "#10b981"}
-            ];
-            renderTreemap('import-treemap', data, 500, 300);
-        }
-        
         // GOES Sankey
         function renderGoesSankey() {
             const container = document.getElementById('goes-sankey');
-            if (!container) return;
+            if (!container || container.querySelector('svg')) return;
             
             const width = container.clientWidth || 600;
             const height = 200;
@@ -2306,17 +1574,15 @@
                 {name: "Japan"},
                 {name: "S. Korea"},
                 {name: "USA"},
-                {name: "Germany"},
                 {name: "China"},
                 {name: "US Transformers"}
             ];
             
             const links = [
-                {source: 0, target: 5, value: 34},
-                {source: 1, target: 5, value: 22},
-                {source: 2, target: 5, value: 30},
-                {source: 3, target: 5, value: 6},
-                {source: 4, target: 5, value: 8}
+                {source: 0, target: 4, value: 40},
+                {source: 1, target: 4, value: 22},
+                {source: 2, target: 4, value: 30},
+                {source: 3, target: 4, value: 8}
             ];
             
             const sankey = d3.sankey()
@@ -2329,7 +1595,7 @@
                 links: links.map(d => ({...d}))
             });
             
-            const colors = ["#ec4899", "#a855f7", "#10b981", "#3b82f6", "#f59e0b", "#64748b"];
+            const colors = ["#ec4899", "#a855f7", "#10b981", "#f59e0b", "#64748b"];
             
             svg.append('g')
                 .selectAll('path')
@@ -2364,188 +1630,33 @@
                 .style('fill', '#fafafa');
         }
         
-        // Component Sankeys
-        function renderComponentSankeys() {
-            // Bushing Sankey
-            const bushingContainer = document.getElementById('bushing-sankey');
-            if (bushingContainer) {
-                const width = bushingContainer.clientWidth || 400;
-                const height = 250;
-                
-                const svg = d3.select('#bushing-sankey')
-                    .append('svg')
-                    .attr('width', '100%')
-                    .attr('height', height)
-                    .attr('viewBox', `0 0 ${width} ${height}`);
-                
-                const nodes = [
-                    {name: "USA"},
-                    {name: "Germany"},
-                    {name: "Switzerland"},
-                    {name: "China"},
-                    {name: "US Market"}
-                ];
-                
-                const links = [
-                    {source: 0, target: 4, value: 40},
-                    {source: 1, target: 4, value: 25},
-                    {source: 2, target: 4, value: 20},
-                    {source: 3, target: 4, value: 10}
-                ];
-                
-                const sankey = d3.sankey()
-                    .nodeWidth(14)
-                    .nodePadding(16)
-                    .extent([[1, 1], [width - 1, height - 6]]);
-                
-                const {nodes: sankeyNodes, links: sankeyLinks} = sankey({
-                    nodes: nodes.map(d => ({...d})),
-                    links: links.map(d => ({...d}))
-                });
-                
-                const colors = ["#10b981", "#3b82f6", "#a855f7", "#f59e0b", "#64748b"];
-                
-                svg.append('g')
-                    .selectAll('path')
-                    .data(sankeyLinks)
-                    .join('path')
-                    .attr('class', 'sankey-link')
-                    .attr('d', d3.sankeyLinkHorizontal())
-                    .attr('stroke', (d) => colors[d.source.index])
-                    .attr('stroke-width', d => Math.max(1, d.width));
-                
-                const node = svg.append('g')
-                    .selectAll('g')
-                    .data(sankeyNodes)
-                    .join('g')
-                    .attr('class', 'sankey-node');
-                
-                node.append('rect')
-                    .attr('x', d => d.x0)
-                    .attr('y', d => d.y0)
-                    .attr('height', d => d.y1 - d.y0)
-                    .attr('width', d => d.x1 - d.x0)
-                    .attr('fill', (d, i) => colors[i])
-                    .attr('rx', 2);
-                
-                node.append('text')
-                    .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-                    .attr('y', d => (d.y1 + d.y0) / 2)
-                    .attr('dy', '0.35em')
-                    .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
-                    .text(d => d.name)
-                    .style('font-size', '11px')
-                    .style('fill', '#fafafa');
-            }
-            
-            // Insulator Sankey
-            const insulatorContainer = document.getElementById('insulator-sankey');
-            if (insulatorContainer) {
-                const width = insulatorContainer.clientWidth || 400;
-                const height = 250;
-                
-                const svg = d3.select('#insulator-sankey')
-                    .append('svg')
-                    .attr('width', '100%')
-                    .attr('height', height)
-                    .attr('viewBox', `0 0 ${width} ${height}`);
-                
-                const nodes = [
-                    {name: "China"},
-                    {name: "Japan (NGK)"},
-                    {name: "USA"},
-                    {name: "France"},
-                    {name: "US Market"}
-                ];
-                
-                const links = [
-                    {source: 0, target: 4, value: 40},
-                    {source: 1, target: 4, value: 20},
-                    {source: 2, target: 4, value: 18},
-                    {source: 3, target: 4, value: 15}
-                ];
-                
-                const sankey = d3.sankey()
-                    .nodeWidth(14)
-                    .nodePadding(16)
-                    .extent([[1, 1], [width - 1, height - 6]]);
-                
-                const {nodes: sankeyNodes, links: sankeyLinks} = sankey({
-                    nodes: nodes.map(d => ({...d})),
-                    links: links.map(d => ({...d}))
-                });
-                
-                const colors = ["#f59e0b", "#ec4899", "#10b981", "#3b82f6", "#64748b"];
-                
-                svg.append('g')
-                    .selectAll('path')
-                    .data(sankeyLinks)
-                    .join('path')
-                    .attr('class', 'sankey-link')
-                    .attr('d', d3.sankeyLinkHorizontal())
-                    .attr('stroke', (d) => colors[d.source.index])
-                    .attr('stroke-width', d => Math.max(1, d.width));
-                
-                const node = svg.append('g')
-                    .selectAll('g')
-                    .data(sankeyNodes)
-                    .join('g')
-                    .attr('class', 'sankey-node');
-                
-                node.append('rect')
-                    .attr('x', d => d.x0)
-                    .attr('y', d => d.y0)
-                    .attr('height', d => d.y1 - d.y0)
-                    .attr('width', d => d.x1 - d.x0)
-                    .attr('fill', (d, i) => colors[i])
-                    .attr('rx', 2);
-                
-                node.append('text')
-                    .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
-                    .attr('y', d => (d.y1 + d.y0) / 2)
-                    .attr('dy', '0.35em')
-                    .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
-                    .text(d => d.name)
-                    .style('font-size', '11px')
-                    .style('fill', '#fafafa');
-            }
+        // Import Dependency Treemap
+        function renderImportTreemap() {
+            const data = [
+                {name: "Switchgear 73%", value: 73, color: "#f97316"},
+                {name: "Transformers 71%", value: 71, color: "#ef4444"},
+                {name: "Materials 70%", value: 70, color: "#ef4444"},
+                {name: "Components 67%", value: 67, color: "#f59e0b"},
+                {name: "Cables 33%", value: 33, color: "#10b981"}
+            ];
+            renderTreemap('import-treemap', data, 500, 280);
         }
         
         // Initialize
         document.addEventListener('DOMContentLoaded', () => {
             renderMarketSankey();
             renderImportTreemap();
-            renderMfgLeadTimes();
-            renderManufacturerCards();
-            renderTreemap('switchgear-treemap', switchgearMarket, 500, 300);
-            renderTreemap('hvdc-treemap', hvdcProducers, 500, 300);
-            renderTreemap('lpt-market-treemap', lptMarketShare, 800, 250);
+            renderEquipmentGrid();
+            renderLeadTimes();
             
-            // Render transformer sankey when tab is shown
-            document.querySelector('[data-tab="transformers"]').addEventListener('click', () => {
-                setTimeout(() => {
-                    if (!document.querySelector('#transformer-sankey svg')) {
-                        renderTransformerSankey();
-                    }
-                }, 100);
+            // Render equipment sankey when tab is shown
+            document.querySelector('[data-tab="equipment"]').addEventListener('click', () => {
+                setTimeout(renderEquipmentSankey, 100);
             });
             
-            // Render materials sankey when tab is shown
+            // Render GOES sankey when materials tab is shown
             document.querySelector('[data-tab="materials"]').addEventListener('click', () => {
-                setTimeout(() => {
-                    if (!document.querySelector('#goes-sankey svg')) {
-                        renderGoesSankey();
-                    }
-                }, 100);
-            });
-            
-            // Render component sankeys when tab is shown
-            document.querySelector('[data-tab="components"]').addEventListener('click', () => {
-                setTimeout(() => {
-                    if (!document.querySelector('#bushing-sankey svg')) {
-                        renderComponentSankeys();
-                    }
-                }, 100);
+                setTimeout(renderGoesSankey, 100);
             });
         });
         
@@ -2554,13 +1665,9 @@
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                // Clear and re-render SVGs on resize
                 document.querySelectorAll('.sankey-container svg, .treemap-container svg').forEach(svg => svg.remove());
                 renderMarketSankey();
                 renderImportTreemap();
-                renderTreemap('switchgear-treemap', switchgearMarket, 500, 300);
-                renderTreemap('hvdc-treemap', hvdcProducers, 500, 300);
-                renderTreemap('lpt-market-treemap', lptMarketShare, 800, 250);
             }, 250);
         });
     </script>

@@ -8,6 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root {
       --bg-primary: #ffffff;
@@ -22,6 +23,9 @@
       --success: #22c55e;
       --warning: #f59e0b;
       --danger: #ef4444;
+      --chart-dev: #3B82F6;
+      --chart-region: #8b5cf6;
+      --chart-market: #64748b;
       --font-sans: 'Geist', system-ui, sans-serif;
       --font-mono: 'JetBrains Mono', monospace;
     }
@@ -36,6 +40,9 @@
       --border: #2a2a2a;
       --accent: #3B82F6;
       --accent-muted: #60a5fa;
+      --chart-dev: #60a5fa;
+      --chart-region: #a78bfa;
+      --chart-market: #94a3b8;
     }
 
     *, *::before, *::after {
@@ -225,7 +232,7 @@
     }
 
     .main-layout.with-detail {
-      grid-template-columns: 1fr 400px;
+      grid-template-columns: 1fr 420px;
     }
 
     @media (max-width: 1200px) {
@@ -369,35 +376,6 @@
       border-bottom: 1px solid var(--border);
     }
 
-    .detail-header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 1rem;
-    }
-
-    .close-btn {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      width: 28px;
-      height: 28px;
-      cursor: pointer;
-      color: var(--text-muted);
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      transition: all 0.15s ease;
-    }
-
-    .close-btn:hover {
-      border-color: var(--danger);
-      color: var(--danger);
-      background: rgba(239, 68, 68, 0.1);
-    }
-
     .detail-header h2 {
       font-size: 1.125rem;
       font-weight: 600;
@@ -483,9 +461,154 @@
       color: var(--text-secondary);
     }
 
+    /* Benchmark section */
+    .benchmark-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .benchmark-card {
+      background: var(--bg-tertiary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.75rem;
+    }
+
+    .benchmark-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .benchmark-label {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+    }
+
+    .benchmark-value {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .benchmark-compare {
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      margin-top: 0.25rem;
+    }
+
+    .benchmark-compare.above { color: var(--success); }
+    .benchmark-compare.below { color: var(--danger); }
+    .benchmark-compare.neutral { color: var(--text-muted); }
+
+    .percentile-badge {
+      display: inline-block;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      font-weight: 600;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      margin-left: 0.5rem;
+    }
+
+    .percentile-top10 { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
+    .percentile-top25 { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
+    .percentile-top50 { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+    .percentile-bottom { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
+
+    /* Chart container */
+    .chart-container {
+      position: relative;
+      height: 180px;
+      margin-top: 0.5rem;
+    }
+
+    .chart-legend {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      color: var(--text-secondary);
+    }
+
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+    }
+
+    .legend-dot.dev { background: var(--chart-dev); }
+    .legend-dot.region { background: var(--chart-region); }
+    .legend-dot.market { background: var(--chart-market); }
+
+    /* Tech breakdown */
+    .tech-row {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .tech-row:last-child {
+      border-bottom: none;
+    }
+
+    .tech-name {
+      flex: 0 0 80px;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
+
+    .tech-bar-container {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .tech-bar-bg {
+      flex: 1;
+      height: 12px;
+      background: var(--border);
+      border-radius: 3px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .tech-bar {
+      height: 100%;
+      border-radius: 3px;
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    .tech-bar.dev { background: var(--chart-dev); z-index: 2; }
+    .tech-bar.market { background: var(--chart-market); opacity: 0.4; z-index: 1; }
+
+    .tech-value {
+      flex: 0 0 50px;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      text-align: right;
+    }
+
     /* Project list */
     .project-list {
-      max-height: 300px;
+      max-height: 250px;
       overflow-y: auto;
     }
 
@@ -683,6 +806,10 @@
         position: static;
         max-height: none;
       }
+
+      .benchmark-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -809,6 +936,16 @@
     let selectedDev = null;
     let currentPage = 1;
     const pageSize = 50;
+    
+    // Benchmarks (calculated at load)
+    let benchmarks = {
+      regions: {},    // { region: { avgSuccessRate, medianMW, devCount, successRates: [] } }
+      types: {},      // { type: { avgSuccessRate, totalMW, devCount } }
+      market: {}      // Overall market averages
+    };
+
+    // Chart instance
+    let comparisonChart = null;
 
     // Column definitions
     const columns = [
@@ -828,6 +965,8 @@
       const next = current === 'dark' ? 'light' : 'dark';
       html.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
+      // Re-render detail to update chart colors
+      if (selectedDev) renderDetail();
     }
 
     // Initialize theme
@@ -835,11 +974,101 @@
       (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
     document.documentElement.setAttribute('data-theme', savedTheme);
 
+    // Calculate benchmarks from all developer data
+    function calculateBenchmarks() {
+      const regionData = {};
+      const typeData = {};
+      let totalSuccessRates = [];
+      let totalMWs = [];
+      let totalProjects = [];
+
+      developers.forEach(d => {
+        // Market totals
+        if (d.success_rate != null) totalSuccessRates.push(d.success_rate);
+        totalMWs.push(d.total_mw);
+        totalProjects.push(d.total_projects);
+
+        // Region breakdown
+        d.regions.forEach(region => {
+          if (!regionData[region]) {
+            regionData[region] = { successRates: [], mws: [], devCount: 0 };
+          }
+          if (d.success_rate != null) regionData[region].successRates.push(d.success_rate);
+          regionData[region].mws.push(d.total_mw);
+          regionData[region].devCount++;
+        });
+
+        // Type breakdown - calculate per-developer success by type
+        d.types.forEach(type => {
+          if (!typeData[type]) {
+            typeData[type] = { successRates: [], totalMW: 0, devCount: 0 };
+          }
+          if (d.success_rate != null) typeData[type].successRates.push(d.success_rate);
+          typeData[type].devCount++;
+        });
+      });
+
+      // Calculate region benchmarks
+      Object.keys(regionData).forEach(region => {
+        const rd = regionData[region];
+        const sortedRates = [...rd.successRates].sort((a,b) => a - b);
+        const sortedMWs = [...rd.mws].sort((a,b) => a - b);
+        benchmarks.regions[region] = {
+          avgSuccessRate: sortedRates.length ? (sortedRates.reduce((a,b) => a+b, 0) / sortedRates.length) : 0,
+          medianMW: sortedMWs.length ? sortedMWs[Math.floor(sortedMWs.length / 2)] : 0,
+          devCount: rd.devCount,
+          successRates: sortedRates // Keep sorted for percentile calc
+        };
+      });
+
+      // Calculate type benchmarks
+      Object.keys(typeData).forEach(type => {
+        const td = typeData[type];
+        const sortedRates = [...td.successRates].sort((a,b) => a - b);
+        benchmarks.types[type] = {
+          avgSuccessRate: sortedRates.length ? (sortedRates.reduce((a,b) => a+b, 0) / sortedRates.length) : 0,
+          devCount: td.devCount,
+          successRates: sortedRates
+        };
+      });
+
+      // Market averages
+      const sortedMarketRates = totalSuccessRates.sort((a,b) => a - b);
+      const sortedMarketMWs = totalMWs.sort((a,b) => a - b);
+      benchmarks.market = {
+        avgSuccessRate: sortedMarketRates.length ? (sortedMarketRates.reduce((a,b) => a+b, 0) / sortedMarketRates.length) : 0,
+        medianMW: sortedMarketMWs.length ? sortedMarketMWs[Math.floor(sortedMarketMWs.length / 2)] : 0,
+        devCount: developers.length,
+        successRates: sortedMarketRates
+      };
+    }
+
+    // Calculate percentile rank
+    function getPercentile(value, sortedArray) {
+      if (!sortedArray.length || value == null) return null;
+      let count = 0;
+      for (let v of sortedArray) {
+        if (v < value) count++;
+        else break;
+      }
+      return Math.round((count / sortedArray.length) * 100);
+    }
+
+    // Get percentile badge HTML
+    function getPercentileBadge(percentile) {
+      if (percentile == null) return '';
+      if (percentile >= 90) return `<span class="percentile-badge percentile-top10">Top 10%</span>`;
+      if (percentile >= 75) return `<span class="percentile-badge percentile-top25">Top 25%</span>`;
+      if (percentile >= 50) return `<span class="percentile-badge percentile-top50">Top 50%</span>`;
+      return `<span class="percentile-badge percentile-bottom">Bottom ${100 - percentile}%</span>`;
+    }
+
     // Load data
     async function loadData() {
       try {
         const response = await fetch('data/developers.json');
         developers = await response.json();
+        calculateBenchmarks();
         initFilters();
         applyFilters();
       } catch (err) {
@@ -909,7 +1138,7 @@
         if (aVal == null) return 1;
         if (bVal == null) return -1;
         
-        // For success_rate, lower avg_timeline is better
+        // For avg_timeline, lower is better
         if (sortBy === 'avg_timeline_months') {
           return aVal - bVal;
         }
@@ -1001,15 +1230,51 @@
       const panel = document.getElementById('detailPanel');
       panel.style.display = 'block';
 
+      // Calculate benchmarks for this developer
+      const primaryRegion = d.regions[0];
+      const regionBench = benchmarks.regions[primaryRegion] || {};
+      const marketBench = benchmarks.market;
+
+      // Calculate developer's percentile in their primary region
+      const regionPercentile = d.success_rate != null && regionBench.successRates 
+        ? getPercentile(d.success_rate, regionBench.successRates) 
+        : null;
+
+      // Calculate market percentile
+      const marketPercentile = d.success_rate != null 
+        ? getPercentile(d.success_rate, marketBench.successRates)
+        : null;
+
+      // Compare to region avg
+      const regionDiff = d.success_rate != null && regionBench.avgSuccessRate != null
+        ? d.success_rate - regionBench.avgSuccessRate
+        : null;
+
+      // Compare to market
+      const marketDiff = d.success_rate != null && marketBench.avgSuccessRate != null
+        ? d.success_rate - marketBench.avgSuccessRate
+        : null;
+
+      // MW comparison
+      const mwVsMedian = regionBench.medianMW ? ((d.total_mw / regionBench.medianMW) * 100).toFixed(0) : null;
+
       // Filter and sort projects
       const projects = d.projects.sort((a, b) => (b.mw || 0) - (a.mw || 0));
 
+      // Build tech type breakdown for comparison
+      const techTypes = ['Solar', 'Wind', 'Storage', 'Hybrid', 'Gas'];
+      const devTypeCounts = {};
+      d.projects.forEach(p => {
+        if (p.type && techTypes.some(t => p.type.includes(t))) {
+          const mainType = techTypes.find(t => p.type.includes(t)) || 'Other';
+          devTypeCounts[mainType] = (devTypeCounts[mainType] || 0) + 1;
+        }
+      });
+      const devTotal = d.total_projects;
+
       panel.innerHTML = `
         <div class="detail-header">
-          <div class="detail-header-top">
-            <h2>${d.name}</h2>
-            <button class="close-btn" onclick="closeDetail()" title="Close">✕</button>
-          </div>
+          <h2>${d.name}</h2>
           <div class="subtitle">${d.total_projects} projects • Active since ${formatDateShort(d.earliest_queue)}</div>
         </div>
         
@@ -1034,25 +1299,73 @@
             <div class="stat-value accent">${formatMW(d.construction.mw)}</div>
             <div class="stat-sub">${d.construction.count} projects</div>
           </div>
-          <div class="stat-card">
-            <div class="stat-label">Pending</div>
-            <div class="stat-value">${formatMW(d.pending.mw)}</div>
-            <div class="stat-sub">${d.pending.count} in queue</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Withdrawn</div>
-            <div class="stat-value danger">${formatMW(d.withdrawn.mw)}</div>
-            <div class="stat-sub">${d.withdrawn.count} projects</div>
+        </div>
+
+        <!-- BENCHMARKS SECTION -->
+        <div class="detail-section">
+          <h3>📊 Benchmarks vs ${primaryRegion}</h3>
+          <div class="benchmark-grid">
+            <div class="benchmark-card">
+              <div class="benchmark-label">Success Rate</div>
+              <div class="benchmark-value">${d.success_rate != null ? d.success_rate + '%' : '—'}${regionPercentile ? getPercentileBadge(regionPercentile) : ''}</div>
+              <div class="benchmark-compare ${regionDiff > 0 ? 'above' : regionDiff < 0 ? 'below' : 'neutral'}">
+                ${regionDiff != null ? (regionDiff > 0 ? '+' : '') + regionDiff.toFixed(1) + '% vs region avg (' + regionBench.avgSuccessRate.toFixed(1) + '%)' : '—'}
+              </div>
+            </div>
+            <div class="benchmark-card">
+              <div class="benchmark-label">Portfolio Size</div>
+              <div class="benchmark-value">${formatMW(d.total_mw)}</div>
+              <div class="benchmark-compare ${mwVsMedian > 100 ? 'above' : mwVsMedian < 100 ? 'below' : 'neutral'}">
+                ${mwVsMedian ? mwVsMedian + '% of region median' : '—'}
+              </div>
+            </div>
+            <div class="benchmark-card full-width">
+              <div class="benchmark-label">Market Ranking</div>
+              <div class="benchmark-value">${marketPercentile != null ? getPercentileBadge(marketPercentile) : '—'}</div>
+              <div class="benchmark-compare ${marketDiff > 0 ? 'above' : marketDiff < 0 ? 'below' : 'neutral'}">
+                ${marketDiff != null ? (marketDiff > 0 ? '+' : '') + marketDiff.toFixed(1) + '% vs market avg (' + marketBench.avgSuccessRate.toFixed(1) + '%)' : '—'}
+              </div>
+            </div>
           </div>
         </div>
 
-        ${d.avg_timeline_months ? `
+        <!-- COMPARISON CHART -->
         <div class="detail-section">
-          <h3>Average Timeline</h3>
-          <div style="font-size: 1.5rem; font-weight: 600;">${d.avg_timeline_months} months</div>
-          <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem;">Queue to commercial operation</div>
+          <h3>📈 Success Rate Comparison</h3>
+          <div class="chart-container">
+            <canvas id="comparisonChart"></canvas>
+          </div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot dev"></span>Developer</span>
+            <span class="legend-item"><span class="legend-dot region"></span>Region Avg</span>
+            <span class="legend-item"><span class="legend-dot market"></span>Market Avg</span>
+          </div>
         </div>
-        ` : ''}
+
+        <!-- TECHNOLOGY BREAKDOWN -->
+        <div class="detail-section">
+          <h3>⚡ Technology Focus vs Market</h3>
+          ${techTypes.filter(t => devTypeCounts[t] || benchmarks.types[t]).slice(0, 4).map(type => {
+            const devPct = devTotal ? ((devTypeCounts[type] || 0) / devTotal * 100) : 0;
+            const marketPct = benchmarks.types[type] ? (benchmarks.types[type].devCount / developers.length * 100) : 0;
+            return `
+              <div class="tech-row">
+                <span class="tech-name">${type}</span>
+                <div class="tech-bar-container">
+                  <div class="tech-bar-bg">
+                    <div class="tech-bar market" style="width: ${Math.min(marketPct * 2, 100)}%"></div>
+                    <div class="tech-bar dev" style="width: ${Math.min(devPct * 2, 100)}%"></div>
+                  </div>
+                  <span class="tech-value">${devPct.toFixed(0)}%</span>
+                </div>
+              </div>
+            `;
+          }).join('')}
+          <div class="chart-legend" style="margin-top: 0.75rem;">
+            <span class="legend-item"><span class="legend-dot dev"></span>Developer</span>
+            <span class="legend-item"><span class="legend-dot market"></span>Market</span>
+          </div>
+        </div>
 
         <div class="detail-section">
           <h3>Regions (${d.regions.length})</h3>
@@ -1062,16 +1375,9 @@
         </div>
 
         <div class="detail-section">
-          <h3>Technology Types (${d.types.length})</h3>
-          <div class="tag-list">
-            ${d.types.map(t => `<span class="tag">${t}</span>`).join('')}
-          </div>
-        </div>
-
-        <div class="detail-section">
           <h3>Projects (${projects.length})</h3>
           <div class="project-list">
-            ${projects.slice(0, 50).map(p => `
+            ${projects.slice(0, 30).map(p => `
               <div class="project-item">
                 <div class="project-info">
                   <div class="project-name" title="${escapeHtml(p.name || p.id)}">${p.name || p.id}</div>
@@ -1083,18 +1389,99 @@
                 </div>
               </div>
             `).join('')}
-            ${projects.length > 50 ? `<div style="padding: 0.5rem 0; color: var(--text-muted); font-size: 0.75rem;">+ ${projects.length - 50} more projects</div>` : ''}
+            ${projects.length > 30 ? `<div style="padding: 0.5rem 0; color: var(--text-muted); font-size: 0.75rem;">+ ${projects.length - 30} more projects</div>` : ''}
           </div>
         </div>
       `;
+
+      // Render chart after DOM is updated
+      setTimeout(() => renderComparisonChart(d), 50);
     }
 
-    function closeDetail() {
-      selectedDev = null;
-      document.getElementById('detailPanel').style.display = 'none';
-      document.getElementById('mainLayout').classList.remove('with-detail');
-      // Remove selected class from all rows
-      document.querySelectorAll('tbody tr.selected').forEach(tr => tr.classList.remove('selected'));
+    function renderComparisonChart(dev) {
+      const ctx = document.getElementById('comparisonChart');
+      if (!ctx) return;
+
+      // Destroy existing chart
+      if (comparisonChart) {
+        comparisonChart.destroy();
+      }
+
+      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+      const colors = {
+        dev: isDark ? '#60a5fa' : '#3B82F6',
+        region: isDark ? '#a78bfa' : '#8b5cf6',
+        market: isDark ? '#94a3b8' : '#64748b',
+        text: isDark ? '#a0a0a0' : '#5f6368',
+        grid: isDark ? '#2a2a2a' : '#e1e4e8'
+      };
+
+      // Prepare data for each region
+      const labels = dev.regions.slice(0, 5);
+      const devRates = labels.map(() => dev.success_rate || 0);
+      const regionRates = labels.map(r => benchmarks.regions[r]?.avgSuccessRate || 0);
+      const marketRate = benchmarks.market.avgSuccessRate;
+
+      comparisonChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Developer',
+              data: devRates,
+              backgroundColor: colors.dev,
+              borderRadius: 4,
+              barPercentage: 0.7
+            },
+            {
+              label: 'Region Avg',
+              data: regionRates,
+              backgroundColor: colors.region,
+              borderRadius: 4,
+              barPercentage: 0.7
+            },
+            {
+              label: 'Market Avg',
+              data: labels.map(() => marketRate),
+              type: 'line',
+              borderColor: colors.market,
+              borderWidth: 2,
+              borderDash: [5, 5],
+              pointRadius: 0,
+              fill: false
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
+              }
+            }
+          },
+          scales: {
+            x: {
+              grid: { display: false },
+              ticks: { color: colors.text, font: { family: "'JetBrains Mono', monospace", size: 10 } }
+            },
+            y: {
+              beginAtZero: true,
+              max: 100,
+              grid: { color: colors.grid },
+              ticks: { 
+                color: colors.text, 
+                font: { family: "'JetBrains Mono', monospace", size: 10 },
+                callback: v => v + '%'
+              }
+            }
+          }
+        }
+      });
     }
 
     function escapeHtml(str) {
