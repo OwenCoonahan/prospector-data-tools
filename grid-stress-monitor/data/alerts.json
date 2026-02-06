@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-02-06T14:45:00Z",
+  "alerts": [
+    {
+      "id": "ERCOT_OCN_001",
+      "iso": "ERCOT",
+      "type": "Operating Condition Notice",
+      "level": "watch",
+      "title": "Houston Import Constraint",
+      "message": "Transmission limits into Houston zone at capacity due to high demand. Monitor for potential conservation appeal.",
+      "issued": "2026-02-06T10:30:00Z",
+      "expires": "2026-02-06T20:00:00Z"
+    },
+    {
+      "id": "ERCOT_WIND_001",
+      "iso": "ERCOT",
+      "type": "Renewable Curtailment",
+      "level": "info",
+      "title": "West Texas Wind Curtailment",
+      "message": "Economic curtailment of 2,800 MW wind generation in West Texas due to transmission constraints. Negative prices at western nodes.",
+      "issued": "2026-02-06T06:00:00Z",
+      "expires": "2026-02-06T18:00:00Z"
+    },
+    {
+      "id": "NYISO_TLR_001",
+      "iso": "NYISO",
+      "type": "Transmission Loading Relief",
+      "level": "warning",
+      "title": "Central-East Interface Limit",
+      "message": "TLR-5 in effect for Central-East interface. Import restrictions into NYC zone active.",
+      "issued": "2026-02-06T08:00:00Z",
+      "expires": "2026-02-06T22:00:00Z"
+    },
+    {
+      "id": "PJM_HOT_001",
+      "iso": "PJM",
+      "type": "Hot Weather Alert",
+      "level": "watch",
+      "title": "Summer Peak Approaching",
+      "message": "High temperatures forecast for Mid-Atlantic. Peak demand expected near 145 GW. All generation resources requested online.",
+      "issued": "2026-02-06T06:00:00Z",
+      "expires": "2026-02-06T21:00:00Z"
+    },
+    {
+      "id": "SPP_WIND_001",
+      "iso": "SPP",
+      "type": "Renewable Curtailment",
+      "level": "info",
+      "title": "Wind Curtailment Active",
+      "message": "Curtailing 1,500 MW wind generation in Oklahoma panhandle. Negative prices throughout central SPP.",
+      "issued": "2026-02-06T12:00:00Z",
+      "expires": "2026-02-06T16:00:00Z"
+    },
+    {
+      "id": "CAISO_FLEX_001",
+      "iso": "CAISO",
+      "type": "Flex Alert",
+      "level": "warning",
+      "title": "Evening Ramp Conservation",
+      "message": "Flex Alert issued 4-9 PM. High demand combined with solar ramp-down creating tight conditions. Consumers asked to reduce usage.",
+      "issued": "2026-02-06T12:00:00Z",
+      "expires": "2026-02-06T21:00:00Z"
+    }
+  ]
+}

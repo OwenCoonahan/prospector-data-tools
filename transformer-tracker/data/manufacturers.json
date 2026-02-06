@@ -1,0 +1,132 @@
+{
+  "metadata": {
+    "title": "Major Power Transformer Manufacturers",
+    "description": "Global transformer manufacturers with US market presence",
+    "last_updated": "2026-02-06",
+    "data_quality": "ESTIMATED - market shares are approximations from industry reports",
+    "confidence": "medium",
+    "sources": [
+      "Company investor presentations",
+      "Industry market reports (Mordor Intelligence, Wood Mackenzie summaries)",
+      "News coverage of capacity expansions"
+    ]
+  },
+  "manufacturers": [
+    {
+      "name": "Hitachi Energy",
+      "formerly": "ABB Power Grids (acquired 2020)",
+      "hq_country": "Switzerland",
+      "global_market_share_pct": 20,
+      "us_facilities": [
+        { "location": "Jefferson City, MO", "type": "Manufacturing", "products": "LPT, Distribution" },
+        { "location": "South Boston, VA", "type": "Manufacturing", "products": "LPT" },
+        { "location": "Bland, VA", "type": "Components", "products": "Bushings" }
+      ],
+      "segments": ["Large Power", "Medium Power", "Distribution"],
+      "recent_news": "Announced $100M+ capacity expansion plans 2023-2025"
+    },
+    {
+      "name": "Siemens Energy",
+      "formerly": null,
+      "hq_country": "Germany",
+      "global_market_share_pct": 15,
+      "us_facilities": [
+        { "location": "Charlotte, NC", "type": "Service Center", "products": "Repair, refurbishment" },
+        { "location": "Wendell, NC", "type": "Manufacturing", "products": "Medium voltage" }
+      ],
+      "segments": ["Large Power", "Medium Power", "Traction"],
+      "recent_news": "Focus on grid technologies division growth"
+    },
+    {
+      "name": "GE Vernova",
+      "formerly": "GE Grid Solutions",
+      "hq_country": "USA",
+      "global_market_share_pct": 10,
+      "us_facilities": [
+        { "location": "Clearwater, FL", "type": "Manufacturing", "products": "LPT" },
+        { "location": "Charleroi, PA", "type": "Manufacturing", "products": "Instrument transformers" }
+      ],
+      "segments": ["Large Power", "Industrial"],
+      "recent_news": "Spun off from GE 2024; investing in grid equipment"
+    },
+    {
+      "name": "Toshiba Energy Systems",
+      "formerly": null,
+      "hq_country": "Japan",
+      "global_market_share_pct": 8,
+      "us_facilities": [
+        { "location": "Houston, TX", "type": "Sales/Service", "products": "LPT support" }
+      ],
+      "segments": ["Large Power", "GSU"],
+      "recent_news": "Restructuring energy division"
+    },
+    {
+      "name": "TBEA",
+      "formerly": null,
+      "hq_country": "China",
+      "global_market_share_pct": 12,
+      "us_facilities": [],
+      "segments": ["All segments"],
+      "recent_news": "Limited US presence due to supply chain security concerns"
+    },
+    {
+      "name": "Howard Industries",
+      "formerly": null,
+      "hq_country": "USA",
+      "global_market_share_pct": 3,
+      "us_facilities": [
+        { "location": "Laurel, MS", "type": "Manufacturing", "products": "Distribution transformers" }
+      ],
+      "segments": ["Distribution"],
+      "recent_news": "Major US distribution transformer supplier; expanded capacity 2023"
+    },
+    {
+      "name": "SPX Transformer Solutions",
+      "formerly": "Waukesha Electric",
+      "hq_country": "USA",
+      "global_market_share_pct": 2,
+      "us_facilities": [
+        { "location": "Waukesha, WI", "type": "Manufacturing", "products": "LPT, Medium Power" }
+      ],
+      "segments": ["Large Power", "Medium Power"],
+      "recent_news": "Focused on North American utility market"
+    },
+    {
+      "name": "Prolec GE",
+      "formerly": null,
+      "hq_country": "Mexico",
+      "global_market_share_pct": 4,
+      "us_facilities": [],
+      "segments": ["Distribution", "Medium Power"],
+      "recent_news": "Major supplier to US utilities from Mexico facilities"
+    },
+    {
+      "name": "Hyundai Electric",
+      "formerly": null,
+      "hq_country": "South Korea",
+      "global_market_share_pct": 6,
+      "us_facilities": [
+        { "location": "Montgomery, AL", "type": "Manufacturing (planned)", "products": "LPT" }
+      ],
+      "segments": ["Large Power", "Medium Power"],
+      "recent_news": "Announced US manufacturing facility 2024"
+    },
+    {
+      "name": "Mitsubishi Electric",
+      "formerly": null,
+      "hq_country": "Japan",
+      "global_market_share_pct": 5,
+      "us_facilities": [
+        { "location": "Memphis, TN", "type": "Service", "products": "Support" }
+      ],
+      "segments": ["Large Power", "Traction"],
+      "recent_news": "Expanding grid equipment focus"
+    }
+  ],
+  "market_summary": {
+    "total_global_market_size_usd_b": 32,
+    "north_america_share_pct": 18,
+    "growth_rate_cagr_pct": 6.5,
+    "notes": "Market size estimates vary; range from $28-38B depending on scope definition"
+  }
+}

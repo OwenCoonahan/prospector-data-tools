@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Tools — Prospector Labs</title>
+  <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Geist', system-ui, sans-serif;
+      background: #0d0d0d;
+      color: #f0f0f0;
+      min-height: 100vh;
+      padding: 4rem 2rem;
+    }
+    .container { max-width: 900px; margin: 0 auto; }
+    h1 { font-size: 2.5rem; font-weight: 600; margin-bottom: 0.5rem; letter-spacing: -0.02em; }
+    .subtitle { color: #666; font-size: 1rem; margin-bottom: 3rem; }
+    .tools { display: grid; gap: 1rem; }
+    .tool {
+      display: block;
+      padding: 1.5rem;
+      background: #141414;
+      border: 1px solid #2a2a2a;
+      border-radius: 8px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.15s ease;
+    }
+    .tool:hover { border-color: #3b82f6; background: #1a1a1a; }
+    .tool h2 { font-size: 1.25rem; font-weight: 600; margin-bottom: 0.25rem; }
+    .tool p { color: #888; font-size: 0.9rem; }
+    .tool .meta { margin-top: 0.75rem; font-size: 0.75rem; color: #555; }
+    footer { margin-top: 4rem; text-align: center; color: #444; font-size: 0.8rem; }
+    footer a { color: #3b82f6; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Data Tools</h1>
+    <p class="subtitle">Energy infrastructure intelligence from Prospector Labs</p>
+    
+    <div class="tools">
+      <a href="queue-lookup/" class="tool">
+        <h2>Queue Lookup</h2>
+        <p>Search 35,000+ US interconnection queue projects across all ISOs</p>
+        <div class="meta">35,469 projects • 6.3 TW capacity</div>
+      </a>
+      
+      <a href="developer-scorecard/" class="tool">
+        <h2>Developer Scorecard</h2>
+        <p>Track records for energy project developers — success rates, timelines, capacity</p>
+        <div class="meta">6,271 developers tracked</div>
+      </a>
+      
+      <a href="iso-comparison/" class="tool">
+        <h2>ISO Comparison</h2>
+        <p>Side-by-side metrics across all 9 US interconnection regions</p>
+        <div class="meta">Withdrawal rates, timelines, capacity mix</div>
+      </a>
+      
+      <a href="grid-stress-monitor/" class="tool">
+        <h2>Grid Stress Monitor</h2>
+        <p>Real-time congestion, constraints, and LMP visualization</p>
+        <div class="meta">Mapbox-powered • Multi-ISO</div>
+      </a>
+      
+      <a href="critical-minerals-v2/" class="tool">
+        <h2>Critical Minerals Tracker</h2>
+        <p>Supply chain intelligence for 12 energy transition minerals</p>
+        <div class="meta">Prices, production, concentration risk</div>
+      </a>
+      
+      <a href="transformer-tracker/" class="tool">
+        <h2>Transformer Lead Time Tracker</h2>
+        <p>Power transformer supply chain constraints and lead times</p>
+        <div class="meta">36-month LPT lead time • 70% GOES import dependency</div>
+      </a>
+    </div>
+    
+    <footer>
+      Built by <a href="https://prospectorlabs.io">Prospector Labs</a> · Feb 2026
+    </footer>
+  </div>
+</body>
+</html>

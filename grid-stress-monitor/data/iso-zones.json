@@ -1,0 +1,187 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "ERCOT",
+        "zone": "HOUSTON",
+        "name": "Houston Load Zone",
+        "color": "#3B82F6"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-96.0, 29.0], [-94.5, 29.0], [-94.5, 30.5], [-96.0, 30.5], [-96.0, 29.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "ERCOT",
+        "zone": "NORTH",
+        "name": "North Load Zone",
+        "color": "#3B82F6"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-98.5, 32.0], [-96.0, 32.0], [-96.0, 34.0], [-98.5, 34.0], [-98.5, 32.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "ERCOT",
+        "zone": "SOUTH",
+        "name": "South Load Zone",
+        "color": "#3B82F6"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-99.0, 26.5], [-97.0, 26.5], [-97.0, 28.5], [-99.0, 28.5], [-99.0, 26.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "ERCOT",
+        "zone": "WEST",
+        "name": "West Load Zone",
+        "color": "#3B82F6"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-104.5, 30.0], [-102.0, 30.0], [-102.0, 32.5], [-104.5, 32.5], [-104.5, 30.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "PJM",
+        "zone": "COMED",
+        "name": "ComEd (Chicago)",
+        "color": "#10B981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-91.0, 39.5], [-87.5, 39.5], [-87.5, 42.5], [-91.0, 42.5], [-91.0, 39.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "PJM",
+        "zone": "AEP",
+        "name": "AEP (Ohio/WV)",
+        "color": "#10B981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-84.5, 38.0], [-80.5, 38.0], [-80.5, 41.0], [-84.5, 41.0], [-84.5, 38.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "PJM",
+        "zone": "PECO",
+        "name": "PECO (Philadelphia)",
+        "color": "#10B981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-76.0, 39.5], [-74.5, 39.5], [-74.5, 40.5], [-76.0, 40.5], [-76.0, 39.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "PJM",
+        "zone": "BGE",
+        "name": "BGE (Baltimore)",
+        "color": "#10B981"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-77.5, 38.5], [-76.0, 38.5], [-76.0, 39.8], [-77.5, 39.8], [-77.5, 38.5]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "CAISO",
+        "zone": "NP15",
+        "name": "Northern California",
+        "color": "#F59E0B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-124.0, 37.0], [-119.5, 37.0], [-119.5, 42.0], [-124.0, 42.0], [-124.0, 37.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "CAISO",
+        "zone": "SP15",
+        "name": "Southern California",
+        "color": "#F59E0B"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-121.0, 33.0], [-115.5, 33.0], [-115.5, 36.0], [-121.0, 36.0], [-121.0, 33.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "MISO",
+        "zone": "MISO_CENTRAL",
+        "name": "MISO Central",
+        "color": "#8B5CF6"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-95.0, 35.0], [-89.0, 35.0], [-89.0, 43.0], [-95.0, 43.0], [-95.0, 35.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "SPP",
+        "zone": "SPP_CENTRAL",
+        "name": "SPP Central",
+        "color": "#EC4899"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-103.0, 33.0], [-95.0, 33.0], [-95.0, 40.0], [-103.0, 40.0], [-103.0, 33.0]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "NYISO",
+        "zone": "NYC",
+        "name": "New York City",
+        "color": "#06B6D4"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-74.3, 40.4], [-73.7, 40.4], [-73.7, 41.0], [-74.3, 41.0], [-74.3, 40.4]]]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "iso": "ISONE",
+        "zone": "BOSTON",
+        "name": "Boston/NEMA",
+        "color": "#14B8A6"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [[[-71.5, 42.0], [-70.5, 42.0], [-70.5, 42.8], [-71.5, 42.8], [-71.5, 42.0]]]
+      }
+    }
+  ]
+}

@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critical Minerals Tracker — Prospector Labs</title>
+    <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-sankey@0.12.0/dist/chartjs-chart-sankey.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --black: #000000;
+            --charcoal: #18181B;
+            --graphite: #27272A;
+            --zinc: #3F3F46;
+            --stone: #71717A;
+            --silver: #A1A1AA;
+            --smoke: #E4E4E7;
+            --cloud: #F4F4F5;
+            --white: #FFFFFF;
+            --electric: #3B82F6;
+            --ember: #F59E0B;
+            --jade: #10B981;
+            --coral: #EF4444;
+        }
+        
+        body {
+            font-family: 'Geist', system-ui, sans-serif;
+            background: var(--charcoal);
+            color: var(--white);
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+        
+        /* Typography */
+        .display { font-size: 48px; font-weight: 600; line-height: 1.1; letter-spacing: -0.02em; }
+        .h1 { font-size: 32px; font-weight: 600; line-height: 1.2; letter-spacing: -0.02em; }
+        .h2 { font-size: 24px; font-weight: 600; line-height: 1.3; }
+        .h3 { font-size: 18px; font-weight: 600; line-height: 1.4; }
+        .body { font-size: 15px; font-weight: 400; line-height: 1.6; }
+        .small { font-size: 13px; font-weight: 400; line-height: 1.5; color: var(--stone); }
+        .micro { font-size: 11px; font-weight: 500; line-height: 1.4; text-transform: uppercase; letter-spacing: 0.05em; }
+        .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+        
+        /* Header */
+        header {
+            margin-bottom: 48px;
+        }
+        
+        header .small {
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: var(--stone);
+            margin-top: 8px;
+            max-width: 600px;
+        }
+        
+        /* Navigation / Mineral Selector */
+        .mineral-nav {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--zinc);
+        }
+        
+        .mineral-btn {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            color: var(--silver);
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        
+        .mineral-btn:hover {
+            background: var(--zinc);
+            color: var(--white);
+        }
+        
+        .mineral-btn.active {
+            background: var(--electric);
+            border-color: var(--electric);
+            color: var(--white);
+        }
+        
+        .mineral-btn .symbol {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            opacity: 0.7;
+            margin-left: 4px;
+        }
+        
+        /* Grid Layout */
+        .grid {
+            display: grid;
+            gap: 24px;
+        }
+        
+        .grid-2 { grid-template-columns: repeat(2, 1fr); }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-4 { grid-template-columns: repeat(4, 1fr); }
+        
+        @media (max-width: 1024px) {
+            .grid-4 { grid-template-columns: repeat(2, 1fr); }
+            .grid-3 { grid-template-columns: repeat(2, 1fr); }
+        }
+        
+        @media (max-width: 640px) {
+            .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
+        }
+        
+        /* Cards */
+        .card {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+        
+        .card-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--stone);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        /* Stats */
+        .stat-value {
+            font-size: 36px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            font-feature-settings: "tnum";
+            line-height: 1.1;
+        }
+        
+        .stat-unit {
+            font-size: 14px;
+            color: var(--stone);
+            font-weight: 400;
+        }
+        
+        .stat-change {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            margin-top: 8px;
+        }
+        
+        .stat-change.positive { color: var(--jade); }
+        .stat-change.negative { color: var(--coral); }
+        
+        /* Charts */
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 16px;
+        }
+        
+        .chart-container.tall {
+            height: 400px;
+        }
+        
+        /* Bar chart custom */
+        .bar-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .bar-label {
+            width: 100px;
+            font-size: 13px;
+            color: var(--silver);
+            text-align: right;
+            flex-shrink: 0;
+        }
+        
+        .bar-container {
+            flex: 1;
+            height: 24px;
+            background: var(--zinc);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            background: var(--electric);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+        
+        .bar-value {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--white);
+        }
+        
+        /* Concentration Risk */
+        .risk-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        .risk-critical { background: rgba(239, 68, 68, 0.2); color: var(--coral); }
+        .risk-high { background: rgba(245, 158, 11, 0.2); color: var(--ember); }
+        .risk-moderate { background: rgba(59, 130, 246, 0.2); color: var(--electric); }
+        
+        /* Data Table */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--stone);
+            padding: 12px 0;
+            border-bottom: 1px solid var(--zinc);
+        }
+        
+        .data-table th:last-child,
+        .data-table td:last-child {
+            text-align: right;
+        }
+        
+        .data-table td {
+            padding: 12px 0;
+            font-size: 14px;
+            border-bottom: 1px solid var(--zinc);
+        }
+        
+        .data-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .data-table .mono {
+            font-size: 13px;
+        }
+        
+        /* Supply Chain section */
+        .supply-chain-section {
+            margin-top: 48px;
+            padding-top: 48px;
+            border-top: 1px solid var(--zinc);
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid var(--zinc);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        footer .small {
+            color: var(--stone);
+        }
+        
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background: var(--black);
+            color: var(--white);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        /* Company list */
+        .company-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .company-tag {
+            background: var(--zinc);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: var(--silver);
+        }
+        
+        /* Use badges */
+        .use-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.15);
+            color: var(--electric);
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        
+        /* Info panel */
+        .info-panel {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 8px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        
+        .info-panel .micro {
+            color: var(--electric);
+            margin-bottom: 8px;
+        }
+        
+        /* Loading state */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: var(--stone);
+        }
+        
+        /* Section headers */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        
+        .section-header .h2 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .section-header .mineral-symbol {
+            background: var(--electric);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 16px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <p class="small micro">Critical Minerals Tracker</p>
+            <h1 class="display">Supply Chain Intelligence</h1>
+            <p class="subtitle body">Real-time monitoring of critical minerals powering the energy transition. Production, prices, reserves, and supply chain concentration risks.</p>
+        </header>
+        
+        <!-- Mineral Selector -->
+        <nav class="mineral-nav" id="mineralNav">
+            <button class="mineral-btn active" data-mineral="overview">Overview</button>
+            <button class="mineral-btn" data-mineral="lithium">Lithium <span class="symbol">Li</span></button>
+            <button class="mineral-btn" data-mineral="cobalt">Cobalt <span class="symbol">Co</span></button>
+            <button class="mineral-btn" data-mineral="nickel">Nickel <span class="symbol">Ni</span></button>
+            <button class="mineral-btn" data-mineral="copper">Copper <span class="symbol">Cu</span></button>
+            <button class="mineral-btn" data-mineral="graphite">Graphite <span class="symbol">C</span></button>
+            <button class="mineral-btn" data-mineral="rareEarths">Rare Earths <span class="symbol">REE</span></button>
+            <button class="mineral-btn" data-mineral="gallium">Gallium <span class="symbol">Ga</span></button>
+            <button class="mineral-btn" data-mineral="germanium">Germanium <span class="symbol">Ge</span></button>
+        </nav>
+        
+        <!-- Main Content Area -->
+        <main id="mainContent">
+            <!-- Overview Section (default) -->
+            <section id="overviewSection">
+                <!-- Key Stats Grid -->
+                <div class="grid grid-4" style="margin-bottom: 32px;">
+                    <div class="card">
+                        <p class="card-title">Lithium Price</p>
+                        <p class="stat-value">134,500 <span class="stat-unit">CNY/t</span></p>
+                        <p class="stat-change positive">↑ 74% YoY</p>
+                    </div>
+                    <div class="card">
+                        <p class="card-title">Cobalt Price</p>
+                        <p class="stat-value">56,290 <span class="stat-unit">USD/t</span></p>
+                        <p class="stat-change positive">↑ 161% YoY</p>
+                    </div>
+                    <div class="card">
+                        <p class="card-title">Nickel Price</p>
+                        <p class="stat-value">17,033 <span class="stat-unit">USD/t</span></p>
+                        <p class="stat-change positive">↑ 8.2% YoY</p>
+                    </div>
+                    <div class="card">
+                        <p class="card-title">Copper Price</p>
+                        <p class="stat-value">5.85 <span class="stat-unit">USD/lb</span></p>
+                        <p class="stat-change positive">↑ 27.6% YoY</p>
+                    </div>
+                </div>
+                
+                <!-- Concentration Risks -->
+                <div class="grid grid-2">
+                    <div class="card">
+                        <p class="card-title">Supply Concentration Risk</p>
+                        <p class="small" style="margin-bottom: 16px;">Single-country dominance in critical supply chains</p>
+                        
+                        <div style="margin-top: 16px;">
+                            <div class="bar-row">
+                                <span class="bar-label">Gallium</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 96%; background: var(--coral);"></div>
+                                    <span class="bar-value">China 96%</span>
+                                </div>
+                            </div>
+                            <div class="bar-row">
+                                <span class="bar-label">REE Processing</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 90%; background: var(--coral);"></div>
+                                    <span class="bar-value">China 90%</span>
+                                </div>
+                            </div>
+                            <div class="bar-row">
+                                <span class="bar-label">Polysilicon</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 90%; background: var(--coral);"></div>
+                                    <span class="bar-value">China 90%</span>
+                                </div>
+                            </div>
+                            <div class="bar-row">
+                                <span class="bar-label">Graphite</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 75%; background: var(--ember);"></div>
+                                    <span class="bar-value">China 75%</span>
+                                </div>
+                            </div>
+                            <div class="bar-row">
+                                <span class="bar-label">Cobalt</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 68%; background: var(--ember);"></div>
+                                    <span class="bar-value">DRC 68%</span>
+                                </div>
+                            </div>
+                            <div class="bar-row">
+                                <span class="bar-label">Nickel</span>
+                                <div class="bar-container">
+                                    <div class="bar-fill" style="width: 50%; background: var(--electric);"></div>
+                                    <span class="bar-value">Indonesia 50%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <p class="card-title">Production by Mineral (2024)</p>
+                        <div class="chart-container">
+                            <canvas id="productionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Data Quality Matrix -->
+                <div class="card" style="margin-top: 24px;">
+                    <p class="card-title">Data Availability by Mineral</p>
+                    <p class="small" style="margin-bottom: 16px;">Quality assessment of publicly available data sources</p>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Mineral</th>
+                                <th>Price Data</th>
+                                <th>Production</th>
+                                <th>Reserves</th>
+                                <th>Supply Chain</th>
+                                <th>Data Quality</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Lithium</strong></td>
+                                <td class="mono">✓ Trading Economics</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ Industry</td>
+                                <td><span class="risk-badge risk-moderate">Excellent</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cobalt</strong></td>
+                                <td class="mono">✓ LME/TE</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ Industry</td>
+                                <td><span class="risk-badge risk-moderate">Good</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Nickel</strong></td>
+                                <td class="mono">✓ LME/TE</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ Industry</td>
+                                <td><span class="risk-badge risk-moderate">Excellent</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Copper</strong></td>
+                                <td class="mono">✓ COMEX/TE</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ Industry</td>
+                                <td><span class="risk-badge risk-moderate">Excellent</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Graphite</strong></td>
+                                <td class="mono">△ Industry est.</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">△ Limited</td>
+                                <td><span class="risk-badge risk-high">Moderate</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Rare Earths</strong></td>
+                                <td class="mono">△ Paid sources</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">△ Limited</td>
+                                <td><span class="risk-badge risk-high">Moderate</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Gallium</strong></td>
+                                <td class="mono">△ Industry est.</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✗ N/A</td>
+                                <td class="mono">✗ Limited</td>
+                                <td><span class="risk-badge risk-critical">Limited</span></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Germanium</strong></td>
+                                <td class="mono">△ Industry est.</td>
+                                <td class="mono">✓ USGS</td>
+                                <td class="mono">✗ N/A</td>
+                                <td class="mono">✗ Limited</td>
+                                <td><span class="risk-badge risk-critical">Limited</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="info-panel">
+                        <p class="micro">Data Sources</p>
+                        <p class="small">✓ = Freely available public data | △ = Requires paid sources or estimates | ✗ = Data not available</p>
+                        <p class="small" style="margin-top: 8px;"><strong>Primary Sources:</strong> USGS Mineral Commodity Summaries, Trading Economics, LME, COMEX, Company Reports</p>
+                        <p class="small"><strong>Paid Sources (for real-time):</strong> Benchmark Mineral Intelligence, S&P Global Platts, Fastmarkets, Asian Metal</p>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Individual Mineral Sections (hidden by default) -->
+            <section id="mineralDetail" style="display: none;">
+                <div class="section-header">
+                    <div class="h2">
+                        <div class="mineral-symbol" id="mineralSymbol">Li</div>
+                        <span id="mineralName">Lithium</span>
+                    </div>
+                    <div>
+                        <span class="use-badge" id="mineralUse">EV Batteries</span>
+                    </div>
+                </div>
+                
+                <!-- Price & Stats -->
+                <div class="grid grid-4" style="margin-bottom: 24px;">
+                    <div class="card">
+                        <p class="card-title">Current Price</p>
+                        <p class="stat-value" id="detailPrice">-</p>
+                        <p class="stat-change" id="detailPriceChange">-</p>
+                    </div>
+                    <div class="card">
+                        <p class="card-title">All-Time High</p>
+                        <p class="stat-value" id="detailHigh">-</p>
+                        <p class="small" id="detailHighDate">-</p>
+                    </div>
+                    <div class="card">
+                        <p class="card-title">World Production</p>
+                        <p class="stat-value" id="detailProduction">-</p>
+                        <p class="small" id="detailProductionUnit">tonnes</p>
+                    </div>
+                    <div class="card">
+                        <p class="card-title">World Reserves</p>
+                        <p class="stat-value" id="detailReserves">-</p>
+                        <p class="small" id="detailReservesUnit">tonnes</p>
+                    </div>
+                </div>
+                
+                <!-- Production & Reserves Charts -->
+                <div class="grid grid-2" style="margin-bottom: 24px;">
+                    <div class="card">
+                        <p class="card-title">Production by Country</p>
+                        <div id="productionBars"></div>
+                    </div>
+                    <div class="card">
+                        <p class="card-title">Reserves by Country</p>
+                        <div id="reservesBars"></div>
+                    </div>
+                </div>
+                
+                <!-- Supply Chain & Companies -->
+                <div class="grid grid-2">
+                    <div class="card">
+                        <p class="card-title">Supply Chain</p>
+                        <div id="supplyChainInfo"></div>
+                    </div>
+                    <div class="card">
+                        <p class="card-title">Major Companies</p>
+                        <div class="company-list" id="companiesList"></div>
+                        
+                        <div id="concernsPanel" style="margin-top: 16px;"></div>
+                    </div>
+                </div>
+            </section>
+        </main>
+        
+        <footer>
+            <p class="small">Last updated: February 6, 2026 | Data: USGS, Trading Economics, Industry Reports</p>
+            <p class="small">prospectorlabs.io</p>
+        </footer>
+    </div>
+    
+    <script>
+        // Load mineral data
+        let mineralsData = null;
+        
+        async function loadData() {
+            try {
+                const response = await fetch('data/minerals.json');
+                mineralsData = await response.json();
+                initCharts();
+            } catch (e) {
+                console.error('Error loading data:', e);
+                // Use inline data as fallback
+                initWithFallbackData();
+            }
+        }
+        
+        function initWithFallbackData() {
+            // Fallback data inline
+            mineralsData = {
+                minerals: {
+                    lithium: {
+                        symbol: "Li", name: "Lithium", primaryUse: "EV Batteries",
+                        price: { current: 134500, unit: "CNY/t", yearOverYearChange: 74, historicalHigh: 5750000, historicalHighDate: "2022-12" },
+                        production2024: { world: 240000, byCountry: [
+                            {country: "Australia", value: 88000, share: 36.7},
+                            {country: "Chile", value: 49000, share: 20.4},
+                            {country: "China", value: 41000, share: 17.1},
+                            {country: "Argentina", value: 18000, share: 7.5}
+                        ]},
+                        reserves: { world: 30000000, byCountry: [
+                            {country: "Chile", value: 9300000, share: 31.0},
+                            {country: "Australia", value: 7000000, share: 23.3}
+                        ]},
+                        majorCompanies: ["Albemarle (USA)", "SQM (Chile)", "Tianqi Lithium (China)", "Ganfeng Lithium (China)"]
+                    },
+                    cobalt: {
+                        symbol: "Co", name: "Cobalt", primaryUse: "EV Batteries",
+                        price: { current: 56290, unit: "USD/t", yearOverYearChange: 161.21, historicalHigh: 95250, historicalHighDate: "2018-03" },
+                        production2023: { world: 190000, byCountry: [
+                            {country: "DR Congo", value: 130000, share: 68.4},
+                            {country: "Indonesia", value: 17000, share: 8.9}
+                        ]},
+                        reserves: { world: 8300000, byCountry: [
+                            {country: "DR Congo", value: 4000000, share: 48.2},
+                            {country: "Australia", value: 1500000, share: 18.1}
+                        ]},
+                        majorCompanies: ["Glencore (Switzerland)", "CMOC (China)", "Umicore (Belgium)"],
+                        concerns: ["ESG/Child labor concerns in DRC artisanal mining"]
+                    },
+                    nickel: {
+                        symbol: "Ni", name: "Nickel", primaryUse: "Stainless Steel, Batteries",
+                        price: { current: 17032.88, unit: "USD/t", yearOverYearChange: 8.21, historicalHigh: 54050, historicalHighDate: "2007-05" },
+                        production2023: { world: 3600000, byCountry: [
+                            {country: "Indonesia", value: 1800000, share: 50.0},
+                            {country: "Philippines", value: 400000, share: 11.1}
+                        ]},
+                        reserves: { world: 100000000, byCountry: [
+                            {country: "Indonesia", value: 21000000, share: 21.0},
+                            {country: "Australia", value: 21000000, share: 21.0}
+                        ]},
+                        majorCompanies: ["Nornickel (Russia)", "Vale (Brazil)", "BHP (Australia)"]
+                    },
+                    copper: {
+                        symbol: "Cu", name: "Copper", primaryUse: "Electrical Wiring",
+                        price: { current: 5.85, unit: "USD/lb", yearOverYearChange: 27.55, historicalHigh: 6.58, historicalHighDate: "2026-01" },
+                        production2023: { world: 22000000, byCountry: [
+                            {country: "Chile", value: 5200000, share: 23.6},
+                            {country: "Peru", value: 2700000, share: 12.3}
+                        ]},
+                        reserves: { world: 890000000, byCountry: [
+                            {country: "Chile", value: 190000000, share: 21.3},
+                            {country: "Australia", value: 97000000, share: 10.9}
+                        ]},
+                        majorCompanies: ["Codelco (Chile)", "Freeport-McMoRan (USA)", "BHP (Australia)"]
+                    }
+                }
+            };
+            initCharts();
+        }
+        
+        // Initialize charts
+        function initCharts() {
+            // Production overview chart
+            const ctx = document.getElementById('productionChart');
+            if (ctx) {
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Lithium', 'Cobalt', 'Nickel', 'Copper'],
+                        datasets: [{
+                            label: 'Top Producer Share %',
+                            data: [36.7, 68.4, 50.0, 23.6],
+                            backgroundColor: ['#3B82F6', '#EF4444', '#F59E0B', '#10B981'],
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                grid: { color: '#3F3F46', drawBorder: false },
+                                ticks: { color: '#A1A1AA' },
+                                max: 100
+                            },
+                            y: {
+                                grid: { display: false },
+                                ticks: { color: '#A1A1AA' }
+                            }
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Navigation
+        document.querySelectorAll('.mineral-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.mineral-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const mineral = btn.dataset.mineral;
+                if (mineral === 'overview') {
+                    document.getElementById('overviewSection').style.display = 'block';
+                    document.getElementById('mineralDetail').style.display = 'none';
+                } else {
+                    document.getElementById('overviewSection').style.display = 'none';
+                    document.getElementById('mineralDetail').style.display = 'block';
+                    showMineralDetail(mineral);
+                }
+            });
+        });
+        
+        function showMineralDetail(mineralKey) {
+            if (!mineralsData) return;
+            
+            const mineral = mineralsData.minerals[mineralKey];
+            if (!mineral) return;
+            
+            // Update header
+            document.getElementById('mineralSymbol').textContent = mineral.symbol || mineralKey.substring(0, 2).toUpperCase();
+            document.getElementById('mineralName').textContent = mineral.name;
+            document.getElementById('mineralUse').textContent = mineral.primaryUse;
+            
+            // Price
+            const price = mineral.price;
+            if (price) {
+                document.getElementById('detailPrice').innerHTML = `${formatNumber(price.current)} <span class="stat-unit">${price.unit}</span>`;
+                const changeClass = price.yearOverYearChange >= 0 ? 'positive' : 'negative';
+                const arrow = price.yearOverYearChange >= 0 ? '↑' : '↓';
+                document.getElementById('detailPriceChange').className = `stat-change ${changeClass}`;
+                document.getElementById('detailPriceChange').textContent = `${arrow} ${Math.abs(price.yearOverYearChange)}% YoY`;
+                document.getElementById('detailHigh').innerHTML = `${formatNumber(price.historicalHigh)} <span class="stat-unit">${price.unit}</span>`;
+                document.getElementById('detailHighDate').textContent = price.historicalHighDate || '-';
+            }
+            
+            // Production
+            const prod = mineral.production2024 || mineral.production2023;
+            if (prod) {
+                document.getElementById('detailProduction').textContent = formatNumber(prod.world);
+                document.getElementById('detailProductionUnit').textContent = prod.unit || 'tonnes';
+                
+                // Production bars
+                const prodBars = document.getElementById('productionBars');
+                prodBars.innerHTML = prod.byCountry ? prod.byCountry.slice(0, 6).map(c => `
+                    <div class="bar-row">
+                        <span class="bar-label">${c.country}</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${c.share}%;"></div>
+                            <span class="bar-value">${c.share}%</span>
+                        </div>
+                    </div>
+                `).join('') : '<p class="small">No data available</p>';
+            }
+            
+            // Reserves
+            const res = mineral.reserves;
+            if (res) {
+                document.getElementById('detailReserves').textContent = formatNumber(res.world);
+                document.getElementById('detailReservesUnit').textContent = res.unit || 'tonnes';
+                
+                // Reserves bars
+                const resBars = document.getElementById('reservesBars');
+                resBars.innerHTML = res.byCountry ? res.byCountry.slice(0, 6).map(c => `
+                    <div class="bar-row">
+                        <span class="bar-label">${c.country}</span>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: ${c.share}%; background: var(--jade);"></div>
+                            <span class="bar-value">${c.share}%</span>
+                        </div>
+                    </div>
+                `).join('') : '<p class="small">No data available</p>';
+            } else {
+                document.getElementById('detailReserves').textContent = '-';
+                document.getElementById('reservesBars').innerHTML = '<p class="small">No reserves data available</p>';
+            }
+            
+            // Supply Chain
+            const supply = mineral.supplyChain;
+            const supplyDiv = document.getElementById('supplyChainInfo');
+            if (supply) {
+                supplyDiv.innerHTML = `
+                    <div style="margin-bottom: 12px;">
+                        <p class="micro" style="color: var(--stone); margin-bottom: 4px;">Mining</p>
+                        <p class="small">${supply.mining ? supply.mining.join(' → ') : '-'}</p>
+                    </div>
+                    <div style="margin-bottom: 12px;">
+                        <p class="micro" style="color: var(--stone); margin-bottom: 4px;">Processing</p>
+                        <p class="small">${supply.processing ? supply.processing.join(' → ') : (supply.smelting ? supply.smelting.join(' → ') : '-')}</p>
+                    </div>
+                    <div>
+                        <p class="micro" style="color: var(--stone); margin-bottom: 4px;">End Use</p>
+                        <p class="small">${supply.endUse ? supply.endUse.join(' • ') : '-'}</p>
+                    </div>
+                `;
+            } else {
+                supplyDiv.innerHTML = '<p class="small">Supply chain data not available</p>';
+            }
+            
+            // Companies
+            const companiesDiv = document.getElementById('companiesList');
+            companiesDiv.innerHTML = mineral.majorCompanies ? 
+                mineral.majorCompanies.map(c => `<span class="company-tag">${c}</span>`).join('') :
+                '<p class="small">No company data available</p>';
+            
+            // Concerns
+            const concernsDiv = document.getElementById('concernsPanel');
+            if (mineral.concerns && mineral.concerns.length > 0) {
+                concernsDiv.innerHTML = `
+                    <div class="info-panel" style="background: rgba(239, 68, 68, 0.1); border-color: rgba(239, 68, 68, 0.3);">
+                        <p class="micro" style="color: var(--coral);">Supply Chain Concerns</p>
+                        ${mineral.concerns.map(c => `<p class="small">• ${c}</p>`).join('')}
+                    </div>
+                `;
+            } else {
+                concernsDiv.innerHTML = '';
+            }
+        }
+        
+        function formatNumber(num) {
+            if (num >= 1000000000) return (num / 1000000000).toFixed(1) + 'B';
+            if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
+            if (num >= 1000) return num.toLocaleString();
+            return num;
+        }
+        
+        // Initialize
+        loadData();
+    </script>
+</body>
+</html>

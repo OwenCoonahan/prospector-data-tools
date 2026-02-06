@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Power Transformer Lead Time Tracker — Prospector Labs</title>
+    <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --black: #000000;
+            --charcoal: #18181B;
+            --graphite: #27272A;
+            --zinc: #3F3F46;
+            --stone: #71717A;
+            --silver: #A1A1AA;
+            --smoke: #E4E4E7;
+            --cloud: #F4F4F5;
+            --white: #FFFFFF;
+            --electric: #3B82F6;
+            --ember: #F59E0B;
+            --jade: #10B981;
+            --coral: #EF4444;
+        }
+        
+        body {
+            font-family: 'Geist', system-ui, -apple-system, sans-serif;
+            background: var(--charcoal);
+            color: var(--white);
+            line-height: 1.5;
+            font-feature-settings: "tnum";
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 48px 24px;
+        }
+        
+        /* Header */
+        header {
+            margin-bottom: 48px;
+            border-bottom: 1px solid var(--zinc);
+            padding-bottom: 32px;
+        }
+        
+        h1 {
+            font-size: 32px;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.02em;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 15px;
+            color: var(--stone);
+            margin-bottom: 16px;
+        }
+        
+        .data-notice {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 13px;
+            color: var(--silver);
+        }
+        
+        .data-notice .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--ember);
+        }
+        
+        /* Stats Row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+        
+        .stat-card {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .stat-value {
+            font-size: 36px;
+            font-weight: 600;
+            line-height: 1.1;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
+        }
+        
+        .stat-value.highlight {
+            color: var(--electric);
+        }
+        
+        .stat-label {
+            font-size: 13px;
+            color: var(--stone);
+        }
+        
+        .stat-change {
+            font-size: 13px;
+            margin-top: 8px;
+        }
+        
+        .stat-change.up {
+            color: var(--coral);
+        }
+        
+        .stat-change.down {
+            color: var(--jade);
+        }
+        
+        /* Section */
+        section {
+            margin-bottom: 48px;
+        }
+        
+        h2 {
+            font-size: 24px;
+            font-weight: 600;
+            line-height: 1.3;
+            letter-spacing: -0.02em;
+            margin-bottom: 24px;
+        }
+        
+        h3 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+        
+        /* Horizontal Bar Charts */
+        .chart-container {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 24px;
+        }
+        
+        .bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .bar-row {
+            display: grid;
+            grid-template-columns: 180px 1fr 80px;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .bar-label {
+            font-size: 13px;
+            color: var(--silver);
+        }
+        
+        .bar-track {
+            height: 32px;
+            background: var(--zinc);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .bar-fill.current {
+            background: var(--electric);
+        }
+        
+        .bar-fill.historical {
+            background: var(--stone);
+            opacity: 0.5;
+        }
+        
+        .bar-value {
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            text-align: right;
+        }
+        
+        /* Timeline comparison */
+        .timeline-chart {
+            margin-top: 24px;
+        }
+        
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .timeline-bar-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .timeline-bar {
+            height: 16px;
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            padding-right: 8px;
+            justify-content: flex-end;
+            min-width: 40px;
+        }
+        
+        .timeline-bar.pre2020 {
+            background: var(--zinc);
+        }
+        
+        .timeline-bar.peak {
+            background: var(--coral);
+        }
+        
+        .timeline-bar.current {
+            background: var(--electric);
+        }
+        
+        .timeline-bar span {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--white);
+        }
+        
+        .timeline-legend {
+            display: flex;
+            gap: 24px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--zinc);
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--stone);
+        }
+        
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+        }
+        
+        /* Manufacturers */
+        .manufacturer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        
+        .manufacturer-card {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        
+        .manufacturer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        
+        .manufacturer-name {
+            font-size: 15px;
+            font-weight: 600;
+        }
+        
+        .manufacturer-share {
+            font-size: 15px;
+            font-weight: 600;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--electric);
+        }
+        
+        .manufacturer-hq {
+            font-size: 13px;
+            color: var(--stone);
+            margin-bottom: 12px;
+        }
+        
+        .manufacturer-facilities {
+            font-size: 12px;
+            color: var(--silver);
+        }
+        
+        /* Constraints */
+        .constraint-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .constraint-item {
+            background: var(--graphite);
+            border: 1px solid var(--zinc);
+            border-radius: 8px;
+            padding: 16px 20px;
+            display: grid;
+            grid-template-columns: 200px 1fr 100px;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .constraint-name {
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .constraint-desc {
+            font-size: 13px;
+            color: var(--silver);
+        }
+        
+        .constraint-severity {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .severity-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--zinc);
+        }
+        
+        .severity-dot.active {
+            background: var(--coral);
+        }
+        
+        .severity-dot.medium {
+            background: var(--ember);
+        }
+        
+        /* Demand Drivers */
+        .driver-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .driver-row {
+            display: grid;
+            grid-template-columns: 200px 1fr 60px;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .driver-bar {
+            height: 28px;
+            background: var(--electric);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            padding-left: 12px;
+        }
+        
+        .driver-bar span {
+            font-size: 11px;
+            color: var(--white);
+        }
+        
+        .driver-trend {
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .driver-trend.up {
+            color: var(--coral);
+        }
+        
+        /* Footer */
+        footer {
+            margin-top: 64px;
+            padding-top: 24px;
+            border-top: 1px solid var(--zinc);
+        }
+        
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            gap: 24px;
+        }
+        
+        .footer-sources {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        .footer-sources h4 {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--silver);
+            margin-bottom: 8px;
+        }
+        
+        .footer-sources ul {
+            list-style: none;
+            font-size: 12px;
+            color: var(--stone);
+        }
+        
+        .footer-sources li {
+            margin-bottom: 4px;
+        }
+        
+        .footer-brand {
+            font-size: 12px;
+            color: var(--stone);
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .bar-row, .timeline-row, .constraint-item, .driver-row {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .stat-value {
+                font-size: 28px;
+            }
+            
+            h1 {
+                font-size: 24px;
+            }
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 24px;
+            border-bottom: 1px solid var(--zinc);
+            padding-bottom: 16px;
+        }
+        
+        .tab {
+            padding: 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--stone);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        
+        .tab:hover {
+            color: var(--silver);
+            background: var(--graphite);
+        }
+        
+        .tab.active {
+            color: var(--white);
+            background: var(--graphite);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Power Transformer Lead Time Tracker</h1>
+            <p class="subtitle">Monitoring supply chain constraints for large power transformers in the US grid</p>
+            <div class="data-notice">
+                <span class="dot"></span>
+                <span>Data compiled from utility filings, industry reports, and estimates — Feb 2026</span>
+            </div>
+        </header>
+        
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value highlight">36</div>
+                <div class="stat-label">Months — Large Power Transformer Lead Time</div>
+                <div class="stat-change up">↑ 140% vs pre-2020</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">US Facilities — LPT Manufacturing</div>
+                <div class="stat-change">+2 announced expansions</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">2,600</div>
+                <div class="stat-label">GW in Interconnection Queue</div>
+                <div class="stat-change up">Each needs transformers</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">70%</div>
+                <div class="stat-label">US GOES Import Dependency</div>
+                <div class="stat-change">Critical material</div>
+            </div>
+        </div>
+        
+        <div class="tabs">
+            <button class="tab active" data-tab="leadtimes">Lead Times</button>
+            <button class="tab" data-tab="manufacturers">Manufacturers</button>
+            <button class="tab" data-tab="constraints">Constraints</button>
+            <button class="tab" data-tab="demand">Demand Drivers</button>
+        </div>
+        
+        <div id="leadtimes" class="tab-content active">
+            <section>
+                <h2>Lead Times by Transformer Type</h2>
+                <p class="subtitle" style="margin-bottom: 24px;">Comparing pre-2020 baseline, peak shortage (2022-23), and current estimates</p>
+                
+                <div class="chart-container">
+                    <div class="timeline-chart">
+                        <div class="timeline-row">
+                            <div class="bar-label">Distribution<br><span style="font-size: 11px; color: var(--zinc);">&lt;5 MVA</span></div>
+                            <div class="timeline-bars">
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar pre2020" style="width: 25px;"><span>3</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar peak" style="width: 150px;"><span>18</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar current" style="width: 92px;"><span>11</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-row">
+                            <div class="bar-label">Medium Power<br><span style="font-size: 11px; color: var(--zinc);">5-100 MVA</span></div>
+                            <div class="timeline-bars">
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar pre2020" style="width: 75px;"><span>9</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar peak" style="width: 250px;"><span>30</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar current" style="width: 183px;"><span>22</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-row">
+                            <div class="bar-label">Large Power<br><span style="font-size: 11px; color: var(--zinc);">100-400 MVA</span></div>
+                            <div class="timeline-bars">
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar pre2020" style="width: 125px;"><span>15</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar peak" style="width: 400px;"><span>48</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar current" style="width: 300px;"><span>36</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-row">
+                            <div class="bar-label">GSU Transformers<br><span style="font-size: 11px; color: var(--zinc);">200-1000+ MVA</span></div>
+                            <div class="timeline-bars">
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar pre2020" style="width: 175px;"><span>21</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar peak" style="width: 500px;"><span>60</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar current" style="width: 350px;"><span>42</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="timeline-row">
+                            <div class="bar-label">EHV Autotransformer<br><span style="font-size: 11px; color: var(--zinc);">345-765 kV</span></div>
+                            <div class="timeline-bars">
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar pre2020" style="width: 175px;"><span>21</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Pre-2020</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar peak" style="width: 450px;"><span>54</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Peak</span>
+                                </div>
+                                <div class="timeline-bar-group">
+                                    <div class="timeline-bar current" style="width: 333px;"><span>40</span></div>
+                                    <span style="font-size: 11px; color: var(--stone);">Current</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--zinc);"></div>
+                            <span>Pre-2020 Baseline</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--coral);"></div>
+                            <span>Peak Shortage (2022-23)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--electric);"></div>
+                            <span>Current Estimate</span>
+                        </div>
+                        <div class="legend-item" style="margin-left: auto;">
+                            <span style="font-size: 11px;">Values in months</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div id="manufacturers" class="tab-content">
+            <section>
+                <h2>Major Manufacturers</h2>
+                <p class="subtitle" style="margin-bottom: 24px;">Global power transformer manufacturers with US market presence</p>
+                
+                <div class="manufacturer-grid">
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">Hitachi Energy</div>
+                            <div class="manufacturer-share">~20%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇨🇭 Switzerland (acquired ABB 2020)</div>
+                        <div class="manufacturer-facilities">US: Jefferson City MO, South Boston VA, Bland VA</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">Siemens Energy</div>
+                            <div class="manufacturer-share">~15%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇩🇪 Germany</div>
+                        <div class="manufacturer-facilities">US: Charlotte NC (service), Wendell NC</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">TBEA</div>
+                            <div class="manufacturer-share">~12%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇨🇳 China</div>
+                        <div class="manufacturer-facilities">US: Limited presence (supply chain concerns)</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">GE Vernova</div>
+                            <div class="manufacturer-share">~10%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇺🇸 USA</div>
+                        <div class="manufacturer-facilities">US: Clearwater FL, Charleroi PA</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">Toshiba Energy</div>
+                            <div class="manufacturer-share">~8%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇯🇵 Japan</div>
+                        <div class="manufacturer-facilities">US: Houston TX (sales/service)</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">Hyundai Electric</div>
+                            <div class="manufacturer-share">~6%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇰🇷 South Korea</div>
+                        <div class="manufacturer-facilities">US: Montgomery AL (planned 2025)</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">Mitsubishi Electric</div>
+                            <div class="manufacturer-share">~5%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇯🇵 Japan</div>
+                        <div class="manufacturer-facilities">US: Memphis TN (service)</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">Prolec GE</div>
+                            <div class="manufacturer-share">~4%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇲🇽 Mexico</div>
+                        <div class="manufacturer-facilities">US: Major supplier from Mexico facilities</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">Howard Industries</div>
+                            <div class="manufacturer-share">~3%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇺🇸 USA (private)</div>
+                        <div class="manufacturer-facilities">US: Laurel MS — distribution focus</div>
+                    </div>
+                    
+                    <div class="manufacturer-card">
+                        <div class="manufacturer-header">
+                            <div class="manufacturer-name">SPX Transformers</div>
+                            <div class="manufacturer-share">~2%</div>
+                        </div>
+                        <div class="manufacturer-hq">🇺🇸 USA</div>
+                        <div class="manufacturer-facilities">US: Waukesha WI — utility focused</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 24px; padding: 16px; background: var(--graphite); border: 1px solid var(--zinc); border-radius: 8px;">
+                    <p style="font-size: 13px; color: var(--stone);">
+                        <strong style="color: var(--silver);">Note:</strong> Market share estimates are approximate and vary by segment (distribution vs. large power). 
+                        Top 5 manufacturers control ~65% of global market. US has ~6 facilities capable of manufacturing large power transformers (>100 MVA).
+                    </p>
+                </div>
+            </section>
+        </div>
+        
+        <div id="constraints" class="tab-content">
+            <section>
+                <h2>Supply Chain Constraints</h2>
+                <p class="subtitle" style="margin-bottom: 24px;">Key bottlenecks limiting transformer production capacity</p>
+                
+                <h3>Critical Materials</h3>
+                <div class="constraint-list" style="margin-bottom: 32px;">
+                    <div class="constraint-item">
+                        <div class="constraint-name">Grain-Oriented Electrical Steel (GOES)</div>
+                        <div class="constraint-desc">Specialized steel for transformer cores. US 70% import dependent. Section 232 tariffs apply.</div>
+                        <div class="constraint-severity">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">High-Voltage Bushings</div>
+                        <div class="constraint-desc">Insulated conductors through transformer tanks. 60% imported. Few qualified suppliers globally.</div>
+                        <div class="constraint-severity">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">Copper (Winding Grade)</div>
+                        <div class="constraint-desc">Price volatility impacts costs. Competition from EV/renewable sectors.</div>
+                        <div class="constraint-severity">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">Transformer Oil</div>
+                        <div class="constraint-desc">Mineral insulating oil. Adequate supply but environmental regs increasing.</div>
+                        <div class="constraint-severity">
+                            <div class="severity-dot medium"></div>
+                            <div class="severity-dot medium"></div>
+                            <div class="severity-dot"></div>
+                            <div class="severity-dot"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h3>Capacity Constraints</h3>
+                <div class="constraint-list">
+                    <div class="constraint-item">
+                        <div class="constraint-name">Manufacturing Facilities</div>
+                        <div class="constraint-desc">Only 6 US facilities can produce LPTs. New facility requires $100M+ and 2+ years.</div>
+                        <div class="constraint-severity">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">Skilled Labor</div>
+                        <div class="constraint-desc">2-5 year training time. 30% of workforce retiring in next decade.</div>
+                        <div class="constraint-severity">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">High-Power Testing</div>
+                        <div class="constraint-desc">Only ~10 North American test facilities. Each test takes 2-4 weeks.</div>
+                        <div class="constraint-severity">
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot active"></div>
+                            <div class="severity-dot"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                    <div class="constraint-item">
+                        <div class="constraint-name">Transportation</div>
+                        <div class="constraint-desc">LPTs require specialized heavy-haul. Limited rail car availability.</div>
+                        <div class="constraint-severity">
+                            <div class="severity-dot medium"></div>
+                            <div class="severity-dot medium"></div>
+                            <div class="severity-dot"></div>
+                            <div class="severity-dot"></div>
+                            <div class="severity-dot"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div id="demand" class="tab-content">
+            <section>
+                <h2>Demand Drivers</h2>
+                <p class="subtitle" style="margin-bottom: 24px;">Factors driving unprecedented transformer demand</p>
+                
+                <div class="chart-container">
+                    <div class="driver-chart">
+                        <div class="driver-row">
+                            <div class="bar-label">Renewable Interconnection</div>
+                            <div class="bar-track">
+                                <div class="driver-bar" style="width: 100%;"><span>2,600 GW in queue</span></div>
+                            </div>
+                            <div class="driver-trend up">↑↑ accelerating</div>
+                        </div>
+                        <div class="driver-row">
+                            <div class="bar-label">Data Center Growth</div>
+                            <div class="bar-track">
+                                <div class="driver-bar" style="width: 90%;"><span>25 → 50 GW by 2030</span></div>
+                            </div>
+                            <div class="driver-trend up">↑↑ accelerating</div>
+                        </div>
+                        <div class="driver-row">
+                            <div class="bar-label">Transmission Expansion</div>
+                            <div class="bar-track">
+                                <div class="driver-bar" style="width: 80%;"><span>25,000 mi planned</span></div>
+                            </div>
+                            <div class="driver-trend up">↑ increasing</div>
+                        </div>
+                        <div class="driver-row">
+                            <div class="bar-label">Grid Modernization</div>
+                            <div class="bar-track">
+                                <div class="driver-bar" style="width: 80%;"><span>25% past design life</span></div>
+                            </div>
+                            <div class="driver-trend" style="color: var(--silver);">→ steady</div>
+                        </div>
+                        <div class="driver-row">
+                            <div class="bar-label">Electrification (EV/Heat)</div>
+                            <div class="bar-track">
+                                <div class="driver-bar" style="width: 70%;"><span>25% annual growth</span></div>
+                            </div>
+                            <div class="driver-trend up">↑↑ accelerating</div>
+                        </div>
+                        <div class="driver-row">
+                            <div class="bar-label">Battery Storage (BESS)</div>
+                            <div class="bar-track">
+                                <div class="driver-bar" style="width: 60%;"><span>15 GW/year</span></div>
+                            </div>
+                            <div class="driver-trend up">↑↑ accelerating</div>
+                        </div>
+                        <div class="driver-row">
+                            <div class="bar-label">Weather Resilience</div>
+                            <div class="bar-track">
+                                <div class="driver-bar" style="width: 50%;"><span>$8B utility spending</span></div>
+                            </div>
+                            <div class="driver-trend up">↑ increasing</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px;">
+                    <div class="stat-card">
+                        <div class="stat-value" style="font-size: 28px;">50,000</div>
+                        <div class="stat-label">Est. Annual US Transformer Demand (all types)</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" style="font-size: 28px;">~200</div>
+                        <div class="stat-label">Large Power Transformers Needed Annually</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" style="font-size: 28px;">8%</div>
+                        <div class="stat-label">Annual Demand Growth Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" style="font-size: 28px;">2027-28</div>
+                        <div class="stat-label">Est. Constraint Duration</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <footer>
+            <div class="footer-content">
+                <div class="footer-sources">
+                    <h4>Data Sources & Methodology</h4>
+                    <ul>
+                        <li>Lead times: Compiled from utility IRP filings (Duke, AEP, PG&E, Xcel) and industry reports</li>
+                        <li>Market shares: Estimated from company filings and industry analyses</li>
+                        <li>Constraints: DOE reports, NERC reliability assessments, trade data</li>
+                        <li>Demand drivers: Interconnection queue data, EIA, industry forecasts</li>
+                    </ul>
+                    <p style="margin-top: 12px; font-size: 11px; color: var(--zinc);">
+                        ⚠️ This data is largely ESTIMATED. No comprehensive public database of transformer lead times exists. 
+                        Values should be verified before business decisions.
+                    </p>
+                </div>
+                <div class="footer-brand">
+                    prospectorlabs.io<br>
+                    <span style="font-size: 11px;">February 2026</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                // Remove active from all tabs and contents
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                
+                // Add active to clicked tab and corresponding content
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
