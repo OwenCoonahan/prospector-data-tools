@@ -1183,12 +1183,11 @@
     function renderCompareSelector() {
       if (!allData) return;
       const container = document.getElementById('compareSelector');
-      container.innerHTML = allData.isos.map(iso => `
+      container.innerHTML = allData.isos.map((iso, i) => `
         <label class="compare-option ${selectedCompareISOs.includes(iso.id) ? 'selected' : ''}" onclick="toggleCompareSelection('${iso.id}', this)">
           <div class="compare-checkbox"></div>
           <div class="compare-option-info">
             <h4 style="display: flex; align-items: center; gap: 8px;">
-              <span style="width: 10px; height: 10px; border-radius: 50%; background: ${ISO_COLORS[iso.id]}"></span>
               ${iso.id}
             </h4>
             <span>${iso.projects.toLocaleString()} projects · ${(iso.totalMW/1000).toFixed(0)} GW</span>
@@ -1230,9 +1229,9 @@
 
     function renderCompareView() {
       const pills = document.getElementById('activeComparePills');
-      pills.innerHTML = selectedCompareISOs.map(id => `
+      pills.innerHTML = selectedCompareISOs.map((id, i) => `
         <div class="compare-pill">
-          <span style="width: 8px; height: 8px; border-radius: 50%; background: ${ISO_COLORS[id]}"></span>
+          <span style="width: 8px; height: 8px; border-radius: 50%; background: rgba(59, 130, 246, ${0.6 + i * 0.2})"></span>
           ${id}
         </div>
       `).join('');
@@ -1240,10 +1239,10 @@
       const grid = document.getElementById('compareGrid');
       const isos = selectedCompareISOs.map(id => allData.isos.find(i => i.id === id));
       
-      grid.innerHTML = isos.map(iso => `
+      grid.innerHTML = isos.map((iso, idx) => `
         <div class="compare-card">
           <div class="compare-card-header">
-            <span style="width: 16px; height: 16px; border-radius: 50%; background: ${ISO_COLORS[iso.id]}"></span>
+            <span style="width: 16px; height: 16px; border-radius: 50%; background: rgba(59, 130, 246, ${0.6 + idx * 0.2})"></span>
             <h3>${iso.name}</h3>
           </div>
           <div class="compare-metrics">
@@ -1324,7 +1323,7 @@
 
       document.getElementById('isoDetailTitle').innerHTML = `
         <span style="display: flex; align-items: center; gap: 12px;">
-          <span style="width: 16px; height: 16px; border-radius: 50%; background: ${ISO_COLORS[iso.id]}"></span>
+          <span style="width: 16px; height: 16px; border-radius: 50%; background: #3b82f6"></span>
           ${iso.name}
         </span>
       `;
@@ -1412,11 +1411,11 @@
         <div class="iso-section">
           <h3>Top Developers</h3>
           <div class="mini-bar-chart">
-            ${developers.map(dev => `
+            ${developers.map((dev, i) => `
               <div class="mini-bar-row">
                 <span style="font-size: 12px;">${dev.name}</span>
                 <div class="mini-bar-track">
-                  <div class="mini-bar-fill" style="width: ${dev.mw / maxDevMW * 100}%; background: ${ISO_COLORS[iso.id]};"></div>
+                  <div class="mini-bar-fill" style="width: ${dev.mw / maxDevMW * 100}%; background: rgba(59, 130, 246, ${0.5 + (1 - i/developers.length) * 0.5});"></div>
                 </div>
                 <span>${(dev.mw/1000).toFixed(1)} GW</span>
               </div>
@@ -1454,11 +1453,11 @@
         <div class="iso-section">
           <h3>Annual Queue Growth</h3>
           <div class="mini-bar-chart">
-            ${iso.yearlyGrowth.slice(-5).map(y => `
+            ${iso.yearlyGrowth.slice(-5).map((y, i, arr) => `
               <div class="mini-bar-row">
                 <span>${y.year}</span>
                 <div class="mini-bar-track">
-                  <div class="mini-bar-fill" style="width: ${y.projects / Math.max(...iso.yearlyGrowth.map(g => g.projects)) * 100}%; background: ${ISO_COLORS[iso.id]};"></div>
+                  <div class="mini-bar-fill" style="width: ${y.projects / Math.max(...iso.yearlyGrowth.map(g => g.projects)) * 100}%; background: rgba(59, 130, 246, ${0.5 + (i / arr.length) * 0.5});"></div>
                 </div>
                 <span>${y.projects}</span>
               </div>
@@ -1503,52 +1502,70 @@
       document.getElementById('avgWithdrawal').textContent = (avgWithdrawal * 100).toFixed(0) + '%';
       document.getElementById('avgTimeline').textContent = avgTimeline.toFixed(1);
 
-      // Helper for bar charts
-      function renderBarChart(containerId, sortedData, getValue, formatValue, colorFn) {
+      // Helper for bar charts - cleaner color approach
+      function renderBarChart(containerId, sortedData, getValue, formatValue, colorMode = 'neutral') {
         const max = Math.max(...sortedData.map(getValue));
-        document.getElementById(containerId).innerHTML = sortedData.map(iso => `
+        document.getElementById(containerId).innerHTML = sortedData.map((iso, idx) => {
+          let barColor;
+          const pct = getValue(iso) / max;
+          
+          if (colorMode === 'neutral') {
+            // Blue gradient - top performers slightly more saturated
+            barColor = idx === 0 ? '#3b82f6' : `rgba(59, 130, 246, ${0.4 + (1 - idx/sortedData.length) * 0.4})`;
+          } else if (colorMode === 'negative') {
+            // Red for bad metrics - intensity shows severity
+            barColor = `rgba(239, 68, 68, ${0.5 + pct * 0.5})`;
+          } else if (colorMode === 'positive') {
+            // Green for good metrics - intensity shows performance
+            barColor = `rgba(16, 185, 129, ${0.5 + pct * 0.5})`;
+          } else if (colorMode === 'timeline') {
+            // Amber/neutral for timeline - longer = more amber
+            barColor = `rgba(120, 113, 108, ${0.4 + pct * 0.5})`;
+          }
+          
+          return `
           <div class="bar-row" 
                onclick="openIsoDetail('${iso.id}')"
                onmouseenter="showTooltip(event, allData.isos.find(i => i.id === '${iso.id}'), '${containerId.replace('Chart', '')}', '${formatValue(getValue(iso))}')"
                onmouseleave="hideTooltip()">
             <div class="bar-label">${iso.id}</div>
             <div class="bar-track">
-              <div class="bar-fill" style="width: ${(getValue(iso) / max * 100)}%; background: ${colorFn(iso)};"></div>
+              <div class="bar-fill" style="width: ${(pct * 100)}%; background: ${barColor};"></div>
             </div>
             <div class="bar-value">${formatValue(getValue(iso))}</div>
           </div>
-        `).join('');
+        `}).join('');
       }
 
       renderBarChart('projectsChart', sortedByProjects, 
         iso => iso.projects, 
         v => (v / 1000).toFixed(1) + 'k',
-        iso => ISO_COLORS[iso.id]);
+        'neutral');
 
       renderBarChart('capacityChart', sortedByMW,
         iso => iso.totalMW,
         v => (v / 1000).toFixed(0),
-        iso => ISO_COLORS[iso.id]);
+        'neutral');
 
       renderBarChart('withdrawalChart', sortedByWithdrawal,
         iso => iso.withdrawalRate * 100,
         v => v.toFixed(0) + '%',
-        () => 'var(--negative)');
+        'negative');
 
       renderBarChart('completionChart', sortedByCompletion,
         iso => iso.completionRate * 100,
         v => v.toFixed(1) + '%',
-        () => 'var(--positive)');
+        'positive');
 
       renderBarChart('timelineChart', sortedByTimeline,
         iso => iso.avgTimelineYears,
         v => v.toFixed(1),
-        iso => ISO_COLORS[iso.id]);
+        'timeline');
 
       renderBarChart('avgSizeChart', sortedByAvgMW,
         iso => iso.avgMW,
         v => v.toString(),
-        iso => ISO_COLORS[iso.id]);
+        'neutral');
 
       // Capacity mix stacked bars
       document.getElementById('mixChart').innerHTML = sortedByMW.map(iso => {
@@ -1578,11 +1595,11 @@
         `;
       }).join('');
 
-      // Table
-      document.getElementById('tableBody').innerHTML = sortedByProjects.map(iso => `
+      // Table - cleaner look without rainbow dots
+      document.getElementById('tableBody').innerHTML = sortedByProjects.map((iso, idx) => `
         <tr onclick="openIsoDetail('${iso.id}')">
           <td class="iso-name">
-            <span class="iso-dot" style="background: ${ISO_COLORS[iso.id]}"></span>
+            <span class="iso-dot" style="background: rgba(59, 130, 246, ${0.5 + (1 - idx/sortedByProjects.length) * 0.5})"></span>
             ${iso.name}
           </td>
           <td>${iso.projects.toLocaleString()}</td>
