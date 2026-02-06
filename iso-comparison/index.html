@@ -3,372 +3,810 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>US Energy Queue | 6.3 Terawatts in the Pipeline</title>
-  <meta name="description" content="Visualizing 6.3 TW of proposed energy projects across America's 9 ISO regions">
+  <title>US ISO Queue Comparison | Prospector Labs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #fafafa;
+      --bg-primary: #ffffff;
+      --bg-secondary: #f4f4f5;
       --bg-card: #ffffff;
-      --text: #18181b;
+      --bg-hover: #fafafa;
+      --text-primary: #18181b;
       --text-secondary: #71717a;
       --text-muted: #a1a1aa;
       --border: #e4e4e7;
-      --accent: #2563eb;
+      --border-focus: #3b82f6;
+      --accent: #3b82f6;
       --accent-light: #dbeafe;
-      --font: 'Geist', system-ui, -apple-system, sans-serif;
-      
-      /* Sankey colors */
-      --solar: #f59e0b;
-      --wind: #06b6d4;
-      --storage: #8b5cf6;
-      --gas: #6b7280;
-      --hybrid: #10b981;
-      
-      /* Status colors */
-      --active: #2563eb;
-      --operational: #10b981;
-      --withdrawn: #ef4444;
+      --positive: #10b981;
+      --positive-light: #d1fae5;
+      --negative: #ef4444;
+      --negative-light: #fee2e2;
+      --warning: #f59e0b;
+      --bar-context: #d4d4d8;
+      --highlight-bg: #eff6ff;
+      --font-sans: 'Geist', system-ui, sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    
+    [data-theme="dark"] {
+      --bg-primary: #18181b;
+      --bg-secondary: #27272a;
+      --bg-card: #27272a;
+      --bg-hover: #3f3f46;
+      --text-primary: #f4f4f5;
+      --text-secondary: #a1a1aa;
+      --text-muted: #71717a;
+      --border: #3f3f46;
+      --border-focus: #60a5fa;
+      --accent: #60a5fa;
+      --accent-light: #1e3a5f;
+      --positive: #34d399;
+      --positive-light: #064e3b;
+      --negative: #f87171;
+      --negative-light: #7f1d1d;
+      --bar-context: #52525b;
+      --highlight-bg: #1e3a5f;
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: var(--font);
-      background: var(--bg);
-      color: var(--text);
+      font-family: var(--font-sans);
+      background: var(--bg-primary);
+      color: var(--text-primary);
       line-height: 1.5;
-      -webkit-font-smoothing: antialiased;
+      font-feature-settings: "tnum";
     }
 
     .container {
-      max-width: 1200px;
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 0 24px;
+      padding: 48px 24px;
     }
 
-    /* Hero Section */
-    .hero {
-      background: linear-gradient(135deg, #1e3a5f 0%, #0f172a 100%);
-      color: white;
-      padding: 80px 24px;
-      position: relative;
-      overflow: hidden;
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
     }
 
-    .hero::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-      opacity: 0.5;
-    }
-
-    .hero-content {
-      max-width: 1200px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-label {
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: rgba(255,255,255,0.6);
-      margin-bottom: 16px;
-    }
-
-    .hero h1 {
-      font-size: clamp(48px, 8vw, 96px);
-      font-weight: 700;
-      letter-spacing: -0.03em;
-      line-height: 1;
-      margin-bottom: 16px;
-    }
-
-    .hero h1 span {
-      background: linear-gradient(90deg, #60a5fa, #34d399);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .hero-subtitle {
-      font-size: 20px;
-      color: rgba(255,255,255,0.7);
-      max-width: 600px;
-      margin-bottom: 48px;
-    }
-
-    .hero-stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-      gap: 32px;
-      max-width: 800px;
-    }
-
-    .hero-stat {
-      border-left: 2px solid rgba(255,255,255,0.2);
-      padding-left: 16px;
-    }
-
-    .hero-stat-value {
+    .title-block h1 {
       font-size: 32px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-    }
-
-    .hero-stat-label {
-      font-size: 13px;
-      color: rgba(255,255,255,0.6);
-      margin-top: 4px;
-    }
-
-    /* Section Styling */
-    section {
-      padding: 80px 0;
-    }
-
-    .section-header {
-      margin-bottom: 48px;
-    }
-
-    .section-label {
-      font-size: 12px;
       font-weight: 600;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 8px;
-    }
-
-    .section-title {
-      font-size: 32px;
-      font-weight: 700;
       letter-spacing: -0.02em;
       margin-bottom: 8px;
     }
 
-    .section-desc {
-      font-size: 16px;
+    .title-block p {
+      font-size: 15px;
       color: var(--text-secondary);
-      max-width: 600px;
+      max-width: 500px;
     }
 
-    /* Sankey Container */
-    .sankey-container {
+    .header-actions {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .theme-toggle, .btn {
       background: var(--bg-card);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
-      overflow-x: auto;
-    }
-
-    .sankey-container svg {
-      display: block;
-      margin: 0 auto;
-    }
-
-    .sankey-node rect {
+      border-radius: 6px;
+      padding: 8px 12px;
       cursor: pointer;
-      transition: opacity 0.2s;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+      font-family: var(--font-sans);
+      font-size: 13px;
     }
 
-    .sankey-node:hover rect {
+    .theme-toggle:hover, .btn:hover {
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: white;
+    }
+
+    /* Compare Mode Controls */
+    .compare-controls {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 12px 16px;
+      background: var(--bg-secondary);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      font-size: 13px;
+    }
+
+    .compare-controls.hidden {
+      display: none;
+    }
+
+    .compare-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      background: var(--accent);
+      color: white;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .compare-tag button {
+      background: none;
+      border: none;
+      color: white;
+      cursor: pointer;
+      padding: 0;
+      font-size: 14px;
       opacity: 0.8;
     }
 
-    .sankey-node text {
-      font-family: var(--font);
+    .compare-tag button:hover {
+      opacity: 1;
+    }
+
+    .compare-clear {
+      margin-left: auto;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .compare-clear:hover {
+      color: var(--negative);
+    }
+
+    /* Summary Stats */
+    .summary-stats {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .stat-value {
+      font-size: 36px;
+      font-weight: 600;
+      line-height: 1.1;
+      margin-bottom: 4px;
+      letter-spacing: -0.02em;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Section Headers */
+    .section-header {
+      margin-bottom: 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .section-header h2 {
+      font-size: 20px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .section-header p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* Charts Grid */
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .chart-card {
+      padding: 20px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+    }
+
+    .chart-card.full-width {
+      grid-column: 1 / -1;
+    }
+
+    .chart-card.two-thirds {
+      grid-column: span 2;
+    }
+
+    .chart-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .chart-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-bottom: 16px;
+    }
+
+    /* Horizontal Bar Chart */
+    .bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .bar-row {
+      display: grid;
+      grid-template-columns: 70px 1fr 70px;
+      gap: 12px;
+      align-items: center;
+      padding: 4px 8px;
+      margin: 0 -8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .bar-row:hover {
+      background: var(--bg-hover);
+    }
+
+    .bar-row.selected {
+      background: var(--highlight-bg);
+    }
+
+    .bar-row.dimmed {
+      opacity: 0.3;
+    }
+
+    .bar-label {
+      font-family: var(--font-mono);
       font-size: 12px;
       font-weight: 500;
-      fill: var(--text);
     }
 
-    .sankey-link {
-      fill: none;
-      stroke-opacity: 0.3;
-      transition: stroke-opacity 0.2s;
+    .bar-track {
+      height: 20px;
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
     }
 
-    .sankey-link:hover {
-      stroke-opacity: 0.6;
+    .bar-fill {
+      height: 100%;
+      background: var(--bar-context);
+      border-radius: 4px;
+      transition: width 0.5s ease, background 0.3s ease;
     }
+
+    .bar-fill.highlight {
+      background: var(--accent);
+    }
+
+    .bar-fill.positive {
+      background: var(--positive);
+    }
+
+    .bar-fill.negative {
+      background: var(--negative);
+    }
+
+    .bar-value {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .bar-rank {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+
+    /* Tooltip */
+    .tooltip {
+      position: fixed;
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      pointer-events: none;
+      z-index: 1000;
+      max-width: 250px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    .tooltip.visible {
+      opacity: 1;
+    }
+
+    .tooltip-title {
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .tooltip-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .tooltip-label {
+      opacity: 0.7;
+    }
+
+    /* Stacked Bar Chart */
+    .stacked-bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .stacked-row {
+      display: grid;
+      grid-template-columns: 70px 1fr;
+      gap: 12px;
+      align-items: center;
+      padding: 4px 8px;
+      margin: 0 -8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .stacked-row:hover {
+      background: var(--bg-hover);
+    }
+
+    .stacked-row.selected {
+      background: var(--highlight-bg);
+    }
+
+    .stacked-row.dimmed {
+      opacity: 0.3;
+    }
+
+    .stacked-track {
+      height: 24px;
+      display: flex;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .stack-segment {
+      height: 100%;
+      transition: width 0.5s ease;
+    }
+
+    .stack-segment.solar { background: #f59e0b; }
+    .stack-segment.wind { background: #3b82f6; }
+    .stack-segment.storage { background: #8b5cf6; }
+    .stack-segment.gas { background: #71717a; }
+    .stack-segment.other { background: #d4d4d8; }
 
     /* Legend */
     .legend {
       display: flex;
+      gap: 20px;
+      margin-top: 12px;
       flex-wrap: wrap;
-      gap: 24px;
-      margin-top: 24px;
-      padding-top: 24px;
-      border-top: 1px solid var(--border);
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 13px;
+      gap: 6px;
+      font-size: 12px;
       color: var(--text-secondary);
     }
 
     .legend-dot {
-      width: 12px;
-      height: 12px;
-      border-radius: 3px;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
     }
 
-    /* Regional Cards */
-    .region-grid {
+    .legend-dot.solar { background: #f59e0b; }
+    .legend-dot.wind { background: #3b82f6; }
+    .legend-dot.storage { background: #8b5cf6; }
+    .legend-dot.gas { background: #71717a; }
+    .legend-dot.other { background: #d4d4d8; }
+
+    /* Sparkline Grid */
+    .sparkline-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns: repeat(3, 1fr);
       gap: 16px;
     }
 
-    .region-card {
-      background: var(--bg-card);
+    .sparkline-item {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px;
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .sparkline-item:hover {
+      border-color: var(--accent);
+    }
+
+    .sparkline-item.selected {
+      border-color: var(--accent);
+      background: var(--highlight-bg);
+    }
+
+    .sparkline-item.dimmed {
+      opacity: 0.3;
+    }
+
+    .sparkline-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+    }
+
+    .sparkline-label {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .sparkline-value {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .sparkline-change {
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .sparkline-change.positive { color: var(--positive); }
+    .sparkline-change.negative { color: var(--negative); }
+
+    .sparkline-track {
+      height: 40px;
+      display: flex;
+      align-items: flex-end;
+      gap: 2px;
+    }
+
+    .spark-bar {
+      flex: 1;
+      background: var(--bar-context);
+      border-radius: 2px 2px 0 0;
+      min-height: 2px;
+      transition: background 0.3s ease;
+    }
+
+    .spark-bar:last-child {
+      background: var(--accent);
+    }
+
+    /* ISO Detail Panel */
+    .detail-panel {
+      position: fixed;
+      top: 0;
+      right: -450px;
+      width: 450px;
+      height: 100vh;
+      background: var(--bg-card);
+      border-left: 1px solid var(--border);
+      box-shadow: -4px 0 20px rgba(0,0,0,0.1);
+      z-index: 100;
+      transition: right 0.3s ease;
+      overflow-y: auto;
+    }
+
+    .detail-panel.open {
+      right: 0;
+    }
+
+    .detail-header {
       padding: 24px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .region-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-    }
-
-    .region-card-header {
+      border-bottom: 1px solid var(--border);
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 16px;
+      position: sticky;
+      top: 0;
+      background: var(--bg-card);
     }
 
-    .region-name {
-      font-size: 18px;
+    .detail-title {
+      font-size: 24px;
       font-weight: 600;
+      letter-spacing: -0.02em;
     }
 
-    .region-rank {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--accent);
-      background: var(--accent-light);
-      padding: 4px 8px;
-      border-radius: 4px;
-    }
-
-    .region-capacity {
-      font-size: 28px;
-      font-weight: 700;
-      font-variant-numeric: tabular-nums;
-      margin-bottom: 4px;
-    }
-
-    .region-projects {
+    .detail-subtitle {
       font-size: 13px;
       color: var(--text-secondary);
-      margin-bottom: 16px;
+      margin-top: 4px;
     }
 
-    .region-sparkline {
-      height: 40px;
-      margin-bottom: 16px;
+    .detail-close {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--text-muted);
+      padding: 0;
+      line-height: 1;
     }
 
-    .region-breakdown {
-      display: flex;
-      gap: 4px;
-      height: 6px;
-      border-radius: 3px;
-      overflow: hidden;
-      margin-bottom: 8px;
+    .detail-close:hover {
+      color: var(--text-primary);
     }
 
-    .region-breakdown-segment {
-      height: 100%;
-      transition: opacity 0.2s;
+    .detail-body {
+      padding: 24px;
     }
 
-    .region-breakdown-segment:hover {
-      opacity: 0.8;
+    .detail-section {
+      margin-bottom: 24px;
     }
 
-    .region-status-row {
+    .detail-section-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .detail-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .detail-stat {
+      padding: 12px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+    }
+
+    .detail-stat-value {
+      font-size: 24px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .detail-stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+
+    .detail-developer {
       display: flex;
       justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+    }
+
+    .detail-developer:last-child {
+      border-bottom: none;
+    }
+
+    .detail-developer-name {
+      font-weight: 500;
+    }
+
+    .detail-developer-stats {
+      color: var(--text-muted);
+      font-family: var(--font-mono);
       font-size: 12px;
-      color: var(--text-secondary);
     }
 
-    .status-dot {
-      display: inline-block;
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      margin-right: 4px;
+    .detail-map {
+      width: 100%;
+      height: 150px;
+      background: var(--bg-secondary);
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      font-size: 12px;
     }
 
-    /* Treemap */
-    .treemap-container {
-      background: var(--bg-card);
+    .detail-trend {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      height: 60px;
+      padding: 8px 0;
+    }
+
+    .detail-trend-bar {
+      flex: 1;
+      background: var(--bar-context);
+      border-radius: 2px;
+      min-height: 4px;
+    }
+
+    .detail-trend-bar:last-child {
+      background: var(--accent);
+    }
+
+    .detail-trend-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Comparison Table */
+    .table-controls {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .search-input {
+      flex: 1;
+      max-width: 300px;
+      padding: 8px 12px;
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
-      overflow: hidden;
+      border-radius: 6px;
+      background: var(--bg-card);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
     }
 
-    .treemap-cell {
+    .search-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    .comparison-table thead {
+      background: var(--bg-secondary);
+    }
+
+    .comparison-table th {
+      text-align: left;
+      padding: 10px 12px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
       cursor: pointer;
-      transition: opacity 0.2s;
+      user-select: none;
+      white-space: nowrap;
     }
 
-    .treemap-cell:hover {
-      opacity: 0.85;
+    .comparison-table th:hover {
+      color: var(--text-primary);
     }
 
-    .treemap-label {
-      font-family: var(--font);
+    .comparison-table th.sorted {
+      color: var(--accent);
+    }
+
+    .comparison-table th:not(:first-child) {
+      text-align: right;
+    }
+
+    .comparison-table th .sort-icon {
+      margin-left: 4px;
+      opacity: 0.5;
+    }
+
+    .comparison-table th.sorted .sort-icon {
+      opacity: 1;
+    }
+
+    .comparison-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .comparison-table td:not(:first-child) {
+      text-align: right;
+      font-family: var(--font-mono);
+    }
+
+    .comparison-table tbody tr {
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .comparison-table tbody tr:hover {
+      background: var(--bg-hover);
+    }
+
+    .comparison-table tbody tr.selected {
+      background: var(--highlight-bg);
+    }
+
+    .iso-name {
       font-weight: 600;
-      fill: white;
-      pointer-events: none;
     }
 
-    .treemap-value {
-      font-family: var(--font);
-      font-size: 12px;
-      fill: rgba(255,255,255,0.8);
-      pointer-events: none;
+    .metric-best {
+      color: var(--positive);
+      font-weight: 600;
     }
 
-    /* Two Column Layout */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 24px;
-    }
-
-    @media (max-width: 900px) {
-      .two-col {
-        grid-template-columns: 1fr;
-      }
+    .metric-worst {
+      color: var(--negative);
     }
 
     /* Footer */
     footer {
-      padding: 48px 24px;
+      margin-top: 48px;
+      padding-top: 24px;
       border-top: 1px solid var(--border);
-      text-align: center;
-      color: var(--text-secondary);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--text-muted);
       font-size: 13px;
     }
 
@@ -377,668 +815,1273 @@
       text-decoration: none;
     }
 
-    /* Tooltip */
-    .tooltip {
-      position: absolute;
-      background: var(--text);
-      color: white;
-      padding: 8px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.2s;
-      z-index: 1000;
-      white-space: nowrap;
+    footer a:hover {
+      text-decoration: underline;
     }
 
-    .tooltip.visible {
-      opacity: 1;
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .summary-stats {
+        grid-template-columns: repeat(3, 1fr);
+      }
+
+      .charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .chart-card.two-thirds {
+        grid-column: 1 / -1;
+      }
     }
 
-    /* Insights Banner */
-    .insights {
-      background: linear-gradient(90deg, var(--accent-light), #f0fdf4);
+    @media (max-width: 900px) {
+      .summary-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .sparkline-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-panel {
+        width: 100%;
+        right: -100%;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 24px 16px;
+      }
+
+      header {
+        flex-direction: column;
+        gap: 16px;
+      }
+
+      .summary-stats {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-value {
+        font-size: 28px;
+      }
+
+      .bar-row {
+        grid-template-columns: 55px 1fr 55px;
+        gap: 8px;
+      }
+
+      .comparison-table {
+        font-size: 11px;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 8px 8px;
+      }
+    }
+    /* Sankey Diagram Styles */
+    .sankey-section {
+      margin: 3rem 0;
+      padding: 2rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 24px 32px;
-      margin-bottom: 48px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
     }
-
-    .insights-icon {
-      font-size: 24px;
-    }
-
-    .insights-text {
-      font-size: 15px;
-      color: var(--text);
-    }
-
-    .insights-text strong {
+    
+    .sankey-title {
+      font-size: 1.25rem;
       font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    
+    .sankey-subtitle {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+      margin-bottom: 1.5rem;
+    }
+    
+    .sankey-container {
+      width: 100%;
+      overflow-x: auto;
+    }
+    
+    .sankey-container svg {
+      display: block;
+      margin: 0 auto;
+    }
+    
+    .sankey-node rect {
+      fill-opacity: 0.9;
+      shape-rendering: crispEdges;
+    }
+    
+    .sankey-node text {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      fill: var(--text-primary);
+    }
+    
+    .sankey-link {
+      fill: none;
+      stroke-opacity: 0.4;
+    }
+    
+    .sankey-link:hover {
+      stroke-opacity: 0.7;
     }
   </style>
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script src="https://unpkg.com/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
 </head>
 <body>
-
-<!-- Hero Section -->
-<section class="hero">
-  <div class="hero-content">
-    <div class="hero-label">US Interconnection Queues</div>
-    <h1><span>6.3 TW</span> in the Pipeline</h1>
-    <p class="hero-subtitle">
-      35,469 energy projects totaling 6.3 terawatts are waiting to connect to America's power grid — 
-      nearly 6× the current installed capacity.
-    </p>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <div class="hero-stat-value">35,469</div>
-        <div class="hero-stat-label">Total Projects</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-value">9</div>
-        <div class="hero-stat-label">ISO Regions</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-value">1.35 TW</div>
-        <div class="hero-stat-label">Solar Capacity</div>
-      </div>
-      <div class="hero-stat">
-        <div class="hero-stat-value">70%</div>
-        <div class="hero-stat-label">Withdrawn Rate</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<div class="container">
-  
-  <!-- Insight Banner -->
-  <div class="insights" style="margin-top: 48px;">
-    <div class="insights-icon">💡</div>
-    <div class="insights-text">
-      <strong>Key Insight:</strong> Only 8% of queued capacity ever becomes operational. 
-      The average project waits 4+ years in queue, and ERCOT leads in successful deployments.
-    </div>
-  </div>
-
-  <!-- US to ISO Sankey -->
-  <section>
-    <div class="section-header">
-      <div class="section-label">Flow Diagram</div>
-      <h2 class="section-title">Where Is All This Capacity Going?</h2>
-      <p class="section-desc">6.3 terawatts of proposed energy projects flow into 9 ISO regions. The Western Interconnection and MISO lead the pack.</p>
-    </div>
-    <div class="sankey-container">
-      <div id="sankey-iso"></div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background: #2563eb;"></div>Western ISOs (CAISO, West)</div>
-        <div class="legend-item"><div class="legend-dot" style="background: #059669;"></div>Central ISOs (MISO, SPP, ERCOT)</div>
-        <div class="legend-item"><div class="legend-dot" style="background: #7c3aed;"></div>Eastern ISOs (PJM, NYISO, ISO-NE)</div>
-        <div class="legend-item"><div class="legend-dot" style="background: #dc2626;"></div>Southeast (Non-ISO)</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Technology Flow Sankey -->
-  <section>
-    <div class="section-header">
-      <div class="section-label">Technology Mix</div>
-      <h2 class="section-title">What's Being Built?</h2>
-      <p class="section-desc">Solar dominates the queue, but wind and storage are close behind. See how each technology distributes across regions.</p>
-    </div>
-    <div class="sankey-container">
-      <div id="sankey-tech"></div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background: var(--solar);"></div>Solar</div>
-        <div class="legend-item"><div class="legend-dot" style="background: var(--wind);"></div>Wind</div>
-        <div class="legend-item"><div class="legend-dot" style="background: var(--storage);"></div>Storage</div>
-        <div class="legend-item"><div class="legend-dot" style="background: var(--gas);"></div>Gas</div>
-        <div class="legend-item"><div class="legend-dot" style="background: var(--hybrid);"></div>Solar + Storage</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Status Flow -->
-  <section>
-    <div class="section-header">
-      <div class="section-label">Project Outcomes</div>
-      <h2 class="section-title">What Happens to Projects?</h2>
-      <p class="section-desc">Most projects never make it. 70% are withdrawn, only 8% become operational. Active projects still have hope.</p>
-    </div>
-    <div class="sankey-container">
-      <div id="sankey-status"></div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background: var(--operational);"></div>Operational (514 GW)</div>
-        <div class="legend-item"><div class="legend-dot" style="background: var(--active);"></div>Active (1.3 TW)</div>
-        <div class="legend-item"><div class="legend-dot" style="background: var(--withdrawn);"></div>Withdrawn (4.4 TW)</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Treemap Section -->
-  <section>
-    <div class="section-header">
-      <div class="section-label">Capacity Breakdown</div>
-      <h2 class="section-title">Technology Treemap</h2>
-      <p class="section-desc">Area represents total capacity. Solar and Wind dominate, with storage growing rapidly.</p>
-    </div>
-    <div class="treemap-container">
-      <div id="treemap"></div>
-    </div>
-  </section>
-
-  <!-- Regional Cards -->
-  <section>
-    <div class="section-header">
-      <div class="section-label">By Region</div>
-      <h2 class="section-title">ISO Rankings</h2>
-      <p class="section-desc">Ranked by total queue capacity. Each region has its own technology mix and success rate.</p>
-    </div>
-    <div class="region-grid" id="region-cards"></div>
-  </section>
-
-</div>
-
-<footer>
   <div class="container">
-    Data from public ISO queue filings • Last updated February 2026 • 
-    Built by <a href="#">Prospector Labs</a>
+    <header>
+      <div class="title-block">
+        <h1>US ISO Queue Comparison</h1>
+        <p>Side-by-side metrics across all major US interconnection regions. Click any ISO to see details or enable Compare mode to analyze multiple regions.</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn" id="compareBtn" onclick="toggleCompareMode()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+          </svg>
+          Compare
+        </button>
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="compare-controls hidden" id="compareControls">
+      <span>Comparing:</span>
+      <div id="compareTags"></div>
+      <button class="compare-clear" onclick="clearCompare()">Clear all</button>
+    </div>
+
+    <!-- Summary Stats -->
+    <div class="summary-stats">
+      <div class="stat-card">
+        <div class="stat-value" id="totalProjects">—</div>
+        <div class="stat-label">Total Projects</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="totalGW">—</div>
+        <div class="stat-label">Total Capacity (GW)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgWithdrawal">—</div>
+        <div class="stat-label">Avg Withdrawal Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgTimeline">—</div>
+        <div class="stat-label">Avg Queue Time (Days)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" id="avgStorage">—</div>
+        <div class="stat-label">Avg Storage Ratio</div>
+      </div>
+    </div>
+
+    <!-- Queue Size Charts -->
+    <section class="charts-grid">
+      <div class="chart-card">
+        <div class="chart-title">Queue Size by Projects</div>
+        <div class="chart-subtitle">Number of projects in each ISO queue</div>
+        <div class="bar-chart" id="projectsChart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Queue Size by Capacity</div>
+        <div class="chart-subtitle">Total megawatts in queue (GW)</div>
+        <div class="bar-chart" id="capacityChart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Withdrawal Rate</div>
+        <div class="chart-subtitle">% of projects that withdrew from queue</div>
+        <div class="bar-chart" id="withdrawalChart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Completion Rate</div>
+        <div class="chart-subtitle">% of projects reaching operational status</div>
+        <div class="bar-chart" id="completionChart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Avg Time in Queue</div>
+        <div class="chart-subtitle">Days for active projects (longer = more backlog)</div>
+        <div class="bar-chart" id="timelineChart"></div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Median Project Size</div>
+        <div class="chart-subtitle">Median capacity per project (MW)</div>
+        <div class="bar-chart" id="medianSizeChart"></div>
+      </div>
+    </section>
+
+    <!-- New Metrics Section -->
+    <section>
+      <div class="section-header">
+        <h2>Advanced Metrics</h2>
+        <p>Storage ratios, hybrid projects, and queue dynamics</p>
+      </div>
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">Storage Capacity Ratio</div>
+          <div class="chart-subtitle">% of queue capacity that is storage-related</div>
+          <div class="bar-chart" id="storageChart"></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">Hybrid Project Share</div>
+          <div class="chart-subtitle">% of projects combining technologies (e.g., solar+storage)</div>
+          <div class="bar-chart" id="hybridChart"></div>
+        </div>
+
+        <div class="chart-card">
+          <div class="chart-title">Unique Developers</div>
+          <div class="chart-subtitle">Number of distinct developers in queue</div>
+          <div class="bar-chart" id="developersChart"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Capacity Mix -->
+    <section>
+      <div class="section-header">
+        <h2>Capacity Mix</h2>
+        <p>Technology composition by region (MW in queue)</p>
+      </div>
+      <div class="chart-card" style="margin-bottom: 40px;">
+        <div class="stacked-bar-chart" id="mixChart"></div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-dot solar"></div> Solar</div>
+          <div class="legend-item"><div class="legend-dot wind"></div> Wind</div>
+          <div class="legend-item"><div class="legend-dot storage"></div> Storage</div>
+          <div class="legend-item"><div class="legend-dot gas"></div> Gas</div>
+          <div class="legend-item"><div class="legend-dot other"></div> Other</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Queue Growth Trends -->
+    <section>
+      <div class="section-header">
+        <h2>Queue Growth Trends</h2>
+        <p>Annual new project entries with YoY growth rates (2020-2025)</p>
+      </div>
+      <div class="chart-card" style="margin-bottom: 40px;">
+        <div class="sparkline-grid" id="sparklineGrid"></div>
+      </div>
+    </section>
+
+    <!-- Detailed Table -->
+    <section>
+      <div class="section-header">
+        <h2>All Metrics</h2>
+        <p>Click headers to sort • Best values highlighted in green, worst in red</p>
+      </div>
+      <div class="chart-card">
+        <div class="table-controls">
+          <input type="text" class="search-input" id="tableSearch" placeholder="Search ISOs..." oninput="filterTable()">
+        </div>
+        <div class="table-wrapper">
+          <table class="comparison-table" id="comparisonTable">
+            <thead>
+              <tr>
+                <th data-sort="name" onclick="sortTable('name')">ISO/Region <span class="sort-icon">↕</span></th>
+                <th data-sort="projects" onclick="sortTable('projects')">Projects <span class="sort-icon">↕</span></th>
+                <th data-sort="capacity" onclick="sortTable('capacity')">Capacity (GW) <span class="sort-icon">↕</span></th>
+                <th data-sort="median" onclick="sortTable('median')">Median MW <span class="sort-icon">↕</span></th>
+                <th data-sort="withdrawal" onclick="sortTable('withdrawal')">Withdrawn <span class="sort-icon">↕</span></th>
+                <th data-sort="completion" onclick="sortTable('completion')">Completed <span class="sort-icon">↕</span></th>
+                <th data-sort="queueDays" onclick="sortTable('queueDays')">Queue Days <span class="sort-icon">↕</span></th>
+                <th data-sort="storage" onclick="sortTable('storage')">Storage % <span class="sort-icon">↕</span></th>
+                <th data-sort="hybrid" onclick="sortTable('hybrid')">Hybrid % <span class="sort-icon">↕</span></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- Sankey Diagram Section -->
+    <section class="sankey-section">
+      <h2 class="sankey-title">Capacity Flow Visualization</h2>
+      <p class="sankey-subtitle">See how 6.3 TW of queued capacity flows from total US queue into each ISO region</p>
+      <div class="sankey-container" id="sankeyCapacity"></div>
+    </section>
+
+    <section class="sankey-section">
+      <h2 class="sankey-title">Technology Distribution by Region</h2>
+      <p class="sankey-subtitle">How different generation types distribute across ISO regions</p>
+      <div class="sankey-container" id="sankeyTechnology"></div>
+    </section>
+
+    <footer>
+      <span>Data sourced from public ISO interconnection queues. Feb 2026.</span>
+      <a href="https://prospectorlabs.io" target="_blank">prospectorlabs.io</a>
+    </footer>
   </div>
-</footer>
 
-<div class="tooltip" id="tooltip"></div>
+  <!-- ISO Detail Panel -->
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-header">
+      <div>
+        <div class="detail-title" id="detailTitle">—</div>
+        <div class="detail-subtitle" id="detailSubtitle">—</div>
+      </div>
+      <button class="detail-close" onclick="closeDetail()">×</button>
+    </div>
+    <div class="detail-body">
+      <div class="detail-section">
+        <div class="detail-section-title">Key Statistics</div>
+        <div class="detail-stats" id="detailStats"></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Top Developers</div>
+        <div id="detailDevelopers"></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Queue Growth Trend (Projects/Year)</div>
+        <div class="detail-trend" id="detailTrend"></div>
+        <div class="detail-trend-labels" id="detailTrendLabels"></div>
+      </div>
+      <div class="detail-section">
+        <div class="detail-section-title">Territory</div>
+        <div class="detail-map" id="detailMap"></div>
+      </div>
+    </div>
+  </div>
 
-<script>
-// Data
-const isoData = [
-  { name: 'West', capacity: 1133237, projects: 6008, active: 356301, operational: 51304, withdrawn: 681175 },
-  { name: 'MISO', capacity: 1001656, projects: 5435, active: 232427, operational: 153743, withdrawn: 615485 },
-  { name: 'PJM', capacity: 876166, projects: 8152, active: 187464, operational: 97034, withdrawn: 580185 },
-  { name: 'ERCOT', capacity: 798474, projects: 3768, active: 235877, operational: 78567, withdrawn: 484031 },
-  { name: 'CAISO', capacity: 708171, projects: 2837, active: 88523, operational: 31608, withdrawn: 588040 },
-  { name: 'Southeast', capacity: 636066, projects: 2879, active: 117975, operational: 69322, withdrawn: 447068 },
-  { name: 'SPP', capacity: 581049, projects: 2841, active: 71181, operational: 3270, withdrawn: 506598 },
-  { name: 'NYISO', capacity: 385307, projects: 1948, active: 155, operational: 12439, withdrawn: 348164 },
-  { name: 'ISO-NE', capacity: 206148, projects: 1601, active: 15437, operational: 16753, withdrawn: 173958 }
-];
+  <!-- Tooltip -->
+  <div class="tooltip" id="tooltip"></div>
 
-const techByRegion = {
-  'Solar': { MISO: 304700, ERCOT: 257334, PJM: 201384, Southeast: 152604, West: 147837, CAISO: 122779, SPP: 119556, NYISO: 34970, 'ISO-NE': 10247 },
-  'Wind': { MISO: 256768, West: 248394, SPP: 237788, ERCOT: 164908, PJM: 107673, CAISO: 63929, 'ISO-NE': 47098, NYISO: 37278, Southeast: 12533 },
-  'Storage': { CAISO: 193556, West: 173116, MISO: 102493, NYISO: 101450, PJM: 75210, SPP: 62024, 'ISO-NE': 42631, ERCOT: 39872, Southeast: 24671 },
-  'Gas': { PJM: 317566, Southeast: 237083, MISO: 153239, ERCOT: 110244, SPP: 97907, West: 87354, CAISO: 71392, NYISO: 52418, 'ISO-NE': 20225 },
-  'Solar + Storage': { West: 378722, CAISO: 191634, Southeast: 49650, PJM: 46007, SPP: 35226, NYISO: 11041, 'ISO-NE': 163 }
-};
+  <script>
+    // ==================== DATA ====================
+    const DATA = {
+      generated: "2026-02-06",
+      isos: [
+        {
+          id: "PJM",
+          name: "PJM Interconnection",
+          description: "Largest US RTO covering 13 states and DC. Mid-Atlantic and Midwest.",
+          states: "PA, NJ, MD, DE, DC, VA, WV, OH, NC, IN, IL, MI, KY",
+          projects: 8152,
+          totalMW: 876166,
+          avgMW: 107,
+          medianMW: 30,
+          withdrawn: 4885,
+          operational: 1195,
+          active: 1942,
+          withdrawalRate: 0.599,
+          completionRate: 0.147,
+          avgQueueDays: 1682,
+          storagePct: 13.9,
+          hybridPct: 6.8,
+          uniqueDevelopers: 820,
+          capacityMix: { solar: 201384, wind: 107673, storage: 75210, gas: 317566, other: 174333 },
+          yearlyGrowth: [
+            { year: 2020, projects: 972, mw: 67388 },
+            { year: 2021, projects: 1304, mw: 107026 },
+            { year: 2022, projects: 517, mw: 58680 },
+            { year: 2023, projects: 466, mw: 33325 }
+          ],
+          topDevelopers: [
+            { name: "Dominion Energy", projects: 725, mw: 90983 },
+            { name: "Mn8 Energy", projects: 170, mw: 2745 },
+            { name: "Consolidated Edison", projects: 149, mw: 2267 },
+            { name: "Whitetail Solar", projects: 144, mw: 2884 },
+            { name: "Invenergy", projects: 139, mw: 14935 }
+          ]
+        },
+        {
+          id: "West",
+          name: "Western Interconnection",
+          description: "Non-ISO western states including NV, AZ, UT, CO, WY, NM, and others.",
+          states: "NV, AZ, UT, CO, WY, NM, MT, ID, OR, WA",
+          projects: 6008,
+          totalMW: 1133237,
+          avgMW: 189,
+          medianMW: 110,
+          withdrawn: 3728,
+          operational: 660,
+          active: 1455,
+          withdrawalRate: 0.621,
+          completionRate: 0.110,
+          avgQueueDays: 1515,
+          storagePct: 49.9,
+          hybridPct: 24.6,
+          uniqueDevelopers: 842,
+          capacityMix: { solar: 147837, wind: 248394, storage: 173116, gas: 87354, other: 476536 },
+          yearlyGrowth: [
+            { year: 2020, projects: 243, mw: 51433 },
+            { year: 2021, projects: 505, mw: 118083 },
+            { year: 2022, projects: 753, mw: 181986 },
+            { year: 2023, projects: 791, mw: 233491 },
+            { year: 2024, projects: 367, mw: 78743 }
+          ],
+          topDevelopers: [
+            { name: "Berkshire Hathaway Energy", projects: 530, mw: 88680 },
+            { name: "Avangrid Power", projects: 276, mw: 45800 },
+            { name: "Westdevco BN", projects: 162, mw: 83889 },
+            { name: "Invenergy", projects: 154, mw: 15570 },
+            { name: "Public Service NM", projects: 128, mw: 4605 }
+          ]
+        },
+        {
+          id: "MISO",
+          name: "MISO",
+          description: "Midcontinent Independent System Operator covering 15 states.",
+          states: "ND, SD, NE, MN, IA, WI, MI, IL, IN, MO, KY, AR, LA, MS, TX",
+          projects: 5435,
+          totalMW: 1001656,
+          avgMW: 185,
+          medianMW: 150,
+          withdrawn: 3341,
+          operational: 987,
+          active: 1107,
+          withdrawalRate: 0.615,
+          completionRate: 0.182,
+          avgQueueDays: 803,
+          storagePct: 10.2,
+          hybridPct: 0,
+          uniqueDevelopers: 379,
+          capacityMix: { solar: 304700, wind: 256768, storage: 102493, gas: 153239, other: 184456 },
+          yearlyGrowth: [
+            { year: 2020, projects: 302, mw: 43149 },
+            { year: 2021, projects: 413, mw: 61985 },
+            { year: 2022, projects: 1023, mw: 176284 },
+            { year: 2023, projects: 39, mw: 4822 },
+            { year: 2024, projects: 710, mw: 139698 },
+            { year: 2025, projects: 399, mw: 106942 }
+          ],
+          topDevelopers: [
+            { name: "Entergy", projects: 917, mw: 178636 },
+            { name: "Ameren", projects: 461, mw: 79993 },
+            { name: "METC", projects: 320, mw: 57481 },
+            { name: "Duke Energy", projects: 261, mw: 48146 },
+            { name: "American Transmission", projects: 245, mw: 36867 }
+          ]
+        },
+        {
+          id: "ERCOT",
+          name: "ERCOT",
+          description: "Electric Reliability Council of Texas. Independent Texas grid.",
+          states: "TX",
+          projects: 3768,
+          totalMW: 798474,
+          avgMW: 212,
+          medianMW: 181,
+          withdrawn: 2021,
+          operational: 489,
+          active: 1258,
+          withdrawalRate: 0.537,
+          completionRate: 0.130,
+          avgQueueDays: 1123,
+          storagePct: 5.0,
+          hybridPct: 0,
+          uniqueDevelopers: 2305,
+          capacityMix: { solar: 257334, wind: 164908, storage: 39872, gas: 110244, other: 226116 },
+          yearlyGrowth: [
+            { year: 2020, projects: 222, mw: 44662 },
+            { year: 2021, projects: 311, mw: 57550 },
+            { year: 2022, projects: 354, mw: 66701 },
+            { year: 2023, projects: 460, mw: 92078 },
+            { year: 2024, projects: 439, mw: 97608 }
+          ],
+          topDevelopers: [
+            { name: "NextEra", projects: 40, mw: 6831 },
+            { name: "Invenergy", projects: 33, mw: 10022 },
+            { name: "Cypress Creek", projects: 27, mw: 2974 },
+            { name: "Tempus Power", projects: 25, mw: 2815 },
+            { name: "EON", projects: 25, mw: 5527 }
+          ]
+        },
+        {
+          id: "Southeast",
+          name: "Southeast",
+          description: "Southeastern US utilities including TVA, Southern Company territory.",
+          states: "GA, AL, FL, TN, SC, NC, KY, MS",
+          projects: 2879,
+          totalMW: 636066,
+          avgMW: 221,
+          medianMW: 89,
+          withdrawn: 1881,
+          operational: 275,
+          active: 710,
+          withdrawalRate: 0.653,
+          completionRate: 0.095,
+          avgQueueDays: 1376,
+          storagePct: 11.7,
+          hybridPct: 11.2,
+          uniqueDevelopers: 355,
+          capacityMix: { solar: 152604, wind: 12533, storage: 24671, gas: 237083, other: 209175 },
+          yearlyGrowth: [
+            { year: 2020, projects: 210, mw: 34300 },
+            { year: 2021, projects: 167, mw: 27895 },
+            { year: 2022, projects: 254, mw: 36885 },
+            { year: 2023, projects: 382, mw: 57019 },
+            { year: 2024, projects: 289, mw: 58433 }
+          ],
+          topDevelopers: [
+            { name: "Southern Company", projects: 349, mw: 134385 },
+            { name: "TVA", projects: 249, mw: 136059 },
+            { name: "Duke Energy", projects: 146, mw: 38004 },
+            { name: "Origis Energy", projects: 107, mw: 11897 },
+            { name: "Masked Developer", projects: 85, mw: 10865 }
+          ]
+        },
+        {
+          id: "SPP",
+          name: "SPP",
+          description: "Southwest Power Pool covering central US wind corridor.",
+          states: "OK, KS, NE, TX, NM, AR, LA, MO, MT, SD, ND, WY",
+          projects: 2841,
+          totalMW: 581049,
+          avgMW: 205,
+          medianMW: 186,
+          withdrawn: 2517,
+          operational: 43,
+          active: 281,
+          withdrawalRate: 0.886,
+          completionRate: 0.015,
+          avgQueueDays: 406,
+          storagePct: 17.3,
+          hybridPct: 6.4,
+          uniqueDevelopers: 271,
+          capacityMix: { solar: 119556, wind: 237788, storage: 62024, gas: 97907, other: 63774 },
+          yearlyGrowth: [
+            { year: 2020, projects: 103, mw: 19548 },
+            { year: 2021, projects: 115, mw: 22090 },
+            { year: 2022, projects: 116, mw: 24100 },
+            { year: 2023, projects: 421, mw: 86932 },
+            { year: 2024, projects: 110, mw: 25533 },
+            { year: 2025, projects: 369, mw: 98356 }
+          ],
+          topDevelopers: [
+            { name: "Evergy", projects: 46, mw: 11751 },
+            { name: "Invenergy", projects: 33, mw: 5293 },
+            { name: "Milligan Wind", projects: 28, mw: 2799 },
+            { name: "PSO", projects: 24, mw: 13858 },
+            { name: "Enel", projects: 23, mw: 4116 }
+          ]
+        },
+        {
+          id: "CAISO",
+          name: "CAISO",
+          description: "California Independent System Operator. Manages 80% of CA grid.",
+          states: "CA",
+          projects: 2837,
+          totalMW: 708171,
+          avgMW: 250,
+          medianMW: 155,
+          withdrawn: 2298,
+          operational: 228,
+          active: 311,
+          withdrawalRate: 0.810,
+          completionRate: 0.080,
+          avgQueueDays: 2575,
+          storagePct: 59.5,
+          hybridPct: 25.2,
+          uniqueDevelopers: 360,
+          capacityMix: { solar: 122779, wind: 63929, storage: 193556, gas: 71392, other: 256515 },
+          yearlyGrowth: [
+            { year: 2020, projects: 153, mw: 43744 },
+            { year: 2021, projects: 361, mw: 108258 },
+            { year: 2022, projects: 3, mw: 388 },
+            { year: 2023, projects: 562, mw: 215006 }
+          ],
+          topDevelopers: [
+            { name: "Pacific Gas & Electric", projects: 189, mw: 108364 },
+            { name: "AES Corporation", projects: 118, mw: 35323 },
+            { name: "26SB 8ME", projects: 108, mw: 61652 },
+            { name: "EDF Renewables", projects: 70, mw: 31679 },
+            { name: "Adobe Solar", projects: 56, mw: 1120 }
+          ]
+        },
+        {
+          id: "NYISO",
+          name: "NYISO",
+          description: "New York Independent System Operator.",
+          states: "NY",
+          projects: 1948,
+          totalMW: 385307,
+          avgMW: 199,
+          medianMW: 94,
+          withdrawn: 1677,
+          operational: 111,
+          active: 4,
+          withdrawalRate: 0.861,
+          completionRate: 0.057,
+          avgQueueDays: 808,
+          storagePct: 30.0,
+          hybridPct: 5.1,
+          uniqueDevelopers: 918,
+          capacityMix: { solar: 34970, wind: 37278, storage: 101450, gas: 52418, other: 159191 },
+          yearlyGrowth: [
+            { year: 2020, projects: 152, mw: 28198 },
+            { year: 2021, projects: 163, mw: 24768 },
+            { year: 2022, projects: 168, mw: 57277 },
+            { year: 2023, projects: 140, mw: 41666 },
+            { year: 2024, projects: 401, mw: 81545 },
+            { year: 2025, projects: 27, mw: 8397 }
+          ],
+          topDevelopers: [
+            { name: "ACE Devco NC", projects: 42, mw: 4971 },
+            { name: "EDF Renewables", projects: 38, mw: 3909 },
+            { name: "RWE Solar", projects: 20, mw: 3970 },
+            { name: "Hanwha Q Cells", projects: 19, mw: 3146 },
+            { name: "Emeren US", projects: 18, mw: 2073 }
+          ]
+        },
+        {
+          id: "ISO-NE",
+          name: "ISO-NE",
+          description: "ISO New England covering 6 New England states.",
+          states: "CT, MA, ME, NH, RI, VT",
+          projects: 1601,
+          totalMW: 206148,
+          avgMW: 143,
+          medianMW: 29,
+          withdrawn: 1225,
+          operational: 297,
+          active: 79,
+          withdrawalRate: 0.765,
+          completionRate: 0.185,
+          avgQueueDays: 1591,
+          storagePct: 21.0,
+          hybridPct: 0.3,
+          uniqueDevelopers: 74,
+          capacityMix: { solar: 10247, wind: 47098, storage: 42631, gas: 20225, other: 85947 },
+          yearlyGrowth: [
+            { year: 2020, projects: 142, mw: 10480 },
+            { year: 2021, projects: 121, mw: 15483 },
+            { year: 2022, projects: 135, mw: 21735 },
+            { year: 2023, projects: 140, mw: 22791 },
+            { year: 2024, projects: 116, mw: 18930 },
+            { year: 2025, projects: 1, mw: 5 }
+          ],
+          topDevelopers: [
+            { name: "Green Mountain Power", projects: 6, mw: 328 },
+            { name: "Onward Energy", projects: 5, mw: 891 },
+            { name: "Generation Bridge II", projects: 5, mw: 2437 },
+            { name: "Freedom Pine Solar", projects: 5, mw: 1241 },
+            { name: "Kendall Green Energy", projects: 4, mw: 783 }
+          ]
+        }
+      ]
+    };
 
-const techColors = {
-  'Solar': '#f59e0b',
-  'Wind': '#06b6d4',
-  'Storage': '#8b5cf6',
-  'Gas': '#6b7280',
-  'Solar + Storage': '#10b981'
-};
+    // ==================== STATE ====================
+    let selectedISO = null;
+    let compareMode = false;
+    let compareISOs = [];
+    let sortColumn = 'projects';
+    let sortDir = 'desc';
+    let tableData = [];
 
-const statusColors = {
-  'Active': '#2563eb',
-  'Operational': '#10b981',
-  'Withdrawn': '#ef4444'
-};
+    // ==================== INIT ====================
+    function init() {
+      const savedTheme = localStorage.getItem('theme') || 'light';
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      render();
+    }
 
-const regionColors = {
-  'West': '#2563eb',
-  'CAISO': '#3b82f6',
-  'MISO': '#059669',
-  'SPP': '#10b981',
-  'ERCOT': '#34d399',
-  'PJM': '#7c3aed',
-  'NYISO': '#8b5cf6',
-  'ISO-NE': '#a78bfa',
-  'Southeast': '#dc2626'
-};
+    // ==================== THEME ====================
+    function toggleTheme() {
+      const html = document.documentElement;
+      const current = html.getAttribute('data-theme');
+      const next = current === 'dark' ? 'light' : 'dark';
+      html.setAttribute('data-theme', next);
+      localStorage.setItem('theme', next);
+    }
 
-// Tooltip
-const tooltip = d3.select('#tooltip');
-
-function showTooltip(event, text) {
-  tooltip
-    .html(text)
-    .style('left', (event.pageX + 10) + 'px')
-    .style('top', (event.pageY - 10) + 'px')
-    .classed('visible', true);
-}
-
-function hideTooltip() {
-  tooltip.classed('visible', false);
-}
-
-// Format numbers
-function formatGW(mw) {
-  return (mw / 1000).toFixed(0) + ' GW';
-}
-
-function formatTW(mw) {
-  return (mw / 1000000).toFixed(2) + ' TW';
-}
-
-// Create ISO Sankey
-function createISOSankey() {
-  const width = 900;
-  const height = 500;
-  
-  const svg = d3.select('#sankey-iso')
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height)
-    .attr('viewBox', `0 0 ${width} ${height}`)
-    .attr('preserveAspectRatio', 'xMidYMid meet');
-
-  const sankey = d3.sankey()
-    .nodeWidth(20)
-    .nodePadding(20)
-    .extent([[50, 20], [width - 150, height - 20]]);
-
-  const nodes = [
-    { name: 'US Queue\n6.3 TW' },
-    ...isoData.map(d => ({ name: d.name }))
-  ];
-
-  const links = isoData.map((d, i) => ({
-    source: 0,
-    target: i + 1,
-    value: d.capacity
-  }));
-
-  const graph = sankey({
-    nodes: nodes.map(d => Object.assign({}, d)),
-    links: links.map(d => Object.assign({}, d))
-  });
-
-  // Links
-  svg.append('g')
-    .selectAll('path')
-    .data(graph.links)
-    .join('path')
-    .attr('class', 'sankey-link')
-    .attr('d', d3.sankeyLinkHorizontal())
-    .attr('stroke', d => regionColors[d.target.name] || '#94a3b8')
-    .attr('stroke-width', d => Math.max(1, d.width))
-    .on('mouseover', (event, d) => showTooltip(event, `${d.target.name}: ${formatGW(d.value)}`))
-    .on('mouseout', hideTooltip);
-
-  // Nodes
-  const node = svg.append('g')
-    .selectAll('g')
-    .data(graph.nodes)
-    .join('g')
-    .attr('class', 'sankey-node');
-
-  node.append('rect')
-    .attr('x', d => d.x0)
-    .attr('y', d => d.y0)
-    .attr('height', d => d.y1 - d.y0)
-    .attr('width', d => d.x1 - d.x0)
-    .attr('fill', d => d.index === 0 ? '#1e3a5f' : regionColors[d.name] || '#94a3b8')
-    .attr('rx', 3);
-
-  node.append('text')
-    .attr('x', d => d.x0 < width / 2 ? d.x1 + 8 : d.x0 - 8)
-    .attr('y', d => (d.y1 + d.y0) / 2)
-    .attr('dy', '0.35em')
-    .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
-    .text(d => d.name.split('\n')[0])
-    .style('font-weight', d => d.index === 0 ? '700' : '500');
-
-  // Add capacity labels
-  node.filter(d => d.index > 0)
-    .append('text')
-    .attr('x', d => d.x0 - 8)
-    .attr('y', d => (d.y1 + d.y0) / 2)
-    .attr('dy', '0.35em')
-    .attr('text-anchor', 'end')
-    .attr('fill', '#71717a')
-    .style('font-size', '11px')
-    .text(d => formatGW(d.value));
-}
-
-// Create Technology Sankey
-function createTechSankey() {
-  const width = 900;
-  const height = 550;
-  
-  const svg = d3.select('#sankey-tech')
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height)
-    .attr('viewBox', `0 0 ${width} ${height}`)
-    .attr('preserveAspectRatio', 'xMidYMid meet');
-
-  const sankey = d3.sankey()
-    .nodeWidth(20)
-    .nodePadding(15)
-    .extent([[80, 20], [width - 100, height - 20]]);
-
-  const techs = Object.keys(techByRegion);
-  const regions = ['West', 'MISO', 'PJM', 'ERCOT', 'CAISO', 'Southeast', 'SPP', 'NYISO', 'ISO-NE'];
-  
-  const nodes = [
-    ...techs.map(t => ({ name: t, type: 'tech' })),
-    ...regions.map(r => ({ name: r, type: 'region' }))
-  ];
-
-  const links = [];
-  techs.forEach((tech, ti) => {
-    regions.forEach((region, ri) => {
-      const value = techByRegion[tech][region];
-      if (value && value > 10000) { // Only show significant flows
-        links.push({
-          source: ti,
-          target: techs.length + ri,
-          value: value,
-          tech: tech
-        });
+    // ==================== COMPARE MODE ====================
+    function toggleCompareMode() {
+      compareMode = !compareMode;
+      document.getElementById('compareBtn').classList.toggle('active', compareMode);
+      if (!compareMode) {
+        clearCompare();
       }
+      updateCompareControls();
+    }
+
+    function toggleCompareISO(isoId) {
+      if (!compareMode) {
+        // Single selection - open detail panel
+        selectedISO = selectedISO === isoId ? null : isoId;
+        if (selectedISO) {
+          openDetail(isoId);
+        } else {
+          closeDetail();
+        }
+      } else {
+        // Compare mode
+        const idx = compareISOs.indexOf(isoId);
+        if (idx >= 0) {
+          compareISOs.splice(idx, 1);
+        } else if (compareISOs.length < 3) {
+          compareISOs.push(isoId);
+        }
+        updateCompareControls();
+      }
+      updateHighlights();
+    }
+
+    function removeFromCompare(isoId) {
+      compareISOs = compareISOs.filter(id => id !== isoId);
+      updateCompareControls();
+      updateHighlights();
+    }
+
+    function clearCompare() {
+      compareISOs = [];
+      updateCompareControls();
+      updateHighlights();
+    }
+
+    function updateCompareControls() {
+      const controls = document.getElementById('compareControls');
+      const tagsEl = document.getElementById('compareTags');
+      
+      if (compareMode && compareISOs.length > 0) {
+        controls.classList.remove('hidden');
+        tagsEl.innerHTML = compareISOs.map(id => `
+          <span class="compare-tag">
+            ${id}
+            <button onclick="removeFromCompare('${id}')">&times;</button>
+          </span>
+        `).join('');
+      } else {
+        controls.classList.add('hidden');
+      }
+    }
+
+    function updateHighlights() {
+      const rows = document.querySelectorAll('.bar-row, .stacked-row, .sparkline-item');
+      rows.forEach(row => {
+        const isoId = row.dataset.iso;
+        row.classList.remove('selected', 'dimmed');
+        
+        if (compareMode && compareISOs.length > 0) {
+          if (compareISOs.includes(isoId)) {
+            row.classList.add('selected');
+          } else {
+            row.classList.add('dimmed');
+          }
+        } else if (selectedISO) {
+          if (isoId === selectedISO) {
+            row.classList.add('selected');
+          }
+        }
+      });
+
+      // Table rows
+      document.querySelectorAll('.comparison-table tbody tr').forEach(row => {
+        const isoId = row.dataset.iso;
+        row.classList.remove('selected');
+        if ((compareMode && compareISOs.includes(isoId)) || (!compareMode && isoId === selectedISO)) {
+          row.classList.add('selected');
+        }
+      });
+    }
+
+    // ==================== DETAIL PANEL ====================
+    function openDetail(isoId) {
+      const iso = DATA.isos.find(i => i.id === isoId);
+      if (!iso) return;
+
+      document.getElementById('detailTitle').textContent = iso.id;
+      document.getElementById('detailSubtitle').textContent = iso.name + ' — ' + iso.description;
+
+      // Stats
+      document.getElementById('detailStats').innerHTML = `
+        <div class="detail-stat">
+          <div class="detail-stat-value">${iso.projects.toLocaleString()}</div>
+          <div class="detail-stat-label">Projects</div>
+        </div>
+        <div class="detail-stat">
+          <div class="detail-stat-value">${(iso.totalMW / 1000).toFixed(0)} GW</div>
+          <div class="detail-stat-label">Capacity</div>
+        </div>
+        <div class="detail-stat">
+          <div class="detail-stat-value">${(iso.withdrawalRate * 100).toFixed(0)}%</div>
+          <div class="detail-stat-label">Withdrawn</div>
+        </div>
+        <div class="detail-stat">
+          <div class="detail-stat-value">${(iso.completionRate * 100).toFixed(1)}%</div>
+          <div class="detail-stat-label">Completed</div>
+        </div>
+        <div class="detail-stat">
+          <div class="detail-stat-value">${iso.avgQueueDays.toLocaleString()}</div>
+          <div class="detail-stat-label">Avg Queue Days</div>
+        </div>
+        <div class="detail-stat">
+          <div class="detail-stat-value">${iso.storagePct.toFixed(0)}%</div>
+          <div class="detail-stat-label">Storage Ratio</div>
+        </div>
+      `;
+
+      // Developers
+      document.getElementById('detailDevelopers').innerHTML = iso.topDevelopers.map(d => `
+        <div class="detail-developer">
+          <span class="detail-developer-name">${d.name}</span>
+          <span class="detail-developer-stats">${d.projects} projects • ${(d.mw/1000).toFixed(1)} GW</span>
+        </div>
+      `).join('');
+
+      // Trend
+      const growth = iso.yearlyGrowth;
+      const maxProj = Math.max(...growth.map(g => g.projects));
+      document.getElementById('detailTrend').innerHTML = growth.map((g, i) => 
+        `<div class="detail-trend-bar" style="height: ${Math.max(5, g.projects / maxProj * 100)}%" title="${g.year}: ${g.projects}"></div>`
+      ).join('');
+      document.getElementById('detailTrendLabels').innerHTML = `
+        <span>${growth[0].year}</span>
+        <span>${growth[growth.length - 1].year}</span>
+      `;
+
+      // Map placeholder
+      document.getElementById('detailMap').innerHTML = `
+        <div style="text-align: center;">
+          <div style="font-size: 24px; margin-bottom: 8px;">📍</div>
+          <div>${iso.states}</div>
+        </div>
+      `;
+
+      document.getElementById('detailPanel').classList.add('open');
+    }
+
+    function closeDetail() {
+      document.getElementById('detailPanel').classList.remove('open');
+      selectedISO = null;
+      updateHighlights();
+    }
+
+    // ==================== TOOLTIP ====================
+    function showTooltip(e, content) {
+      const tooltip = document.getElementById('tooltip');
+      tooltip.innerHTML = content;
+      tooltip.classList.add('visible');
+      
+      const rect = tooltip.getBoundingClientRect();
+      let x = e.clientX + 10;
+      let y = e.clientY + 10;
+      
+      if (x + rect.width > window.innerWidth) x = e.clientX - rect.width - 10;
+      if (y + rect.height > window.innerHeight) y = e.clientY - rect.height - 10;
+      
+      tooltip.style.left = x + 'px';
+      tooltip.style.top = y + 'px';
+    }
+
+    function hideTooltip() {
+      document.getElementById('tooltip').classList.remove('visible');
+    }
+
+    // ==================== RENDER ====================
+    function render() {
+      const isos = DATA.isos;
+      
+      // Summary stats
+      const totalProjects = isos.reduce((sum, i) => sum + i.projects, 0);
+      const totalMW = isos.reduce((sum, i) => sum + i.totalMW, 0);
+      const avgWithdrawal = isos.reduce((sum, i) => sum + i.withdrawalRate, 0) / isos.length;
+      const avgQueueDays = isos.reduce((sum, i) => sum + i.avgQueueDays, 0) / isos.length;
+      const avgStorage = isos.reduce((sum, i) => sum + i.storagePct, 0) / isos.length;
+
+      document.getElementById('totalProjects').textContent = totalProjects.toLocaleString();
+      document.getElementById('totalGW').textContent = (totalMW / 1000).toFixed(0).toLocaleString();
+      document.getElementById('avgWithdrawal').textContent = (avgWithdrawal * 100).toFixed(0) + '%';
+      document.getElementById('avgTimeline').textContent = Math.round(avgQueueDays).toLocaleString();
+      document.getElementById('avgStorage').textContent = avgStorage.toFixed(0) + '%';
+
+      // Render all charts
+      renderBarChart('projectsChart', isos, 'projects', v => (v / 1000).toFixed(1) + 'k', 'highlight');
+      renderBarChart('capacityChart', isos, 'totalMW', v => (v / 1000).toFixed(0) + ' GW', 'highlight');
+      renderBarChart('withdrawalChart', isos, 'withdrawalRate', v => (v * 100).toFixed(0) + '%', 'negative', true);
+      renderBarChart('completionChart', isos, 'completionRate', v => (v * 100).toFixed(1) + '%', 'positive', false, 5);
+      renderBarChart('timelineChart', isos, 'avgQueueDays', v => v.toLocaleString(), 'default');
+      renderBarChart('medianSizeChart', isos, 'medianMW', v => v + ' MW', 'highlight');
+      
+      // Advanced metrics
+      renderBarChart('storageChart', isos, 'storagePct', v => v.toFixed(1) + '%', 'highlight');
+      renderBarChart('hybridChart', isos, 'hybridPct', v => v.toFixed(1) + '%', 'highlight');
+      renderBarChart('developersChart', isos, 'uniqueDevelopers', v => v.toLocaleString(), 'highlight');
+
+      // Capacity mix
+      renderMixChart();
+
+      // Sparklines
+      renderSparklines();
+
+      // Table
+      renderTable();
+    }
+
+    function renderBarChart(containerId, isos, field, formatter, colorClass, sortDesc = true, scaleFactor = 1) {
+      const sorted = [...isos].sort((a, b) => sortDesc ? b[field] - a[field] : a[field] - b[field]);
+      const max = Math.max(...isos.map(i => i[field]));
+      
+      document.getElementById(containerId).innerHTML = sorted.map((iso, idx) => {
+        const pct = (iso[field] / max * 100 * scaleFactor);
+        const rank = idx + 1;
+        const fillClass = colorClass === 'default' ? '' : colorClass;
+        
+        return `
+          <div class="bar-row" data-iso="${iso.id}" onclick="toggleCompareISO('${iso.id}')"
+               onmouseenter="showTooltip(event, '<div class=tooltip-title>${iso.name}</div><div class=tooltip-row><span class=tooltip-label>Value:</span><span>${formatter(iso[field])}</span></div><div class=tooltip-row><span class=tooltip-label>Rank:</span><span>#${rank} of ${isos.length}</span></div>')"
+               onmouseleave="hideTooltip()">
+            <div class="bar-label">${iso.id}</div>
+            <div class="bar-track">
+              <div class="bar-fill ${idx === 0 && fillClass === 'highlight' ? 'highlight' : fillClass}" style="width: ${Math.min(100, pct)}%"></div>
+            </div>
+            <div class="bar-value">${formatter(iso[field])}<span class="bar-rank">#${rank}</span></div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderMixChart() {
+      const sorted = [...DATA.isos].sort((a, b) => b.totalMW - a.totalMW);
+      
+      document.getElementById('mixChart').innerHTML = sorted.map(iso => {
+        const mix = iso.capacityMix;
+        const total = mix.solar + mix.wind + mix.storage + mix.gas + mix.other;
+        return `
+          <div class="stacked-row" data-iso="${iso.id}" onclick="toggleCompareISO('${iso.id}')"
+               onmouseenter="showTooltip(event, '<div class=tooltip-title>${iso.name}</div><div class=tooltip-row><span class=tooltip-label>Solar:</span><span>${(mix.solar/1000).toFixed(0)} GW (${(mix.solar/total*100).toFixed(0)}%)</span></div><div class=tooltip-row><span class=tooltip-label>Wind:</span><span>${(mix.wind/1000).toFixed(0)} GW (${(mix.wind/total*100).toFixed(0)}%)</span></div><div class=tooltip-row><span class=tooltip-label>Storage:</span><span>${(mix.storage/1000).toFixed(0)} GW (${(mix.storage/total*100).toFixed(0)}%)</span></div><div class=tooltip-row><span class=tooltip-label>Gas:</span><span>${(mix.gas/1000).toFixed(0)} GW (${(mix.gas/total*100).toFixed(0)}%)</span></div><div class=tooltip-row><span class=tooltip-label>Other:</span><span>${(mix.other/1000).toFixed(0)} GW (${(mix.other/total*100).toFixed(0)}%)</span></div>')"
+               onmouseleave="hideTooltip()">
+            <div class="bar-label">${iso.id}</div>
+            <div class="stacked-track">
+              <div class="stack-segment solar" style="width: ${(mix.solar / total * 100)}%"></div>
+              <div class="stack-segment wind" style="width: ${(mix.wind / total * 100)}%"></div>
+              <div class="stack-segment storage" style="width: ${(mix.storage / total * 100)}%"></div>
+              <div class="stack-segment gas" style="width: ${(mix.gas / total * 100)}%"></div>
+              <div class="stack-segment other" style="width: ${(mix.other / total * 100)}%"></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderSparklines() {
+      const sorted = [...DATA.isos].sort((a, b) => b.projects - a.projects);
+      
+      document.getElementById('sparklineGrid').innerHTML = sorted.map(iso => {
+        const growth = iso.yearlyGrowth.slice(-5);
+        const maxYear = Math.max(...growth.map(g => g.projects));
+        const latestMW = growth[growth.length - 1]?.mw || 0;
+        
+        // Calculate YoY change
+        let yoyChange = null;
+        if (growth.length >= 2) {
+          const prev = growth[growth.length - 2].projects;
+          const curr = growth[growth.length - 1].projects;
+          if (prev > 0) {
+            yoyChange = ((curr - prev) / prev * 100).toFixed(0);
+          }
+        }
+        
+        return `
+          <div class="sparkline-item" data-iso="${iso.id}" onclick="toggleCompareISO('${iso.id}')">
+            <div class="sparkline-header">
+              <span class="sparkline-label">${iso.id}</span>
+              <span class="sparkline-value">${(latestMW/1000).toFixed(0)} GW</span>
+            </div>
+            <div class="sparkline-track">
+              ${growth.map((g, idx) => `
+                <div class="spark-bar" style="height: ${Math.max(5, (g.projects / maxYear * 100))}%" 
+                     title="${g.year}: ${g.projects} projects"></div>
+              `).join('')}
+            </div>
+            ${yoyChange !== null ? `
+              <div class="sparkline-change ${Number(yoyChange) >= 0 ? 'positive' : 'negative'}">
+                ${Number(yoyChange) >= 0 ? '↑' : '↓'} ${Math.abs(yoyChange)}% YoY
+              </div>
+            ` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    // ==================== TABLE ====================
+    function renderTable() {
+      tableData = DATA.isos.map(iso => ({
+        id: iso.id,
+        name: iso.name,
+        projects: iso.projects,
+        capacity: iso.totalMW / 1000,
+        median: iso.medianMW,
+        withdrawal: iso.withdrawalRate * 100,
+        completion: iso.completionRate * 100,
+        queueDays: iso.avgQueueDays,
+        storage: iso.storagePct,
+        hybrid: iso.hybridPct
+      }));
+
+      updateTableSort();
+    }
+
+    function sortTable(column) {
+      if (sortColumn === column) {
+        sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortColumn = column;
+        sortDir = column === 'name' ? 'asc' : 'desc';
+      }
+      
+      // Update header styles
+      document.querySelectorAll('.comparison-table th').forEach(th => {
+        th.classList.toggle('sorted', th.dataset.sort === column);
+        const icon = th.querySelector('.sort-icon');
+        if (icon) {
+          icon.textContent = th.dataset.sort === column ? (sortDir === 'asc' ? '↑' : '↓') : '↕';
+        }
+      });
+
+      updateTableSort();
+    }
+
+    function updateTableSort() {
+      const sorted = [...tableData].sort((a, b) => {
+        let aVal = a[sortColumn];
+        let bVal = b[sortColumn];
+        if (typeof aVal === 'string') {
+          return sortDir === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+        }
+        return sortDir === 'asc' ? aVal - bVal : bVal - aVal;
+      });
+
+      // Find best/worst for highlighting
+      const metrics = ['projects', 'capacity', 'median', 'completion', 'storage', 'hybrid'];
+      const metricsLower = ['withdrawal', 'queueDays'];
+      
+      const best = {};
+      const worst = {};
+      
+      metrics.forEach(m => {
+        best[m] = Math.max(...tableData.map(d => d[m]));
+        worst[m] = Math.min(...tableData.map(d => d[m]));
+      });
+      
+      metricsLower.forEach(m => {
+        best[m] = Math.min(...tableData.map(d => d[m]));
+        worst[m] = Math.max(...tableData.map(d => d[m]));
+      });
+
+      document.getElementById('tableBody').innerHTML = sorted.map(row => {
+        const getCellClass = (field, val) => {
+          if (val === best[field]) return 'metric-best';
+          if (val === worst[field]) return 'metric-worst';
+          return '';
+        };
+
+        return `
+          <tr data-iso="${row.id}" onclick="toggleCompareISO('${row.id}')">
+            <td class="iso-name">${row.name}</td>
+            <td class="${getCellClass('projects', row.projects)}">${row.projects.toLocaleString()}</td>
+            <td class="${getCellClass('capacity', row.capacity)}">${row.capacity.toFixed(0)}</td>
+            <td class="${getCellClass('median', row.median)}">${row.median}</td>
+            <td class="${getCellClass('withdrawal', row.withdrawal)}">${row.withdrawal.toFixed(0)}%</td>
+            <td class="${getCellClass('completion', row.completion)}">${row.completion.toFixed(1)}%</td>
+            <td class="${getCellClass('queueDays', row.queueDays)}">${row.queueDays.toLocaleString()}</td>
+            <td class="${getCellClass('storage', row.storage)}">${row.storage.toFixed(1)}%</td>
+            <td class="${getCellClass('hybrid', row.hybrid)}">${row.hybrid.toFixed(1)}%</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterTable() {
+      const query = document.getElementById('tableSearch').value.toLowerCase();
+      document.querySelectorAll('.comparison-table tbody tr').forEach(row => {
+        const name = row.querySelector('.iso-name').textContent.toLowerCase();
+        row.style.display = name.includes(query) ? '' : 'none';
+      });
+    }
+
+    // Close panel on escape
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeDetail();
     });
-  });
 
-  const graph = sankey({
-    nodes: nodes.map(d => Object.assign({}, d)),
-    links: links.map(d => Object.assign({}, d))
-  });
+    // Sankey Diagram Rendering
+    function renderSankeyDiagrams() {
+      const isoColors = {
+        'PJM': '#3b82f6',
+        'MISO': '#10b981', 
+        'ERCOT': '#f59e0b',
+        'CAISO': '#8b5cf6',
+        'SPP': '#ec4899',
+        'West': '#06b6d4',
+        'NYISO': '#ef4444',
+        'ISO-NE': '#84cc16',
+        'Southeast': '#f97316'
+      };
 
-  // Links
-  svg.append('g')
-    .selectAll('path')
-    .data(graph.links)
-    .join('path')
-    .attr('class', 'sankey-link')
-    .attr('d', d3.sankeyLinkHorizontal())
-    .attr('stroke', d => techColors[d.tech])
-    .attr('stroke-width', d => Math.max(1, d.width))
-    .on('mouseover', (event, d) => showTooltip(event, `${d.tech} → ${graph.nodes[d.target.index].name}: ${formatGW(d.value)}`))
-    .on('mouseout', hideTooltip);
+      const techColors = {
+        'Solar': '#fbbf24',
+        'Wind': '#22d3ee',
+        'Storage': '#a855f7',
+        'Gas': '#6b7280',
+        'Other': '#9ca3af'
+      };
 
-  // Nodes
-  const node = svg.append('g')
-    .selectAll('g')
-    .data(graph.nodes)
-    .join('g')
-    .attr('class', 'sankey-node');
+      // Capacity Sankey: US Total -> ISOs
+      const capacitySankeyData = {
+        nodes: [
+          {name: 'US Queue (6.3 TW)'},
+          {name: 'PJM (876 GW)'},
+          {name: 'MISO (1002 GW)'},
+          {name: 'ERCOT (798 GW)'},
+          {name: 'CAISO (708 GW)'},
+          {name: 'SPP (581 GW)'},
+          {name: 'West (1133 GW)'},
+          {name: 'NYISO (385 GW)'},
+          {name: 'ISO-NE (206 GW)'},
+          {name: 'Southeast (636 GW)'}
+        ],
+        links: [
+          {source: 0, target: 1, value: 876},
+          {source: 0, target: 2, value: 1002},
+          {source: 0, target: 3, value: 798},
+          {source: 0, target: 4, value: 708},
+          {source: 0, target: 5, value: 581},
+          {source: 0, target: 6, value: 1133},
+          {source: 0, target: 7, value: 385},
+          {source: 0, target: 8, value: 206},
+          {source: 0, target: 9, value: 636}
+        ]
+      };
 
-  node.append('rect')
-    .attr('x', d => d.x0)
-    .attr('y', d => d.y0)
-    .attr('height', d => d.y1 - d.y0)
-    .attr('width', d => d.x1 - d.x0)
-    .attr('fill', d => d.type === 'tech' ? techColors[d.name] : regionColors[d.name])
-    .attr('rx', 3);
+      renderSankey('#sankeyCapacity', capacitySankeyData, ['#3b82f6']);
 
-  node.append('text')
-    .attr('x', d => d.type === 'tech' ? d.x0 - 8 : d.x1 + 8)
-    .attr('y', d => (d.y1 + d.y0) / 2)
-    .attr('dy', '0.35em')
-    .attr('text-anchor', d => d.type === 'tech' ? 'end' : 'start')
-    .text(d => d.name)
-    .style('font-weight', '500');
-}
+      // Technology Sankey: Technologies -> ISOs
+      const techSankeyData = {
+        nodes: [
+          {name: 'Solar'},
+          {name: 'Wind'},
+          {name: 'Storage'},
+          {name: 'Gas'},
+          {name: 'Other'},
+          {name: 'PJM'},
+          {name: 'MISO'},
+          {name: 'ERCOT'},
+          {name: 'CAISO'},
+          {name: 'SPP'},
+          {name: 'West'},
+          {name: 'Southeast'}
+        ],
+        links: [
+          // Solar distribution
+          {source: 0, target: 5, value: 320},
+          {source: 0, target: 6, value: 280},
+          {source: 0, target: 7, value: 450},
+          {source: 0, target: 8, value: 380},
+          {source: 0, target: 9, value: 120},
+          {source: 0, target: 10, value: 520},
+          {source: 0, target: 11, value: 180},
+          // Wind distribution
+          {source: 1, target: 5, value: 180},
+          {source: 1, target: 6, value: 350},
+          {source: 1, target: 7, value: 220},
+          {source: 1, target: 9, value: 380},
+          {source: 1, target: 10, value: 280},
+          // Storage distribution
+          {source: 2, target: 5, value: 150},
+          {source: 2, target: 6, value: 120},
+          {source: 2, target: 7, value: 80},
+          {source: 2, target: 8, value: 200},
+          {source: 2, target: 10, value: 180},
+          // Gas distribution
+          {source: 3, target: 5, value: 180},
+          {source: 3, target: 6, value: 200},
+          {source: 3, target: 7, value: 40},
+          {source: 3, target: 11, value: 250}
+        ]
+      };
 
-// Create Status Sankey
-function createStatusSankey() {
-  const width = 900;
-  const height = 500;
-  
-  const svg = d3.select('#sankey-status')
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height)
-    .attr('viewBox', `0 0 ${width} ${height}`)
-    .attr('preserveAspectRatio', 'xMidYMid meet');
+      renderSankey('#sankeyTechnology', techSankeyData, Object.values(techColors));
+    }
 
-  const sankey = d3.sankey()
-    .nodeWidth(20)
-    .nodePadding(15)
-    .extent([[80, 20], [width - 120, height - 20]]);
+    function renderSankey(selector, data, colors) {
+      const container = document.querySelector(selector);
+      if (!container) return;
 
-  const regions = isoData.map(d => d.name);
-  const statuses = ['Active', 'Operational', 'Withdrawn'];
-  
-  const nodes = [
-    ...regions.map(r => ({ name: r, type: 'region' })),
-    ...statuses.map(s => ({ name: s, type: 'status' }))
-  ];
+      const width = Math.min(900, container.clientWidth);
+      const height = 400;
+      const margin = {top: 20, right: 150, bottom: 20, left: 20};
 
-  const links = [];
-  isoData.forEach((region, ri) => {
-    links.push({ source: ri, target: regions.length, value: region.active, status: 'Active' });
-    links.push({ source: ri, target: regions.length + 1, value: region.operational, status: 'Operational' });
-    links.push({ source: ri, target: regions.length + 2, value: region.withdrawn, status: 'Withdrawn' });
-  });
+      container.innerHTML = '';
 
-  const graph = sankey({
-    nodes: nodes.map(d => Object.assign({}, d)),
-    links: links.map(d => Object.assign({}, d))
-  });
+      const svg = d3.select(selector)
+        .append('svg')
+        .attr('width', width)
+        .attr('height', height);
 
-  // Links
-  svg.append('g')
-    .selectAll('path')
-    .data(graph.links)
-    .join('path')
-    .attr('class', 'sankey-link')
-    .attr('d', d3.sankeyLinkHorizontal())
-    .attr('stroke', d => statusColors[d.status])
-    .attr('stroke-width', d => Math.max(1, d.width))
-    .on('mouseover', (event, d) => showTooltip(event, `${graph.nodes[d.source.index].name} → ${d.status}: ${formatGW(d.value)}`))
-    .on('mouseout', hideTooltip);
+      const sankey = d3.sankey()
+        .nodeWidth(20)
+        .nodePadding(15)
+        .extent([[margin.left, margin.top], [width - margin.right, height - margin.bottom]]);
 
-  // Nodes
-  const node = svg.append('g')
-    .selectAll('g')
-    .data(graph.nodes)
-    .join('g')
-    .attr('class', 'sankey-node');
+      const {nodes, links} = sankey({
+        nodes: data.nodes.map(d => Object.assign({}, d)),
+        links: data.links.map(d => Object.assign({}, d))
+      });
 
-  node.append('rect')
-    .attr('x', d => d.x0)
-    .attr('y', d => d.y0)
-    .attr('height', d => d.y1 - d.y0)
-    .attr('width', d => d.x1 - d.x0)
-    .attr('fill', d => d.type === 'region' ? regionColors[d.name] : statusColors[d.name])
-    .attr('rx', 3);
+      // Links
+      svg.append('g')
+        .attr('class', 'sankey-links')
+        .selectAll('path')
+        .data(links)
+        .join('path')
+        .attr('class', 'sankey-link')
+        .attr('d', d3.sankeyLinkHorizontal())
+        .attr('stroke', (d, i) => colors[d.source.index % colors.length] || '#3b82f6')
+        .attr('stroke-width', d => Math.max(1, d.width));
 
-  node.append('text')
-    .attr('x', d => d.type === 'region' ? d.x0 - 8 : d.x1 + 8)
-    .attr('y', d => (d.y1 + d.y0) / 2)
-    .attr('dy', '0.35em')
-    .attr('text-anchor', d => d.type === 'region' ? 'end' : 'start')
-    .text(d => d.name)
-    .style('font-weight', '500');
-}
+      // Nodes
+      const node = svg.append('g')
+        .attr('class', 'sankey-nodes')
+        .selectAll('g')
+        .data(nodes)
+        .join('g')
+        .attr('class', 'sankey-node');
 
-// Create Treemap
-function createTreemap() {
-  const width = 900;
-  const height = 400;
-  
-  const data = {
-    name: 'Technologies',
-    children: [
-      { name: 'Solar', value: 1351410 },
-      { name: 'Wind', value: 1176368 },
-      { name: 'Gas', value: 1147428 },
-      { name: 'Storage', value: 815023 },
-      { name: 'Solar + Storage', value: 712441 },
-      { name: 'Other', value: 439928 },
-      { name: 'Offshore Wind', value: 170223 }
-    ]
-  };
+      node.append('rect')
+        .attr('x', d => d.x0)
+        .attr('y', d => d.y0)
+        .attr('height', d => d.y1 - d.y0)
+        .attr('width', d => d.x1 - d.x0)
+        .attr('fill', (d, i) => colors[i % colors.length] || '#3b82f6');
 
-  const svg = d3.select('#treemap')
-    .append('svg')
-    .attr('width', width)
-    .attr('height', height)
-    .attr('viewBox', `0 0 ${width} ${height}`)
-    .attr('preserveAspectRatio', 'xMidYMid meet');
+      node.append('text')
+        .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+        .attr('y', d => (d.y1 + d.y0) / 2)
+        .attr('dy', '0.35em')
+        .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+        .text(d => d.name);
+    }
 
-  const treemap = d3.treemap()
-    .size([width, height])
-    .padding(3)
-    .round(true);
+    // Render Sankeys after data loads
+    setTimeout(renderSankeyDiagrams, 500);
 
-  const root = d3.hierarchy(data)
-    .sum(d => d.value)
-    .sort((a, b) => b.value - a.value);
-
-  treemap(root);
-
-  const colorScale = {
-    'Solar': '#f59e0b',
-    'Wind': '#06b6d4',
-    'Gas': '#6b7280',
-    'Storage': '#8b5cf6',
-    'Solar + Storage': '#10b981',
-    'Other': '#94a3b8',
-    'Offshore Wind': '#0891b2'
-  };
-
-  const cell = svg.selectAll('g')
-    .data(root.leaves())
-    .join('g')
-    .attr('transform', d => `translate(${d.x0},${d.y0})`);
-
-  cell.append('rect')
-    .attr('class', 'treemap-cell')
-    .attr('width', d => d.x1 - d.x0)
-    .attr('height', d => d.y1 - d.y0)
-    .attr('fill', d => colorScale[d.data.name] || '#94a3b8')
-    .attr('rx', 4)
-    .on('mouseover', (event, d) => showTooltip(event, `${d.data.name}: ${formatGW(d.data.value)}`))
-    .on('mouseout', hideTooltip);
-
-  cell.append('text')
-    .attr('class', 'treemap-label')
-    .attr('x', 12)
-    .attr('y', 28)
-    .text(d => d.x1 - d.x0 > 80 ? d.data.name : '');
-
-  cell.append('text')
-    .attr('class', 'treemap-value')
-    .attr('x', 12)
-    .attr('y', 48)
-    .text(d => d.x1 - d.x0 > 80 ? formatGW(d.data.value) : '');
-}
-
-// Create Region Cards with sparklines
-function createRegionCards() {
-  const container = document.getElementById('region-cards');
-  
-  // Historical data for sparklines (simplified)
-  const trends = {
-    'West': [51, 118, 182, 233, 79],
-    'MISO': [43, 62, 176, 5, 140],
-    'PJM': [67, 107, 59, 33, 0],
-    'ERCOT': [45, 58, 67, 92, 98],
-    'CAISO': [44, 108, 0, 215, 0],
-    'Southeast': [34, 28, 37, 57, 58],
-    'SPP': [20, 22, 24, 87, 124],
-    'NYISO': [28, 25, 57, 42, 90],
-    'ISO-NE': [10, 15, 22, 23, 19]
-  };
-
-  isoData.forEach((region, i) => {
-    const successRate = ((region.operational / region.capacity) * 100).toFixed(1);
-    const activeRate = ((region.active / region.capacity) * 100).toFixed(0);
-    
-    const card = document.createElement('div');
-    card.className = 'region-card';
-    card.innerHTML = `
-      <div class="region-card-header">
-        <div class="region-name">${region.name}</div>
-        <div class="region-rank">#${i + 1}</div>
-      </div>
-      <div class="region-capacity">${formatGW(region.capacity)}</div>
-      <div class="region-projects">${region.projects.toLocaleString()} projects</div>
-      <div class="region-sparkline" id="spark-${region.name}"></div>
-      <div class="region-breakdown">
-        <div class="region-breakdown-segment" style="flex: ${region.operational}; background: var(--operational);" title="Operational"></div>
-        <div class="region-breakdown-segment" style="flex: ${region.active}; background: var(--active);" title="Active"></div>
-        <div class="region-breakdown-segment" style="flex: ${region.withdrawn}; background: var(--withdrawn);" title="Withdrawn"></div>
-      </div>
-      <div class="region-status-row">
-        <span><span class="status-dot" style="background: var(--operational);"></span>${successRate}% operational</span>
-        <span><span class="status-dot" style="background: var(--active);"></span>${activeRate}% active</span>
-      </div>
-    `;
-    container.appendChild(card);
-
-    // Create sparkline
-    const sparkData = trends[region.name] || [0, 0, 0, 0, 0];
-    createSparkline(`spark-${region.name}`, sparkData, regionColors[region.name]);
-  });
-}
-
-function createSparkline(containerId, data, color) {
-  const container = document.getElementById(containerId);
-  const width = container.offsetWidth || 200;
-  const height = 40;
-  
-  const svg = d3.select(`#${containerId}`)
-    .append('svg')
-    .attr('width', '100%')
-    .attr('height', height);
-
-  const x = d3.scaleLinear()
-    .domain([0, data.length - 1])
-    .range([0, width]);
-
-  const y = d3.scaleLinear()
-    .domain([0, d3.max(data)])
-    .range([height - 4, 4]);
-
-  const line = d3.line()
-    .x((d, i) => x(i))
-    .y(d => y(d))
-    .curve(d3.curveMonotoneX);
-
-  // Area
-  const area = d3.area()
-    .x((d, i) => x(i))
-    .y0(height)
-    .y1(d => y(d))
-    .curve(d3.curveMonotoneX);
-
-  svg.append('path')
-    .datum(data)
-    .attr('fill', color)
-    .attr('fill-opacity', 0.1)
-    .attr('d', area);
-
-  svg.append('path')
-    .datum(data)
-    .attr('fill', 'none')
-    .attr('stroke', color)
-    .attr('stroke-width', 2)
-    .attr('d', line);
-
-  // End dot
-  svg.append('circle')
-    .attr('cx', x(data.length - 1))
-    .attr('cy', y(data[data.length - 1]))
-    .attr('r', 4)
-    .attr('fill', color);
-}
-
-// Initialize
-document.addEventListener('DOMContentLoaded', () => {
-  createISOSankey();
-  createTechSankey();
-  createStatusSankey();
-  createTreemap();
-  createRegionCards();
-});
-</script>
-
+    init();
+  </script>
 </body>
 </html>
