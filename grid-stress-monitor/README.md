@@ -4,11 +4,40 @@ Real-time visualization of grid congestion, constraints, and stress points acros
 
 ![Grid Stress Monitor Screenshot](screenshots/grid-stress-monitor.png)
 
+---
+
+## 🟢 Live Data Integration (v2.0)
+
+This dashboard now integrates **live real-time data** from ERCOT with automatic fallback to sample data for other ISOs.
+
+### Data Sources
+
+| Source | Data Type | Update Frequency | Status |
+|--------|-----------|------------------|--------|
+| **ERCOT** | Real-time LMPs (Hub/Zone) | 5 minutes | ✅ Live |
+| **ERCOT** | Fuel Mix by Type | 5 minutes | ✅ Live |
+| **ERCOT** | Supply/Demand | 5 minutes | ✅ Live |
+| **PJM, CAISO, etc.** | Sample Data | — | 📊 Sample |
+
+### New Features (v2.0)
+
+- **Real-time LMP markers** with live ERCOT data
+- **Fuel generation mix** bar chart (Wind, Solar, Gas, Nuclear, etc.)
+- **System stats**: Load (GW), Reserve Margin, Renewable %
+- **Live/Sample badge** shows data source status
+- **Manual refresh button** + 5-minute auto-refresh
+- **Improved legend** with color scale
+- **Enhanced styling** following design system
+
+See [LIVE_DATA_SOURCES.md](LIVE_DATA_SOURCES.md) for complete API documentation.
+
+---
+
 ## Overview
 
 The Grid Stress Monitor provides a unified view of electrical grid stress indicators across all major US ISOs:
 
-- **ERCOT** (Texas)
+- **ERCOT** (Texas) — 🟢 Live Data
 - **PJM** (Mid-Atlantic + Midwest)
 - **CAISO** (California)
 - **MISO** (Central US)
@@ -20,8 +49,8 @@ The Grid Stress Monitor provides a unified view of electrical grid stress indica
 
 ### Map Visualization
 - **LMP Heat Points**: Sized and colored by price/stress level
-- **Constraint Lines**: Animated lines showing binding transmission constraints
-- **Interactive Popups**: Click any point for detailed LMP breakdown (Energy, Congestion, Loss)
+- **Interactive Popups**: Click any point for detailed LMP breakdown
+- **ISO Filtering**: Focus on specific regions
 
 ### Stress Indicators
 | Level | Color | Criteria |
@@ -32,42 +61,61 @@ The Grid Stress Monitor provides a unified view of electrical grid stress indica
 | Normal | Gray | LMP < $30/MWh |
 | Curtailment | Green | Negative LMP |
 
-### Sidebar Panels
-- **Active Alerts**: Grid warnings, conservation appeals, TLR events
-- **Top Constraints**: Ranked by shadow price ($/MWh)
+### Left Sidebar
+- **System Overview**: Load, Reserve Margin, Renewable %, Binding Constraints
+- **Generation Mix**: Real-time fuel breakdown with stacked bar
+- **Active Alerts**: Grid warnings and events
+
+### Right Sidebar
+- **ISO Filter**: Quick filter by region
 - **Peak Statistics**: Highest/lowest LMP, max spread
-- **24h LMP Chart**: Historical trend for selected zone
+- **Top Constraints**: Ranked by shadow price
+- **24h LMP Chart**: Historical trend
 
-## Data Sources
+## Live Data API Endpoints
 
-See [RESEARCH.md](RESEARCH.md) for full data source documentation.
+### ERCOT (Working)
+```
+Hub/Zone LMPs: https://www.ercot.com/content/cdr/html/hb_lz.html
+Fuel Mix:      https://www.ercot.com/api/1/services/read/dashboards/fuel-mix.json
+Supply/Demand: https://www.ercot.com/api/1/services/read/dashboards/supply-demand.json
+```
 
-Key sources:
-- ISO real-time LMP feeds
-- ERCOT NP6-788-CD (Real-Time LMPs)
-- PJM Data Miner 2
-- CAISO OASIS
-- gridstatus.io (aggregated data)
+### EIA (Hourly Demand)
+```
+https://api.eia.gov/v2/electricity/rto/region-data/data/?api_key=DEMO_KEY&...
+```
+
+See [LIVE_DATA_SOURCES.md](LIVE_DATA_SOURCES.md) for complete details.
 
 ## Usage
 
 1. Open `index.html` in a browser
-2. Use ISO filter buttons to focus on specific regions
-3. Click markers for detailed price breakdowns
-4. Hover over constraint lines for flow information
+2. Dashboard auto-fetches live ERCOT data on load
+3. Use ISO filter buttons to focus on specific regions
+4. Click markers for detailed price breakdowns
+5. Manual refresh available via button in header
+6. Data auto-refreshes every 5 minutes
+
+### Data Status Indicators
+
+| Badge | Meaning |
+|-------|---------|
+| 🟢 LIVE | Successfully fetching real-time data |
+| 🟡 SAMPLE | Using sample data (API unavailable) |
+| 🔴 OFFLINE | Fetch failed, using fallback |
 
 ## Files
 
 ```
 grid-stress-monitor/
-├── index.html          # Main visualization
-├── README.md           # This file
-├── RESEARCH.md         # Data source research
+├── index.html              # Main visualization (v2.0)
+├── README.md               # This file
+├── RESEARCH.md             # Data source research
+├── LIVE_DATA_SOURCES.md    # API documentation (NEW)
 ├── data/
-│   ├── lmp-current.json    # Current LMP by zone
-│   ├── lmp-history.json    # 24h historical data
+│   ├── lmp-current.json    # Sample LMP data
 │   ├── constraints.json    # Active constraints
-│   ├── alerts.json         # Grid alerts
 │   └── iso-zones.json      # Zone boundaries
 └── screenshots/
     └── grid-stress-monitor.png
@@ -75,17 +123,9 @@ grid-stress-monitor/
 
 ## Development
 
-### Adding Live Data
+### CORS Notes
 
-Replace the embedded sample data with API calls:
-
-```javascript
-// Example: Fetch from gridstatus API
-async function fetchLMPData() {
-    const response = await fetch('https://api.gridstatus.io/v1/lmp?iso=ERCOT');
-    return response.json();
-}
-```
+All ERCOT endpoints return proper CORS headers. Direct browser fetch works without proxy.
 
 ### Mapbox Token
 
@@ -94,6 +134,15 @@ The visualization uses a Mapbox public token. For production, replace with your 
 ```javascript
 mapboxgl.accessToken = 'your-token-here';
 ```
+
+### Adding More ISOs
+
+Other ISOs (PJM, CAISO, MISO, NYISO, SPP) require:
+- API registration (PJM Data Miner)
+- OASIS accounts (CAISO)
+- Proxy server (CORS issues)
+
+See LIVE_DATA_SOURCES.md for specifics.
 
 ## Interpretation Guide
 
@@ -114,13 +163,16 @@ The congestion portion of LMP directly measures transmission constraint costs:
 
 ## Future Enhancements
 
-- [ ] Real-time WebSocket data feed
-- [ ] Historical playback mode
+- [x] Real-time ERCOT data integration
+- [x] Fuel mix visualization
+- [x] System stats dashboard
+- [ ] EIA hourly demand integration
+- [ ] MISO API (new JSON format)
+- [ ] PJM Data Miner API key
+- [ ] Historical playback with time slider
 - [ ] Constraint detail drill-down
-- [ ] Renewable curtailment overlay
-- [ ] Price forecast integration
 - [ ] Mobile-responsive improvements
 
 ---
 
-*Built with Mapbox GL JS • Dark mode design*
+*Built with Mapbox GL JS • Live ERCOT Data • Dark mode design*
