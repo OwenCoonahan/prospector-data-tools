@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lobbyist Registry | Follow the Money</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12.3/dist/d3-sankey.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --bg-card: #161616;
+            --border: #262626;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-muted: #71717a;
+            --accent: #F59E0B;
+            --accent-dim: rgba(245, 158, 11, 0.15);
+            --accent-hover: #FBBF24;
+            --red: #ef4444;
+            --green: #22c55e;
+            --blue: #3b82f6;
+            --purple: #8b5cf6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Header */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 1.5rem 2rem;
+            background: var(--bg-secondary);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--accent);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .logo h1 span {
+            color: var(--accent);
+        }
+
+        .tagline {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            font-style: italic;
+        }
+
+        nav {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        nav button {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        nav button:hover, nav button.active {
+            background: var(--accent-dim);
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Main Content */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Stats Banner */
+        .stats-banner {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .stat-value.mono {
+            font-size: 1.5rem;
+        }
+
+        .stat-sub {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+        }
+
+        /* Search */
+        .search-section {
+            margin-bottom: 2rem;
+        }
+
+        .search-container {
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1rem 1rem 1rem 3rem;
+            font-size: 1rem;
+            color: var(--text-primary);
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .search-results {
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        /* Content Sections */
+        .section {
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title .icon {
+            color: var(--accent);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1rem;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-rank {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .card-amount {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+            line-height: 1.3;
+        }
+
+        .card-subtitle {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+        }
+
+        .tag {
+            background: var(--bg-tertiary);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+        }
+
+        .tag.accent {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        /* Industry View */
+        .industry-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .industry-bar {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            display: grid;
+            grid-template-columns: 200px 1fr 100px;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .industry-name {
+            font-weight: 500;
+        }
+
+        .bar-container {
+            height: 24px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .bar-label {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .industry-amount {
+            text-align: right;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Lobbyist Profiles */
+        .lobbyist-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .lobbyist-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .lobbyist-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent), #ea580c);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .lobbyist-name {
+            font-size: 1.125rem;
+            font-weight: 600;
+        }
+
+        .lobbyist-firm {
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        .lobbyist-billings {
+            color: var(--accent);
+            font-weight: 600;
+            margin-left: auto;
+        }
+
+        .lobbyist-section {
+            margin-top: 1rem;
+        }
+
+        .lobbyist-section-title {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+        }
+
+        .former-positions {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-style: italic;
+        }
+
+        .client-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.375rem;
+        }
+
+        /* Sankey Diagram */
+        .sankey-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .sankey-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sankey-title .icon {
+            color: var(--accent);
+        }
+
+        #sankey svg {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .sankey-node rect {
+            cursor: pointer;
+        }
+
+        .sankey-node text {
+            fill: var(--text-primary);
+            font-size: 11px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .sankey-link {
+            fill: none;
+            stroke-opacity: 0.3;
+        }
+
+        .sankey-link:hover {
+            stroke-opacity: 0.6;
+        }
+
+        /* Top Issues */
+        .issues-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .issue-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+        }
+
+        .issue-rank {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .issue-rank-num {
+            background: var(--accent);
+            color: var(--bg-primary);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .issue-name {
+            font-weight: 600;
+            font-size: 1.125rem;
+        }
+
+        .issue-stats {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 0.75rem;
+        }
+
+        .issue-stat {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .issue-stat-label {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .issue-stat-value {
+            font-weight: 600;
+        }
+
+        .issue-stat-value.money {
+            color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-quote {
+            font-style: italic;
+            margin-top: 0.5rem;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats-banner {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            nav {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .industry-bar {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+        }
+
+        /* Loading animation */
+        .loading {
+            display: flex;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .loading::after {
+            content: "";
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Highlight search matches */
+        .highlight {
+            background: var(--accent-dim);
+            color: var(--accent);
+            padding: 0 2px;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">💰</div>
+                <div>
+                    <h1>Lobbyist <span>Registry</span></h1>
+                    <div class="tagline">"Democracy's suggestion box"</div>
+                </div>
+            </div>
+            <nav>
+                <button class="active" data-section="overview">Overview</button>
+                <button data-section="spenders">Top Spenders</button>
+                <button data-section="industries">Industries</button>
+                <button data-section="lobbyists">Lobbyists</button>
+                <button data-section="issues">Issues</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Stats Banner -->
+        <div class="stats-banner">
+            <div class="stat-card">
+                <div class="stat-label">Total Lobbying (2024)</div>
+                <div class="stat-value mono" id="total-spending">$4.28B</div>
+                <div class="stat-sub">The real constituents</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Registered Lobbyists</div>
+                <div class="stat-value" id="total-lobbyists">12,847</div>
+                <div class="stat-sub">Professional persuaders</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Active Clients</div>
+                <div class="stat-value" id="total-clients">14,203</div>
+                <div class="stat-sub">Paying for access</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">2024 Filings</div>
+                <div class="stat-value" id="total-filings">96,635</div>
+                <div class="stat-sub">Quarterly reports</div>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="search-section">
+            <div class="search-container">
+                <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text" class="search-input" placeholder="Search by company, lobbyist, or issue..." id="search">
+            </div>
+            <div class="search-results" id="search-results"></div>
+        </div>
+
+        <!-- Overview Section -->
+        <section class="section active" id="section-overview">
+            <!-- Money Flow Sankey -->
+            <div class="sankey-container">
+                <div class="sankey-title">
+                    <span class="icon">🔥</span>
+                    Where the Money Flows
+                </div>
+                <div id="sankey"></div>
+            </div>
+
+            <!-- Top Spenders Preview -->
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="icon">🏆</span>
+                    Top Spenders
+                </h2>
+            </div>
+            <div class="cards-grid" id="top-spenders-preview"></div>
+        </section>
+
+        <!-- Top Spenders Section -->
+        <section class="section" id="section-spenders">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="icon">💵</span>
+                    Top Spending Organizations (2024)
+                </h2>
+            </div>
+            <div class="cards-grid" id="all-spenders"></div>
+        </section>
+
+        <!-- Industries Section -->
+        <section class="section" id="section-industries">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="icon">🏭</span>
+                    Spending by Industry
+                </h2>
+            </div>
+            <div class="industry-list" id="industries-list"></div>
+        </section>
+
+        <!-- Lobbyists Section -->
+        <section class="section" id="section-lobbyists">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="icon">🎭</span>
+                    Notable Lobbyists
+                </h2>
+            </div>
+            <div class="cards-grid" id="lobbyists-list"></div>
+        </section>
+
+        <!-- Issues Section -->
+        <section class="section" id="section-issues">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="icon">📋</span>
+                    Most Lobbied Issues
+                </h2>
+            </div>
+            <div class="issues-grid" id="issues-list"></div>
+        </section>
+    </main>
+
+    <footer>
+        <p>Data sourced from <a href="https://lda.senate.gov" target="_blank">Senate Lobbying Disclosure Act Database</a></p>
+        <p class="footer-quote">"I've got to follow them — I am their leader." — Alexandre Auguste Ledru-Rollin</p>
+    </footer>
+
+    <script>
+        // Data
+        let data = null;
+
+        // Format currency
+        function formatMoney(amount) {
+            if (amount >= 1000000000) {
+                return '$' + (amount / 1000000000).toFixed(2) + 'B';
+            } else if (amount >= 1000000) {
+                return '$' + (amount / 1000000).toFixed(1) + 'M';
+            } else if (amount >= 1000) {
+                return '$' + (amount / 1000).toFixed(0) + 'K';
+            }
+            return '$' + amount.toLocaleString();
+        }
+
+        // Format number
+        function formatNumber(num) {
+            return num.toLocaleString();
+        }
+
+        // Navigation
+        document.querySelectorAll('nav button').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+                document.getElementById('section-' + btn.dataset.section).classList.add('active');
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.getElementById('search');
+        const searchResults = document.getElementById('search-results');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            if (query.length < 2) {
+                searchResults.classList.remove('active');
+                return;
+            }
+
+            const results = [];
+
+            // Search clients/spenders
+            data.topSpenders.forEach(s => {
+                if (s.client.toLowerCase().includes(query) || 
+                    s.industry.toLowerCase().includes(query)) {
+                    results.push({
+                        type: 'spender',
+                        title: s.client,
+                        subtitle: s.industry,
+                        amount: s.totalSpending
+                    });
+                }
+            });
+
+            // Search lobbyists
+            data.lobbyists.forEach(l => {
+                if (l.name.toLowerCase().includes(query) ||
+                    l.firm.toLowerCase().includes(query)) {
+                    results.push({
+                        type: 'lobbyist',
+                        title: l.name,
+                        subtitle: l.firm,
+                        amount: l.totalBillings
+                    });
+                }
+            });
+
+            // Search issues
+            data.topIssues.forEach(i => {
+                if (i.issue.toLowerCase().includes(query)) {
+                    results.push({
+                        type: 'issue',
+                        title: i.issue,
+                        subtitle: formatNumber(i.filings) + ' filings',
+                        amount: i.spending
+                    });
+                }
+            });
+
+            if (results.length > 0) {
+                searchResults.innerHTML = results.slice(0, 10).map(r => `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="tag accent">${r.type}</span>
+                            <span class="card-amount">${formatMoney(r.amount)}</span>
+                        </div>
+                        <div class="card-title">${r.title}</div>
+                        <div class="card-subtitle">${r.subtitle}</div>
+                    </div>
+                `).join('');
+                searchResults.classList.add('active');
+            } else {
+                searchResults.innerHTML = '<p style="color: var(--text-muted); padding: 1rem;">No results found</p>';
+                searchResults.classList.add('active');
+            }
+        });
+
+        // Render top spenders
+        function renderSpenders(containerId, limit = 6) {
+            const container = document.getElementById(containerId);
+            const spenders = limit ? data.topSpenders.slice(0, limit) : data.topSpenders;
+            
+            container.innerHTML = spenders.map((s, i) => `
+                <div class="card">
+                    <div class="card-header">
+                        <span class="card-rank">#${i + 1}</span>
+                        <span class="card-amount">${formatMoney(s.totalSpending)}</span>
+                    </div>
+                    <div class="card-title">${s.client}</div>
+                    <div class="card-subtitle">${s.industry}</div>
+                    <div class="card-tags">
+                        ${s.issues.slice(0, 3).map(issue => `<span class="tag">${issue}</span>`).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render industries
+        function renderIndustries() {
+            const container = document.getElementById('industries-list');
+            const maxSpending = Math.max(...data.industryBreakdown.map(i => i.spending));
+            
+            container.innerHTML = data.industryBreakdown.map(industry => `
+                <div class="industry-bar">
+                    <div class="industry-name">${industry.industry}</div>
+                    <div class="bar-container">
+                        <div class="bar-fill" style="width: ${(industry.spending / maxSpending * 100)}%; background: ${industry.color};">
+                        </div>
+                    </div>
+                    <div class="industry-amount">${formatMoney(industry.spending * 1000000)}</div>
+                </div>
+            `).join('');
+        }
+
+        // Render lobbyists
+        function renderLobbyists() {
+            const container = document.getElementById('lobbyists-list');
+            
+            container.innerHTML = data.lobbyists.map(l => `
+                <div class="lobbyist-card">
+                    <div class="lobbyist-header">
+                        <div class="lobbyist-avatar">${l.name.split(' ').map(n => n[0]).join('')}</div>
+                        <div>
+                            <div class="lobbyist-name">${l.name}</div>
+                            <div class="lobbyist-firm">${l.firm}</div>
+                        </div>
+                        <div class="lobbyist-billings">${formatMoney(l.totalBillings)}</div>
+                    </div>
+                    <div class="lobbyist-section">
+                        <div class="lobbyist-section-title">Former Positions</div>
+                        <div class="former-positions">${l.formerPositions.join(' • ')}</div>
+                    </div>
+                    <div class="lobbyist-section">
+                        <div class="lobbyist-section-title">Notable Clients</div>
+                        <div class="client-list">
+                            ${l.clients.slice(0, 5).map(c => `<span class="tag">${c}</span>`).join('')}
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render issues
+        function renderIssues() {
+            const container = document.getElementById('issues-list');
+            
+            container.innerHTML = data.topIssues.map((issue, i) => `
+                <div class="issue-card">
+                    <div class="issue-rank">
+                        <span class="issue-rank-num">${i + 1}</span>
+                        <span class="issue-name">${issue.issue}</span>
+                    </div>
+                    <div class="issue-stats">
+                        <div class="issue-stat">
+                            <span class="issue-stat-label">Filings</span>
+                            <span class="issue-stat-value">${formatNumber(issue.filings)}</span>
+                        </div>
+                        <div class="issue-stat">
+                            <span class="issue-stat-label">Spending</span>
+                            <span class="issue-stat-value money">${formatMoney(issue.spending)}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Render Sankey diagram
+        function renderSankey() {
+            const container = document.getElementById('sankey');
+            const width = Math.min(1200, container.clientWidth - 40);
+            const height = 400;
+
+            // Create nodes and links from data
+            const nodeNames = [...new Set(data.moneyFlows.flatMap(f => [f.source, f.target]))];
+            const nodes = nodeNames.map(name => ({ name }));
+            
+            const links = data.moneyFlows.map(f => ({
+                source: nodeNames.indexOf(f.source),
+                target: nodeNames.indexOf(f.target),
+                value: f.value
+            }));
+
+            // Create SVG
+            const svg = d3.select('#sankey')
+                .append('svg')
+                .attr('width', width)
+                .attr('height', height);
+
+            // Create sankey generator
+            const sankey = d3.sankey()
+                .nodeWidth(20)
+                .nodePadding(15)
+                .extent([[1, 1], [width - 1, height - 6]]);
+
+            // Generate layout
+            const { nodes: sankeyNodes, links: sankeyLinks } = sankey({
+                nodes: nodes.map(d => Object.assign({}, d)),
+                links: links.map(d => Object.assign({}, d))
+            });
+
+            // Color scale
+            const color = d3.scaleOrdinal()
+                .domain(nodeNames)
+                .range(['#F59E0B', '#ea580c', '#dc2626', '#7c3aed', '#2563eb', '#0891b2', '#16a34a', '#84cc16', '#eab308', '#f97316']);
+
+            // Draw links
+            svg.append('g')
+                .attr('class', 'links')
+                .selectAll('path')
+                .data(sankeyLinks)
+                .join('path')
+                .attr('class', 'sankey-link')
+                .attr('d', d3.sankeyLinkHorizontal())
+                .attr('stroke', d => color(d.source.name))
+                .attr('stroke-width', d => Math.max(1, d.width));
+
+            // Draw nodes
+            const node = svg.append('g')
+                .attr('class', 'nodes')
+                .selectAll('g')
+                .data(sankeyNodes)
+                .join('g')
+                .attr('class', 'sankey-node');
+
+            node.append('rect')
+                .attr('x', d => d.x0)
+                .attr('y', d => d.y0)
+                .attr('height', d => d.y1 - d.y0)
+                .attr('width', d => d.x1 - d.x0)
+                .attr('fill', d => color(d.name))
+                .attr('rx', 2);
+
+            node.append('text')
+                .attr('x', d => d.x0 < width / 2 ? d.x1 + 6 : d.x0 - 6)
+                .attr('y', d => (d.y1 + d.y0) / 2)
+                .attr('dy', '0.35em')
+                .attr('text-anchor', d => d.x0 < width / 2 ? 'start' : 'end')
+                .text(d => d.name);
+        }
+
+        // Load data and initialize
+        async function init() {
+            try {
+                const response = await fetch('data/lobbying.json');
+                data = await response.json();
+                
+                // Update stats
+                document.getElementById('total-spending').textContent = formatMoney(data.stats.totalSpending2024);
+                document.getElementById('total-lobbyists').textContent = formatNumber(data.stats.totalLobbyists);
+                document.getElementById('total-clients').textContent = formatNumber(data.stats.totalClients);
+                document.getElementById('total-filings').textContent = formatNumber(data.meta.totalFilings2024);
+                
+                // Render components
+                renderSpenders('top-spenders-preview', 6);
+                renderSpenders('all-spenders');
+                renderIndustries();
+                renderLobbyists();
+                renderIssues();
+                renderSankey();
+                
+            } catch (error) {
+                console.error('Failed to load data:', error);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>

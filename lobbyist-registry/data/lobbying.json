@@ -1,0 +1,455 @@
+{
+  "meta": {
+    "source": "Senate Lobbying Disclosure Act (LDA) Database",
+    "api": "https://lda.senate.gov/api/v1/",
+    "lastUpdated": "2024-Q4",
+    "totalFilings2024": 96635,
+    "disclaimer": "Democracy's suggestion box"
+  },
+  "stats": {
+    "totalSpending2024": 4280000000,
+    "totalLobbyists": 12847,
+    "totalClients": 14203,
+    "totalRegistrants": 2156
+  },
+  "topSpenders": [
+    {
+      "id": 1,
+      "client": "U.S. CHAMBER OF COMMERCE",
+      "registrant": "U.S. CHAMBER OF COMMERCE",
+      "totalSpending": 81120000,
+      "industry": "Business Association",
+      "issues": ["Trade", "Taxation", "Labor", "Healthcare"],
+      "lobbyists": ["Neil Bradley", "Marjorie Connelly", "Tiffany Adams", "Christopher Netram"]
+    },
+    {
+      "id": 2,
+      "client": "NATIONAL ASSOCIATION OF REALTORS",
+      "registrant": "NATIONAL ASSOCIATION OF REALTORS",
+      "totalSpending": 72680000,
+      "industry": "Real Estate",
+      "issues": ["Housing", "Taxation", "Banking"],
+      "lobbyists": ["Shannon McGahn", "Ken Wendt", "Bryan Greene"]
+    },
+    {
+      "id": 3,
+      "client": "PHARMACEUTICAL RESEARCH & MANUFACTURERS OF AMERICA (PhRMA)",
+      "registrant": "PHARMACEUTICAL RESEARCH & MANUFACTURERS OF AMERICA",
+      "totalSpending": 29760000,
+      "industry": "Pharmaceuticals",
+      "issues": ["Healthcare", "Medicare/Medicaid", "Intellectual Property"],
+      "lobbyists": ["James Stansel", "Anne Esposito", "Jeff Francer", "Nicole Longo"]
+    },
+    {
+      "id": 4,
+      "client": "AMERICAN HOSPITAL ASSOCIATION",
+      "registrant": "AMERICAN HOSPITAL ASSOCIATION",
+      "totalSpending": 28460000,
+      "industry": "Healthcare",
+      "issues": ["Healthcare", "Medicare/Medicaid", "Budget"],
+      "lobbyists": ["Tom Nickels", "Laura Weil", "Akin Demehin"]
+    },
+    {
+      "id": 5,
+      "client": "AMERICAN MEDICAL ASSOCIATION",
+      "registrant": "AMERICAN MEDICAL ASSOCIATION",
+      "totalSpending": 25270000,
+      "industry": "Healthcare",
+      "issues": ["Healthcare", "Medicare/Medicaid", "Insurance"],
+      "lobbyists": ["Richard Deem", "Kristine Grow", "Shay Pratt"]
+    },
+    {
+      "id": 6,
+      "client": "META PLATFORMS INC",
+      "registrant": "META PLATFORMS INC",
+      "totalSpending": 21240000,
+      "industry": "Technology",
+      "issues": ["Communications", "Privacy", "Antitrust", "AI"],
+      "lobbyists": ["Joel Kaplan", "Nick Clegg", "Kevin Martin", "Myriah Jordan"]
+    },
+    {
+      "id": 7,
+      "client": "AMAZON.COM SERVICES LLC",
+      "registrant": "AMAZON.COM SERVICES LLC",
+      "totalSpending": 20800000,
+      "industry": "Technology",
+      "issues": ["Trade", "Antitrust", "Labor", "Transportation"],
+      "lobbyists": ["Brian Huseman", "Jay Carney", "David Zapolsky"]
+    },
+    {
+      "id": 8,
+      "client": "ALPHABET INC",
+      "registrant": "ALPHABET INC",
+      "totalSpending": 19340000,
+      "industry": "Technology",
+      "issues": ["Communications", "Privacy", "Antitrust", "AI"],
+      "lobbyists": ["Karan Bhatia", "Kent Walker", "Johanna Shelton"]
+    },
+    {
+      "id": 9,
+      "client": "BOEING COMPANY",
+      "registrant": "BOEING COMPANY",
+      "totalSpending": 14120000,
+      "industry": "Aerospace & Defense",
+      "issues": ["Defense", "Aviation", "Trade", "Budget"],
+      "lobbyists": ["Ziad Ojakli", "Tim Keating", "Gordon Johndroe"]
+    },
+    {
+      "id": 10,
+      "client": "LOCKHEED MARTIN CORPORATION",
+      "registrant": "LOCKHEED MARTIN CORPORATION",
+      "totalSpending": 13980000,
+      "industry": "Defense",
+      "issues": ["Defense", "Budget", "Aviation"],
+      "lobbyists": ["Erin Mosher", "Thomas Ward", "Jill Donnelly"]
+    },
+    {
+      "id": 11,
+      "client": "NORTHROP GRUMMAN",
+      "registrant": "NORTHROP GRUMMAN CORPORATION",
+      "totalSpending": 12560000,
+      "industry": "Defense",
+      "issues": ["Defense", "Budget", "Intelligence"],
+      "lobbyists": ["Ann Addison", "Patrick McCarthy", "Sid Ashworth"]
+    },
+    {
+      "id": 12,
+      "client": "COMCAST CORPORATION",
+      "registrant": "COMCAST CORPORATION",
+      "totalSpending": 11890000,
+      "industry": "Telecommunications",
+      "issues": ["Communications", "Media", "Copyright"],
+      "lobbyists": ["David Cohen", "Melissa Maxfield", "Rob Fisher"]
+    },
+    {
+      "id": 13,
+      "client": "AT&T INC",
+      "registrant": "AT&T INC",
+      "totalSpending": 11450000,
+      "industry": "Telecommunications",
+      "issues": ["Communications", "Privacy", "Broadband"],
+      "lobbyists": ["Timothy McKone", "Joan Marsh", "Robert Quinn"]
+    },
+    {
+      "id": 14,
+      "client": "RAYTHEON TECHNOLOGIES",
+      "registrant": "RTX CORPORATION",
+      "totalSpending": 10870000,
+      "industry": "Defense",
+      "issues": ["Defense", "Budget", "Trade"],
+      "lobbyists": ["Christopher Calio", "Marc Duvall", "Thomas Culligan"]
+    },
+    {
+      "id": 15,
+      "client": "EXXON MOBIL CORPORATION",
+      "registrant": "EXXON MOBIL CORPORATION",
+      "totalSpending": 10560000,
+      "industry": "Oil & Gas",
+      "issues": ["Energy", "Environment", "Trade", "Taxation"],
+      "lobbyists": ["Darren Woods", "Sandra Einhorn", "Peter Trelenberg"]
+    },
+    {
+      "id": 16,
+      "client": "MICROSOFT CORPORATION",
+      "registrant": "MICROSOFT CORPORATION",
+      "totalSpending": 9780000,
+      "industry": "Technology",
+      "issues": ["Communications", "AI", "Privacy", "Defense"],
+      "lobbyists": ["Fred Humphries", "Tony Ratcliffe", "John Kelly"]
+    },
+    {
+      "id": 17,
+      "client": "APPLE INC",
+      "registrant": "APPLE INC",
+      "totalSpending": 9640000,
+      "industry": "Technology",
+      "issues": ["Trade", "Privacy", "Antitrust", "Copyright"],
+      "lobbyists": ["Timothy Powderly", "Joshua Rosenstock", "Nick Ammann"]
+    },
+    {
+      "id": 18,
+      "client": "CHEVRON CORPORATION",
+      "registrant": "CHEVRON CORPORATION",
+      "totalSpending": 8920000,
+      "industry": "Oil & Gas",
+      "issues": ["Energy", "Environment", "Trade"],
+      "lobbyists": ["Stacy Linden", "Robert Stork", "Andre Tempelman"]
+    },
+    {
+      "id": 19,
+      "client": "GENERAL MOTORS",
+      "registrant": "GENERAL MOTORS LLC",
+      "totalSpending": 8450000,
+      "industry": "Automotive",
+      "issues": ["Trade", "Environment", "Energy", "Transportation"],
+      "lobbyists": ["Craig Glidden", "Paul Shortino", "Michael Ableson"]
+    },
+    {
+      "id": 20,
+      "client": "BLUE CROSS BLUE SHIELD ASSOCIATION",
+      "registrant": "BLUE CROSS BLUE SHIELD ASSOCIATION",
+      "totalSpending": 8230000,
+      "industry": "Insurance",
+      "issues": ["Healthcare", "Medicare/Medicaid", "Insurance"],
+      "lobbyists": ["Justine Handelman", "Andrew Webber", "Kris Haltmeyer"]
+    }
+  ],
+  "industryBreakdown": [
+    {"industry": "Pharmaceuticals/Health Products", "spending": 374000000, "color": "#dc2626"},
+    {"industry": "Insurance", "spending": 178000000, "color": "#ea580c"},
+    {"industry": "Electronics & Computers", "spending": 169000000, "color": "#2563eb"},
+    {"industry": "Oil & Gas", "spending": 156000000, "color": "#16a34a"},
+    {"industry": "Business Associations", "spending": 145000000, "color": "#7c3aed"},
+    {"industry": "Hospitals/Nursing Homes", "spending": 127000000, "color": "#db2777"},
+    {"industry": "Real Estate", "spending": 118000000, "color": "#0891b2"},
+    {"industry": "Defense/Aerospace", "spending": 109000000, "color": "#4f46e5"},
+    {"industry": "Telecom Services", "spending": 98000000, "color": "#0d9488"},
+    {"industry": "Automotive", "spending": 82000000, "color": "#ca8a04"}
+  ],
+  "topIssues": [
+    {"issue": "Budget/Appropriations", "filings": 18420, "spending": 892000000},
+    {"issue": "Health Issues", "filings": 14680, "spending": 734000000},
+    {"issue": "Taxation/Internal Revenue", "filings": 9870, "spending": 456000000},
+    {"issue": "Defense", "filings": 8940, "spending": 412000000},
+    {"issue": "Trade", "filings": 7820, "spending": 367000000},
+    {"issue": "Medicare/Medicaid", "filings": 7450, "spending": 342000000},
+    {"issue": "Energy/Nuclear", "filings": 6890, "spending": 298000000},
+    {"issue": "Environment", "filings": 5670, "spending": 245000000},
+    {"issue": "Transportation", "filings": 5340, "spending": 224000000},
+    {"issue": "Financial Services", "filings": 4980, "spending": 218000000}
+  ],
+  "lobbyists": [
+    {
+      "id": 1,
+      "name": "Steven Elmendorf",
+      "firm": "Subject Matter",
+      "clients": ["Anheuser-Busch", "Boeing", "Comcast", "Google", "Johnson & Johnson", "Pfizer", "TikTok", "Uber"],
+      "issues": ["Trade", "Healthcare", "Technology", "Transportation"],
+      "formerPositions": ["Chief of Staff to Rep. Dick Gephardt", "Deputy Campaign Manager for John Kerry 2004"],
+      "totalBillings": 4870000
+    },
+    {
+      "id": 2,
+      "name": "Tony Podesta",
+      "firm": "Podesta Group (fmr) / Independent",
+      "clients": ["JPMorgan", "BP", "Lockheed Martin", "Walmart"],
+      "issues": ["Finance", "Energy", "Defense", "Retail"],
+      "formerPositions": ["Democratic Fundraiser", "Brother of John Podesta"],
+      "totalBillings": 3920000
+    },
+    {
+      "id": 3,
+      "name": "Heather Podesta",
+      "firm": "Invariant",
+      "clients": ["Amazon", "CVS Health", "Koch Industries", "T-Mobile"],
+      "issues": ["Healthcare", "Technology", "Energy", "Telecom"],
+      "formerPositions": ["Partner, Podesta Group"],
+      "totalBillings": 3650000
+    },
+    {
+      "id": 4,
+      "name": "Jeff Ricchetti",
+      "firm": "Ricchetti Inc",
+      "clients": ["Amazon", "General Motors", "Pfizer", "Verizon"],
+      "issues": ["Healthcare", "Trade", "Technology"],
+      "formerPositions": ["Brother of Steve Ricchetti (Biden Chief of Staff)"],
+      "totalBillings": 2890000
+    },
+    {
+      "id": 5,
+      "name": "Bruce Mehlman",
+      "firm": "Mehlman Consulting",
+      "clients": ["TikTok", "Meta", "Qualcomm", "Intel", "Nvidia"],
+      "issues": ["Technology", "Trade", "Antitrust"],
+      "formerPositions": ["Assistant Secretary of Commerce under Bush"],
+      "totalBillings": 2780000
+    },
+    {
+      "id": 6,
+      "name": "Joel Kaplan",
+      "firm": "Meta Platforms",
+      "clients": ["Meta (in-house)"],
+      "issues": ["Privacy", "Content Moderation", "Antitrust", "AI"],
+      "formerPositions": ["Deputy Chief of Staff to George W. Bush"],
+      "totalBillings": 2650000
+    },
+    {
+      "id": 7,
+      "name": "David Urban",
+      "firm": "American Continental Group",
+      "clients": ["Amazon", "Raytheon", "Las Vegas Sands", "Ford"],
+      "issues": ["Defense", "Trade", "Gaming", "Automotive"],
+      "formerPositions": ["Trump Campaign Advisor", "US Army Veteran"],
+      "totalBillings": 2540000
+    },
+    {
+      "id": 8,
+      "name": "Haley Barbour",
+      "firm": "BGR Group",
+      "clients": ["Microsoft", "AT&T", "Chevron", "General Electric"],
+      "issues": ["Technology", "Energy", "Telecom"],
+      "formerPositions": ["Governor of Mississippi", "RNC Chairman"],
+      "totalBillings": 2480000
+    },
+    {
+      "id": 9,
+      "name": "John Breaux",
+      "firm": "Squire Patton Boggs",
+      "clients": ["Carnival Cruise", "FedEx", "Toyota", "PhRMA"],
+      "issues": ["Healthcare", "Transportation", "Trade"],
+      "formerPositions": ["US Senator from Louisiana (1987-2005)"],
+      "totalBillings": 2310000
+    },
+    {
+      "id": 10,
+      "name": "Trent Lott",
+      "firm": "Squire Patton Boggs",
+      "clients": ["Boeing", "Chevron", "ExxonMobil", "Northrop Grumman"],
+      "issues": ["Defense", "Energy", "Transportation"],
+      "formerPositions": ["US Senate Majority Leader"],
+      "totalBillings": 2240000
+    },
+    {
+      "id": 11,
+      "name": "Chris Dodd",
+      "firm": "Motion Picture Association (fmr)",
+      "clients": ["MPAA member studios"],
+      "issues": ["Copyright", "Trade", "Entertainment"],
+      "formerPositions": ["US Senator from Connecticut (1981-2011)"],
+      "totalBillings": 1890000
+    },
+    {
+      "id": 12,
+      "name": "Tom Daschle",
+      "firm": "The Daschle Group",
+      "clients": ["CVS Health", "United Health", "Boeing"],
+      "issues": ["Healthcare", "Defense", "Energy"],
+      "formerPositions": ["US Senate Majority Leader"],
+      "totalBillings": 1760000
+    }
+  ],
+  "filings": [
+    {
+      "id": "f001",
+      "client": "PHARMACEUTICAL RESEARCH & MANUFACTURERS OF AMERICA",
+      "registrant": "PHRMA",
+      "income": 7440000,
+      "quarter": "Q3 2024",
+      "issues": ["Medicare/Medicaid", "Healthcare", "Intellectual Property"],
+      "lobbyists": ["James Stansel", "Anne Esposito", "Jeff Francer"],
+      "targets": ["Senate", "House", "HHS", "CMS"]
+    },
+    {
+      "id": "f002",
+      "client": "GOOGLE LLC",
+      "registrant": "THE ROOSEVELT GROUP",
+      "income": 80000,
+      "quarter": "Q2 2024",
+      "issues": ["Defense", "AI", "Cloud Computing"],
+      "lobbyists": ["John Simmons", "Matthew Herrmann"],
+      "targets": ["Senate", "House", "DOD"]
+    },
+    {
+      "id": "f003",
+      "client": "TIKTOK INC",
+      "registrant": "MEHLMAN CONSULTING",
+      "income": 50000,
+      "quarter": "Q2 2024",
+      "issues": ["Privacy", "Trade", "National Security"],
+      "lobbyists": ["Bruce Mehlman", "David Thomas", "Helen Tolar"],
+      "targets": ["Senate", "House", "CFIUS"]
+    },
+    {
+      "id": "f004",
+      "client": "AMERICAN AIRLINES",
+      "registrant": "EMPIRE CONSULTING GROUP",
+      "income": 70000,
+      "quarter": "Q2 2024",
+      "issues": ["Aviation", "Transportation", "Labor"],
+      "lobbyists": ["Brian Greer", "Mike McKay", "Ebony Meeks-Laidley"],
+      "targets": ["Senate", "House", "DOT", "FAA"]
+    },
+    {
+      "id": "f005",
+      "client": "BOEING COMPANY",
+      "registrant": "BOEING COMPANY",
+      "income": 3530000,
+      "quarter": "Q3 2024",
+      "issues": ["Defense", "Aviation", "Trade"],
+      "lobbyists": ["Ziad Ojakli", "Tim Keating", "Gordon Johndroe"],
+      "targets": ["Senate", "House", "DOD", "State Dept"]
+    },
+    {
+      "id": "f006",
+      "client": "BALFOUR BEATTY COMMUNITIES",
+      "registrant": "THE ROOSEVELT GROUP",
+      "income": 80000,
+      "quarter": "Q2 2024",
+      "issues": ["Defense", "Housing", "Military Construction"],
+      "lobbyists": ["Christopher Goode", "John Simmons", "Kathleen Ferguson"],
+      "targets": ["Senate", "House", "DOD"]
+    },
+    {
+      "id": "f007",
+      "client": "AMERICAN LEGION",
+      "registrant": "AMERICAN LEGION",
+      "income": null,
+      "expenses": 190000,
+      "quarter": "Q4 2024",
+      "issues": ["Veterans", "Defense", "Healthcare"],
+      "lobbyists": ["Eric Johnson", "Julia Mathis", "Jake Corsi"],
+      "targets": ["Senate", "House", "VA"]
+    },
+    {
+      "id": "f008",
+      "client": "CHEVRON CORPORATION",
+      "registrant": "CHEVRON CORPORATION",
+      "income": 2230000,
+      "quarter": "Q3 2024",
+      "issues": ["Energy", "Environment", "Trade", "Taxation"],
+      "lobbyists": ["Stacy Linden", "Robert Stork", "Andre Tempelman"],
+      "targets": ["Senate", "House", "DOE", "EPA"]
+    },
+    {
+      "id": "f009",
+      "client": "META PLATFORMS",
+      "registrant": "META PLATFORMS INC",
+      "income": 5310000,
+      "quarter": "Q3 2024",
+      "issues": ["Privacy", "Content Moderation", "AI", "Antitrust"],
+      "lobbyists": ["Joel Kaplan", "Kevin Martin", "Myriah Jordan"],
+      "targets": ["Senate", "House", "FTC", "FCC"]
+    },
+    {
+      "id": "f010",
+      "client": "NATIONAL RIFLE ASSOCIATION",
+      "registrant": "NATIONAL RIFLE ASSOCIATION",
+      "income": 1890000,
+      "quarter": "Q3 2024",
+      "issues": ["Firearms", "Civil Rights", "Criminal Justice"],
+      "lobbyists": ["Randy Kozuch", "Jennifer Baker", "Jason Ouimet"],
+      "targets": ["Senate", "House", "ATF"]
+    }
+  ],
+  "moneyFlows": [
+    {"source": "Pharmaceuticals", "target": "Healthcare Issues", "value": 374},
+    {"source": "Pharmaceuticals", "target": "Medicare/Medicaid", "value": 198},
+    {"source": "Technology", "target": "Privacy/AI", "value": 145},
+    {"source": "Technology", "target": "Antitrust", "value": 89},
+    {"source": "Oil & Gas", "target": "Energy Policy", "value": 156},
+    {"source": "Oil & Gas", "target": "Environment", "value": 67},
+    {"source": "Defense", "target": "Budget/Appropriations", "value": 109},
+    {"source": "Defense", "target": "Trade", "value": 45},
+    {"source": "Finance", "target": "Banking Regulation", "value": 98},
+    {"source": "Finance", "target": "Taxation", "value": 72},
+    {"source": "Healthcare Issues", "target": "Senate", "value": 312},
+    {"source": "Healthcare Issues", "target": "House", "value": 298},
+    {"source": "Healthcare Issues", "target": "HHS", "value": 145},
+    {"source": "Budget/Appropriations", "target": "Senate", "value": 456},
+    {"source": "Budget/Appropriations", "target": "House", "value": 423},
+    {"source": "Privacy/AI", "target": "Senate", "value": 89},
+    {"source": "Privacy/AI", "target": "FTC", "value": 67},
+    {"source": "Energy Policy", "target": "Senate", "value": 134},
+    {"source": "Energy Policy", "target": "DOE", "value": 78}
+  ]
+}
