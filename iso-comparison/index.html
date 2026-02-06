@@ -194,6 +194,34 @@
       grid-template-columns: 80px 1fr 80px;
       gap: 16px;
       align-items: center;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .bar-row:hover {
+      background: var(--bg-secondary);
+      border-radius: 4px;
+      margin: 0 -8px;
+      padding: 0 8px;
+    }
+
+    .bar-row[data-tooltip]:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      left: 50%;
+      bottom: 100%;
+      transform: translateX(-50%);
+      background: var(--text-primary);
+      color: var(--bg-primary);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-family: var(--font-sans);
+      white-space: nowrap;
+      z-index: 100;
+      margin-bottom: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
     }
 
     .bar-label {
@@ -650,7 +678,7 @@
       // Projects chart
       const maxProjects = Math.max(...isos.map(i => i.projects));
       document.getElementById('projectsChart').innerHTML = sortedByProjects.map((iso, idx) => `
-        <div class="bar-row">
+        <div class="bar-row" data-tooltip="${iso.name}: ${iso.projects.toLocaleString()} projects, ${(iso.totalMW/1000).toFixed(0)} GW capacity">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
             <div class="bar-fill ${idx === 0 ? 'highlight' : ''}" style="width: ${(iso.projects / maxProjects * 100)}%"></div>
@@ -662,7 +690,7 @@
       // Capacity chart
       const maxMW = Math.max(...isos.map(i => i.totalMW));
       document.getElementById('capacityChart').innerHTML = sortedByMW.map((iso, idx) => `
-        <div class="bar-row">
+        <div class="bar-row" data-tooltip="${iso.name}: ${(iso.totalMW/1000).toFixed(0)} GW total, ${iso.projects.toLocaleString()} projects">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
             <div class="bar-fill ${idx === 0 ? 'highlight' : ''}" style="width: ${(iso.totalMW / maxMW * 100)}%"></div>
@@ -673,7 +701,7 @@
 
       // Withdrawal chart
       document.getElementById('withdrawalChart').innerHTML = sortedByWithdrawal.map((iso, idx) => `
-        <div class="bar-row">
+        <div class="bar-row" data-tooltip="${iso.name}: ${(iso.withdrawalRate * 100).toFixed(1)}% withdrawn (${iso.withdrawn?.toLocaleString() || '—'} projects)">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
             <div class="bar-fill negative" style="width: ${(iso.withdrawalRate * 100)}%"></div>
@@ -684,7 +712,7 @@
 
       // Completion chart
       document.getElementById('completionChart').innerHTML = sortedByCompletion.map((iso, idx) => `
-        <div class="bar-row">
+        <div class="bar-row" data-tooltip="${iso.name}: ${(iso.completionRate * 100).toFixed(1)}% reached operational status">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
             <div class="bar-fill positive" style="width: ${(iso.completionRate * 100 * 5)}%"></div>
@@ -696,7 +724,7 @@
       // Timeline chart
       const maxTimeline = Math.max(...isos.map(i => i.avgTimelineYears));
       document.getElementById('timelineChart').innerHTML = sortedByTimeline.map((iso) => `
-        <div class="bar-row">
+        <div class="bar-row" data-tooltip="${iso.name}: ${iso.avgTimelineYears.toFixed(1)} years avg from queue entry to COD">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
             <div class="bar-fill" style="width: ${(iso.avgTimelineYears / maxTimeline * 100)}%"></div>
@@ -708,7 +736,7 @@
       // Avg size chart
       const maxAvgMW = Math.max(...isos.map(i => i.avgMW));
       document.getElementById('avgSizeChart').innerHTML = sortedByAvgMW.map((iso, idx) => `
-        <div class="bar-row">
+        <div class="bar-row" data-tooltip="${iso.name}: ${iso.avgMW} MW average project size">
           <div class="bar-label">${iso.id}</div>
           <div class="bar-track">
             <div class="bar-fill ${idx === 0 ? 'highlight' : ''}" style="width: ${(iso.avgMW / maxAvgMW * 100)}%"></div>

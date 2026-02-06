@@ -369,6 +369,35 @@
       border-bottom: 1px solid var(--border);
     }
 
+    .detail-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .close-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      width: 28px;
+      height: 28px;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.15s ease;
+    }
+
+    .close-btn:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+      background: rgba(239, 68, 68, 0.1);
+    }
+
     .detail-header h2 {
       font-size: 1.125rem;
       font-weight: 600;
@@ -977,7 +1006,10 @@
 
       panel.innerHTML = `
         <div class="detail-header">
-          <h2>${d.name}</h2>
+          <div class="detail-header-top">
+            <h2>${d.name}</h2>
+            <button class="close-btn" onclick="closeDetail()" title="Close">✕</button>
+          </div>
           <div class="subtitle">${d.total_projects} projects • Active since ${formatDateShort(d.earliest_queue)}</div>
         </div>
         
@@ -1055,6 +1087,13 @@
           </div>
         </div>
       `;
+    }
+
+    function closeDetail() {
+      selectedDev = null;
+      document.getElementById('detailPanel').style.display = 'none';
+      // Remove selected class from all rows
+      document.querySelectorAll('tbody tr.selected').forEach(tr => tr.classList.remove('selected'));
     }
 
     function escapeHtml(str) {
