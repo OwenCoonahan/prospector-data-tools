@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Federal Contract Tracker | Your Tax Dollars, Visualized</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111111;
+            --bg-tertiary: #1a1a1a;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1a1;
+            --text-muted: #666666;
+            --accent: #3B82F6;
+            --accent-dim: rgba(59, 130, 246, 0.15);
+            --border: #262626;
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+        }
+
+        .last-updated {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .stat-value.accent {
+            color: var(--accent);
+        }
+
+        .stat-subtext {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.25rem;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .tab {
+            background: transparent;
+            border: none;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            padding: 0.75rem 1.25rem;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.15s ease;
+        }
+
+        .tab:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .tab.active {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        .tab-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            background: var(--bg-tertiary);
+            padding: 0.15rem 0.5rem;
+            border-radius: 10px;
+            margin-left: 0.5rem;
+        }
+
+        .tab.active .tab-count {
+            background: rgba(59, 130, 246, 0.3);
+        }
+
+        /* Filters */
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.875rem;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .search-box::before {
+            content: "⌕";
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .filter-select {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.875rem;
+            cursor: pointer;
+            min-width: 180px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        /* Table */
+        .table-container {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            background: var(--bg-tertiary);
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        th:hover {
+            color: var(--text-secondary);
+        }
+
+        th.sorted {
+            color: var(--accent);
+        }
+
+        th .sort-arrow {
+            margin-left: 0.5rem;
+            opacity: 0.5;
+        }
+
+        th.sorted .sort-arrow {
+            opacity: 1;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.875rem;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: var(--bg-tertiary);
+        }
+
+        .company-name {
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        .contract-id {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .amount {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+            color: var(--success);
+        }
+
+        .agency {
+            color: var(--text-secondary);
+        }
+
+        .agency-sub {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+        }
+
+        .badge-open {
+            background: rgba(34, 197, 94, 0.15);
+            color: var(--success);
+        }
+
+        .badge-closing {
+            background: rgba(245, 158, 11, 0.15);
+            color: var(--warning);
+        }
+
+        .badge-urgent {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .badge-setaside {
+            background: var(--accent-dim);
+            color: var(--accent);
+        }
+
+        .description {
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            color: var(--text-secondary);
+        }
+
+        .days-left {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 500;
+        }
+
+        .days-left.urgent {
+            color: var(--danger);
+        }
+
+        .days-left.warning {
+            color: var(--warning);
+        }
+
+        .days-left.ok {
+            color: var(--text-secondary);
+        }
+
+        /* No results */
+        .no-results {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+
+        .no-results-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        footer a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .filters {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+
+            .filter-select {
+                width: 100%;
+            }
+
+            .table-container {
+                overflow-x: auto;
+            }
+
+            th, td {
+                padding: 0.75rem;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div>
+                    <h1>Federal Contract Tracker</h1>
+                    <p class="subtitle">Your tax dollars, visualized ✨</p>
+                </div>
+                <span class="last-updated" id="lastUpdated">Loading...</span>
+            </div>
+        </header>
+
+        <div class="stats-grid" id="statsGrid">
+            <div class="stat-card">
+                <div class="stat-label">Total Awarded</div>
+                <div class="stat-value accent" id="totalValue">—</div>
+                <div class="stat-subtext">Past 12 months</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Contracts Won</div>
+                <div class="stat-value" id="contractCount">—</div>
+                <div class="stat-subtext">Tracked awards</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Top Agency</div>
+                <div class="stat-value" id="topAgency" style="font-size: 1.25rem;">—</div>
+                <div class="stat-subtext" id="topAgencyValue">—</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Open Opportunities</div>
+                <div class="stat-value" id="oppCount">—</div>
+                <div class="stat-subtext" id="oppValue">Est. value</div>
+            </div>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="won">
+                Won Contracts<span class="tab-count" id="wonCount">0</span>
+            </button>
+            <button class="tab" data-tab="opportunities">
+                Opportunities<span class="tab-count" id="oppTabCount">0</span>
+            </button>
+        </div>
+
+        <div class="filters">
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="Search contracts, companies, agencies...">
+            </div>
+            <select class="filter-select" id="agencyFilter">
+                <option value="">All Agencies</option>
+            </select>
+            <select class="filter-select" id="setAsideFilter">
+                <option value="">All Set-Asides</option>
+                <option value="None">Full & Open</option>
+                <option value="Small Business">Small Business</option>
+                <option value="SDVOSB">SDVOSB</option>
+                <option value="8(a)">8(a)</option>
+            </select>
+        </div>
+
+        <div class="table-container">
+            <table id="contractsTable">
+                <thead id="tableHeader">
+                    <!-- Dynamic headers -->
+                </thead>
+                <tbody id="tableBody">
+                    <!-- Dynamic rows -->
+                </tbody>
+            </table>
+            <div class="no-results hidden" id="noResults">
+                <div class="no-results-icon">🔍</div>
+                <div>No contracts found matching your filters</div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Data from <a href="https://sam.gov" target="_blank">SAM.gov</a> • Sample data for demonstration • 
+            Built with questionable amounts of caffeine ☕</p>
+        </footer>
+    </div>
+
+    <script>
+        // State
+        let data = { won_contracts: [], opportunities: [] };
+        let currentTab = 'won';
+        let sortColumn = 'amount';
+        let sortDirection = 'desc';
+        let searchTerm = '';
+        let agencyFilter = '';
+        let setAsideFilter = '';
+
+        // Format currency
+        function formatCurrency(amount) {
+            if (amount >= 1e9) return '$' + (amount / 1e9).toFixed(1) + 'B';
+            if (amount >= 1e6) return '$' + (amount / 1e6).toFixed(1) + 'M';
+            if (amount >= 1e3) return '$' + (amount / 1e3).toFixed(0) + 'K';
+            return '$' + amount.toLocaleString();
+        }
+
+        // Format date
+        function formatDate(dateStr) {
+            const date = new Date(dateStr);
+            return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        }
+
+        // Calculate days until deadline
+        function daysUntil(dateStr) {
+            const deadline = new Date(dateStr);
+            const today = new Date();
+            const diff = Math.ceil((deadline - today) / (1000 * 60 * 60 * 24));
+            return diff;
+        }
+
+        // Get days left class
+        function getDaysClass(days) {
+            if (days <= 7) return 'urgent';
+            if (days <= 21) return 'warning';
+            return 'ok';
+        }
+
+        // Get days left badge
+        function getDaysBadge(days) {
+            if (days < 0) return 'badge-urgent';
+            if (days <= 7) return 'badge-urgent';
+            if (days <= 21) return 'badge-closing';
+            return 'badge-open';
+        }
+
+        // Populate agency filter
+        function populateAgencies() {
+            const agencies = new Set();
+            data.won_contracts.forEach(c => agencies.add(c.agency));
+            data.opportunities.forEach(o => agencies.add(o.agency));
+            
+            const select = document.getElementById('agencyFilter');
+            Array.from(agencies).sort().forEach(agency => {
+                const option = document.createElement('option');
+                option.value = agency;
+                option.textContent = agency.replace('Department of ', '');
+                select.appendChild(option);
+            });
+        }
+
+        // Calculate stats
+        function calculateStats() {
+            const totalValue = data.won_contracts.reduce((sum, c) => sum + c.amount, 0);
+            const oppValue = data.opportunities.reduce((sum, o) => sum + o.estimated_value, 0);
+            
+            // Top agency
+            const agencyTotals = {};
+            data.won_contracts.forEach(c => {
+                agencyTotals[c.agency] = (agencyTotals[c.agency] || 0) + c.amount;
+            });
+            const topAgency = Object.entries(agencyTotals).sort((a, b) => b[1] - a[1])[0];
+            
+            document.getElementById('totalValue').textContent = formatCurrency(totalValue);
+            document.getElementById('contractCount').textContent = data.won_contracts.length;
+            document.getElementById('topAgency').textContent = topAgency[0].replace('Department of ', '');
+            document.getElementById('topAgencyValue').textContent = formatCurrency(topAgency[1]) + ' awarded';
+            document.getElementById('oppCount').textContent = data.opportunities.length;
+            document.getElementById('oppValue').textContent = formatCurrency(oppValue) + ' est.';
+            document.getElementById('wonCount').textContent = data.won_contracts.length;
+            document.getElementById('oppTabCount').textContent = data.opportunities.length;
+            document.getElementById('lastUpdated').textContent = 'Updated: ' + formatDate(data.metadata.last_updated);
+        }
+
+        // Get filtered data
+        function getFilteredData() {
+            let items = currentTab === 'won' ? data.won_contracts : data.opportunities;
+            
+            if (searchTerm) {
+                const term = searchTerm.toLowerCase();
+                items = items.filter(item => {
+                    const searchFields = currentTab === 'won' 
+                        ? [item.company, item.agency, item.description, item.id]
+                        : [item.title, item.agency, item.id];
+                    return searchFields.some(f => f.toLowerCase().includes(term));
+                });
+            }
+            
+            if (agencyFilter) {
+                items = items.filter(item => item.agency === agencyFilter);
+            }
+            
+            if (setAsideFilter) {
+                items = items.filter(item => item.set_aside === setAsideFilter);
+            }
+            
+            // Sort
+            items = [...items].sort((a, b) => {
+                let aVal, bVal;
+                
+                if (currentTab === 'won') {
+                    switch (sortColumn) {
+                        case 'company': aVal = a.company; bVal = b.company; break;
+                        case 'amount': aVal = a.amount; bVal = b.amount; break;
+                        case 'agency': aVal = a.agency; bVal = b.agency; break;
+                        case 'date': aVal = new Date(a.award_date); bVal = new Date(b.award_date); break;
+                        default: aVal = a.amount; bVal = b.amount;
+                    }
+                } else {
+                    switch (sortColumn) {
+                        case 'title': aVal = a.title; bVal = b.title; break;
+                        case 'value': aVal = a.estimated_value; bVal = b.estimated_value; break;
+                        case 'agency': aVal = a.agency; bVal = b.agency; break;
+                        case 'deadline': aVal = new Date(a.response_deadline); bVal = new Date(b.response_deadline); break;
+                        default: aVal = new Date(a.response_deadline); bVal = new Date(b.response_deadline);
+                    }
+                }
+                
+                if (typeof aVal === 'string') {
+                    return sortDirection === 'asc' ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
+                }
+                return sortDirection === 'asc' ? aVal - bVal : bVal - aVal;
+            });
+            
+            return items;
+        }
+
+        // Render table headers
+        function renderHeaders() {
+            const header = document.getElementById('tableHeader');
+            
+            if (currentTab === 'won') {
+                header.innerHTML = `
+                    <tr>
+                        <th data-sort="company">Company <span class="sort-arrow">↕</span></th>
+                        <th data-sort="amount">Amount <span class="sort-arrow">↕</span></th>
+                        <th data-sort="agency">Agency <span class="sort-arrow">↕</span></th>
+                        <th>Description</th>
+                        <th data-sort="date">Award Date <span class="sort-arrow">↕</span></th>
+                        <th>Set-Aside</th>
+                    </tr>
+                `;
+            } else {
+                header.innerHTML = `
+                    <tr>
+                        <th data-sort="title">Opportunity <span class="sort-arrow">↕</span></th>
+                        <th data-sort="value">Est. Value <span class="sort-arrow">↕</span></th>
+                        <th data-sort="agency">Agency <span class="sort-arrow">↕</span></th>
+                        <th data-sort="deadline">Deadline <span class="sort-arrow">↕</span></th>
+                        <th>Type</th>
+                        <th>Location</th>
+                    </tr>
+                `;
+            }
+            
+            // Attach sort handlers
+            header.querySelectorAll('th[data-sort]').forEach(th => {
+                th.addEventListener('click', () => {
+                    const col = th.dataset.sort;
+                    if (sortColumn === col) {
+                        sortDirection = sortDirection === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        sortColumn = col;
+                        sortDirection = 'desc';
+                    }
+                    renderTable();
+                });
+            });
+        }
+
+        // Render table
+        function renderTable() {
+            const items = getFilteredData();
+            const tbody = document.getElementById('tableBody');
+            const noResults = document.getElementById('noResults');
+            
+            // Update sort indicators
+            document.querySelectorAll('th[data-sort]').forEach(th => {
+                th.classList.toggle('sorted', th.dataset.sort === sortColumn);
+                const arrow = th.querySelector('.sort-arrow');
+                if (arrow) {
+                    arrow.textContent = th.dataset.sort === sortColumn 
+                        ? (sortDirection === 'asc' ? '↑' : '↓') 
+                        : '↕';
+                }
+            });
+            
+            if (items.length === 0) {
+                tbody.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+            
+            noResults.classList.add('hidden');
+            
+            if (currentTab === 'won') {
+                tbody.innerHTML = items.map(c => `
+                    <tr>
+                        <td>
+                            <div class="company-name">${c.company}</div>
+                            <div class="contract-id">${c.id}</div>
+                        </td>
+                        <td class="amount">${formatCurrency(c.amount)}</td>
+                        <td>
+                            <div class="agency">${c.agency.replace('Department of ', '')}</div>
+                            <div class="agency-sub">${c.sub_agency}</div>
+                        </td>
+                        <td class="description" title="${c.description}">${c.description}</td>
+                        <td class="date">${formatDate(c.award_date)}</td>
+                        <td>${c.set_aside !== 'None' ? `<span class="badge badge-setaside">${c.set_aside}</span>` : '—'}</td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = items.map(o => {
+                    const days = daysUntil(o.response_deadline);
+                    const daysText = days < 0 ? 'Closed' : days === 0 ? 'Today!' : `${days} days`;
+                    return `
+                        <tr>
+                            <td>
+                                <div class="company-name">${o.title}</div>
+                                <div class="contract-id">${o.id}</div>
+                            </td>
+                            <td class="amount">${formatCurrency(o.estimated_value)}</td>
+                            <td>
+                                <div class="agency">${o.agency.replace('Department of ', '')}</div>
+                                <div class="agency-sub">${o.sub_agency}</div>
+                            </td>
+                            <td>
+                                <div class="date">${formatDate(o.response_deadline)}</div>
+                                <span class="days-left ${getDaysClass(days)}">${daysText}</span>
+                            </td>
+                            <td>${o.set_aside !== 'None' ? `<span class="badge badge-setaside">${o.set_aside}</span>` : `<span class="badge badge-open">${o.type}</span>`}</td>
+                            <td class="agency-sub">${o.place_of_performance}</td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+        }
+
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                sortColumn = currentTab === 'won' ? 'amount' : 'deadline';
+                sortDirection = currentTab === 'won' ? 'desc' : 'asc';
+                renderHeaders();
+                renderTable();
+            });
+        });
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            searchTerm = e.target.value;
+            renderTable();
+        });
+
+        // Filters
+        document.getElementById('agencyFilter').addEventListener('change', (e) => {
+            agencyFilter = e.target.value;
+            renderTable();
+        });
+
+        document.getElementById('setAsideFilter').addEventListener('change', (e) => {
+            setAsideFilter = e.target.value;
+            renderTable();
+        });
+
+        // Load data
+        async function loadData() {
+            try {
+                const response = await fetch('data/contracts.json');
+                data = await response.json();
+                calculateStats();
+                populateAgencies();
+                renderHeaders();
+                renderTable();
+            } catch (err) {
+                console.error('Failed to load data:', err);
+                document.getElementById('tableBody').innerHTML = `
+                    <tr><td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                        Failed to load contract data. Check the console for details.
+                    </td></tr>
+                `;
+            }
+        }
+
+        loadData();
+    </script>
+</body>
+</html>

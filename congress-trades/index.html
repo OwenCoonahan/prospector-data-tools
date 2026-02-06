@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Congress Stock Tracker | Perfectly Timed Trades™</title>
+  <meta name="description" content="Track stock trades by members of Congress. Because public servants have unusual returns.">
+  
+  <!-- Open Graph -->
+  <meta property="og:title" content="Congress Stock Tracker">
+  <meta property="og:description" content="Track stock trades by members of Congress. Unusual returns for public servants.">
+  <meta property="og:type" content="website">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --accent: #3B82F6;
+      --accent-light: #60A5FA;
+      --accent-bg: #EFF6FF;
+      --bg: #FAFAFA;
+      --bg-card: #FFFFFF;
+      --text: #111827;
+      --text-secondary: #6B7280;
+      --text-muted: #9CA3AF;
+      --border: #E5E7EB;
+      --green: #10B981;
+      --green-bg: #D1FAE5;
+      --red: #EF4444;
+      --red-bg: #FEE2E2;
+      --yellow: #F59E0B;
+      --yellow-bg: #FEF3C7;
+      --dem: #3B82F6;
+      --rep: #EF4444;
+      --radius: 12px;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0,0,0,0.04);
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      min-height: 100vh;
+    }
+    
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    /* Header */
+    header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+    }
+    
+    .logo h1 {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .logo-subtitle {
+      font-size: 12px;
+      color: var(--text-secondary);
+      font-style: italic;
+    }
+    
+    .search-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      width: 320px;
+      transition: all 0.2s;
+    }
+    
+    .search-box:focus-within {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-bg);
+    }
+    
+    .search-box input {
+      border: none;
+      background: none;
+      outline: none;
+      flex: 1;
+      font-size: 14px;
+      font-family: inherit;
+    }
+    
+    .search-box svg {
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    
+    /* Stats Banner */
+    .stats-banner {
+      background: linear-gradient(135deg, var(--accent) 0%, #1D4ED8 100%);
+      color: white;
+      padding: 32px 0;
+      margin-bottom: 32px;
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 24px;
+    }
+    
+    .stat-item {
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 32px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    
+    .stat-label {
+      font-size: 13px;
+      opacity: 0.85;
+      margin-top: 4px;
+    }
+    
+    .stat-subtext {
+      font-size: 11px;
+      opacity: 0.65;
+      margin-top: 2px;
+    }
+    
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0;
+    }
+    
+    .tab {
+      padding: 12px 20px;
+      border: none;
+      background: none;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    
+    .tab:hover {
+      color: var(--text);
+    }
+    
+    .tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    
+    /* Filters */
+    .filters {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      padding: 8px 16px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    
+    .filter-btn:hover {
+      border-color: var(--accent);
+    }
+    
+    .filter-btn.active {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    /* Trades Table */
+    .section {
+      margin-bottom: 40px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .trades-table {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+    
+    .table-header {
+      display: grid;
+      grid-template-columns: 1fr 100px 140px 130px 100px 100px 40px;
+      gap: 16px;
+      padding: 14px 20px;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    
+    .trade-row {
+      display: grid;
+      grid-template-columns: 1fr 100px 140px 130px 100px 100px 40px;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      align-items: center;
+      transition: background 0.15s;
+    }
+    
+    .trade-row:last-child {
+      border-bottom: none;
+    }
+    
+    .trade-row:hover {
+      background: var(--bg);
+    }
+    
+    .trade-row.suspicious {
+      background: var(--yellow-bg);
+    }
+    
+    .trade-row.suspicious:hover {
+      background: #FDE68A;
+    }
+    
+    .member-cell {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .member-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--border);
+    }
+    
+    .member-info h4 {
+      font-size: 14px;
+      font-weight: 600;
+    }
+    
+    .member-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    
+    .party-badge {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+    
+    .party-badge.D { background: var(--dem); }
+    .party-badge.R { background: var(--rep); }
+    
+    .ticker {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .company-name {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+    
+    .trade-type {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .trade-type.buy {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+    
+    .trade-type.sell {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+    
+    .amount {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+    }
+    
+    .pct-change {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .pct-change.positive { color: var(--green); }
+    .pct-change.negative { color: var(--red); }
+    
+    .date-cell {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    .suspicious-icon {
+      color: var(--yellow);
+      cursor: help;
+    }
+    
+    /* Leaderboard */
+    .leaderboard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+    }
+    
+    .leader-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 20px;
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: all 0.2s;
+    }
+    
+    .leader-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+    
+    .rank {
+      width: 32px;
+      height: 32px;
+      background: var(--accent-bg);
+      color: var(--accent);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    
+    .rank.gold { background: #FEF3C7; color: #D97706; }
+    .rank.silver { background: #F3F4F6; color: #6B7280; }
+    .rank.bronze { background: #FED7AA; color: #C2410C; }
+    
+    .leader-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      background: var(--border);
+    }
+    
+    .leader-info {
+      flex: 1;
+    }
+    
+    .leader-name {
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 2px;
+    }
+    
+    .leader-meta {
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+    
+    .leader-stats {
+      display: flex;
+      gap: 16px;
+    }
+    
+    .leader-stat {
+      font-size: 12px;
+    }
+    
+    .leader-stat-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: var(--text);
+    }
+    
+    .leader-stat-label {
+      color: var(--text-muted);
+    }
+    
+    /* Performance Section */
+    .performance-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+    
+    .perf-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 24px;
+    }
+    
+    .perf-card h3 {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+    
+    .perf-comparison {
+      display: flex;
+      align-items: baseline;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    
+    .perf-main {
+      font-size: 36px;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--green);
+    }
+    
+    .perf-vs {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+    
+    .perf-vs span {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+    }
+    
+    .perf-bar {
+      height: 8px;
+      background: var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    
+    .perf-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--green) 100%);
+      border-radius: 4px;
+      transition: width 0.5s ease-out;
+    }
+    
+    .perf-note {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-style: italic;
+    }
+    
+    /* Top Stocks */
+    .top-stocks {
+      list-style: none;
+    }
+    
+    .stock-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .stock-item:last-child {
+      border-bottom: none;
+    }
+    
+    .stock-ticker {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    
+    .stock-trades {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+    
+    .stock-volume {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      margin-top: 60px;
+      text-align: center;
+      color: var(--text-secondary);
+      font-size: 13px;
+    }
+    
+    footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    
+    footer a:hover {
+      text-decoration: underline;
+    }
+    
+    .disclaimer {
+      max-width: 600px;
+      margin: 0 auto;
+      margin-bottom: 16px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+    
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+    }
+    
+    .tooltip-text {
+      visibility: hidden;
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--text);
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      white-space: nowrap;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.2s;
+      margin-bottom: 8px;
+    }
+    
+    .tooltip:hover .tooltip-text {
+      visibility: visible;
+      opacity: 1;
+    }
+    
+    /* Responsive */
+    @media (max-width: 900px) {
+      .table-header,
+      .trade-row {
+        grid-template-columns: 1fr 80px 100px 100px;
+      }
+      
+      .table-header > *:nth-child(5),
+      .table-header > *:nth-child(6),
+      .table-header > *:nth-child(7),
+      .trade-row > *:nth-child(5),
+      .trade-row > *:nth-child(6),
+      .trade-row > *:nth-child(7) {
+        display: none;
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .header-content {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      .search-box {
+        width: 100%;
+      }
+      
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .stat-value {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">📊</div>
+          <div>
+            <h1>Congress Stock Tracker</h1>
+            <div class="logo-subtitle">Perfectly timed trades™</div>
+          </div>
+        </div>
+        <div class="search-box">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <path d="M21 21l-4.35-4.35"/>
+          </svg>
+          <input type="text" id="searchInput" placeholder="Search by name, party, or stock...">
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <div class="stats-banner">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="stat-item">
+          <div class="stat-value" id="totalTrades">847</div>
+          <div class="stat-label">Trades in 2026</div>
+          <div class="stat-subtext">$142M total volume</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">+24.7%</div>
+          <div class="stat-label">Congress Avg Return</div>
+          <div class="stat-subtext">vs S&P 500: +8.2%</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">18.4%</div>
+          <div class="stat-label">Suspicious Trades</div>
+          <div class="stat-subtext">Unusually well-timed</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">12.3%</div>
+          <div class="stat-label">Late Filings</div>
+          <div class="stat-subtext">STOCK Act violations</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <main class="container">
+    <div class="tabs">
+      <button class="tab active" data-tab="trades">Recent Trades</button>
+      <button class="tab" data-tab="leaderboard">Leaderboard</button>
+      <button class="tab" data-tab="performance">Performance</button>
+    </div>
+    
+    <!-- Recent Trades Tab -->
+    <div id="trades-tab" class="tab-content">
+      <div class="filters">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="buy">Buys</button>
+        <button class="filter-btn" data-filter="sell">Sells</button>
+        <button class="filter-btn" data-filter="suspicious">⚠️ Suspicious</button>
+        <button class="filter-btn" data-filter="D">Democrats</button>
+        <button class="filter-btn" data-filter="R">Republicans</button>
+      </div>
+      
+      <div class="section">
+        <div class="trades-table">
+          <div class="table-header">
+            <div>Member</div>
+            <div>Ticker</div>
+            <div>Type / Amount</div>
+            <div>Date</div>
+            <div>Return</div>
+            <div>Disclosed</div>
+            <div></div>
+          </div>
+          <div id="tradesContainer">
+            <!-- Trades will be populated by JS -->
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Leaderboard Tab -->
+    <div id="leaderboard-tab" class="tab-content" style="display:none;">
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">Top Traders by Returns vs S&P 500</h2>
+        </div>
+        <div class="leaderboard" id="leaderboardContainer">
+          <!-- Will be populated by JS -->
+        </div>
+      </div>
+    </div>
+    
+    <!-- Performance Tab -->
+    <div id="performance-tab" class="tab-content" style="display:none;">
+      <div class="performance-grid">
+        <div class="perf-card">
+          <h3>Congress vs Market (2026 YTD)</h3>
+          <div class="perf-comparison">
+            <div class="perf-main">+24.7%</div>
+            <div class="perf-vs">vs S&P 500 <span>+8.2%</span></div>
+          </div>
+          <div class="perf-bar">
+            <div class="perf-bar-fill" style="width: 75%;"></div>
+          </div>
+          <div class="perf-note">"Unusual returns for public servants"</div>
+        </div>
+        
+        <div class="perf-card">
+          <h3>Top Traded Stocks</h3>
+          <ul class="top-stocks" id="topStocksContainer">
+            <!-- Will be populated by JS -->
+          </ul>
+        </div>
+        
+        <div class="perf-card">
+          <h3>Win Rate Analysis</h3>
+          <div class="perf-comparison">
+            <div class="perf-main">71.2%</div>
+            <div class="perf-vs">profitable trades</div>
+          </div>
+          <div class="perf-bar">
+            <div class="perf-bar-fill" style="width: 71.2%;"></div>
+          </div>
+          <div class="perf-note">Retail investors average 42%</div>
+        </div>
+        
+        <div class="perf-card">
+          <h3>By Party (Returns vs S&P)</h3>
+          <div style="display: flex; gap: 32px; margin-top: 16px;">
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span class="party-badge D"></span>
+                <span style="font-weight: 500;">Democrats</span>
+              </div>
+              <div class="perf-main" style="font-size: 28px;">+22.4%</div>
+            </div>
+            <div>
+              <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                <span class="party-badge R"></span>
+                <span style="font-weight: 500;">Republicans</span>
+              </div>
+              <div class="perf-main" style="font-size: 28px;">+27.1%</div>
+            </div>
+          </div>
+          <div class="perf-note" style="margin-top: 16px;">Bipartisan excellence in stock picking</div>
+        </div>
+      </div>
+    </div>
+  </main>
+  
+  <footer>
+    <div class="container">
+      <p class="disclaimer">
+        Data sourced from congressional financial disclosures required by the STOCK Act. 
+        Members must report trades within 45 days. "Suspicious" flags are algorithmic estimates 
+        based on timing relative to legislative events and committee assignments.
+      </p>
+      <p>
+        Built with taxpayer-funded data • 
+        <a href="https://disclosures-clerk.house.gov/PublicDisclosure/FinancialDisclosure">House Disclosures</a> • 
+        <a href="https://efdsearch.senate.gov/search/">Senate Disclosures</a>
+      </p>
+    </div>
+  </footer>
+  
+  <script>
+    // Load data
+    let tradesData = null;
+    
+    async function loadData() {
+      const response = await fetch('data/trades.json');
+      tradesData = await response.json();
+      renderTrades(tradesData.trades);
+      renderLeaderboard(tradesData.members);
+      renderTopStocks(tradesData.aggregateStats.topTradedStocks);
+    }
+    
+    function formatAmount(min, max) {
+      if (min >= 1000000) return '$1M - $5M';
+      if (min >= 500000) return '$500K - $1M';
+      if (min >= 250000) return '$250K - $500K';
+      if (min >= 100000) return '$100K - $250K';
+      if (min >= 50000) return '$50K - $100K';
+      return '$15K - $50K';
+    }
+    
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    }
+    
+    function formatVolume(vol) {
+      if (vol >= 1000000) return '$' + (vol / 1000000).toFixed(1) + 'M';
+      if (vol >= 1000) return '$' + (vol / 1000).toFixed(0) + 'K';
+      return '$' + vol;
+    }
+    
+    function renderTrades(trades) {
+      const container = document.getElementById('tradesContainer');
+      container.innerHTML = trades.map(trade => `
+        <div class="trade-row ${trade.suspicious ? 'suspicious' : ''}" 
+             data-type="${trade.type}" 
+             data-party="${trade.party}"
+             data-suspicious="${trade.suspicious}"
+             data-search="${trade.memberName.toLowerCase()} ${trade.ticker.toLowerCase()} ${trade.party}">
+          <div class="member-cell">
+            <img class="member-avatar" src="${getMemberPhoto(trade.memberId)}" alt="${trade.memberName}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect fill=%22%23E5E7EB%22 width=%2240%22 height=%2240%22/><text x=%2220%22 y=%2226%22 text-anchor=%22middle%22 fill=%22%239CA3AF%22 font-size=%2214%22>${trade.memberName.charAt(0)}</text></svg>'">
+            <div class="member-info">
+              <h4>${trade.memberName}</h4>
+              <div class="member-meta">
+                <span class="party-badge ${trade.party}"></span>
+                ${trade.party === 'D' ? 'Democrat' : 'Republican'}
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="ticker">${trade.ticker}</div>
+            <div class="company-name">${trade.company}</div>
+          </div>
+          <div>
+            <span class="trade-type ${trade.type}">${trade.type}</span>
+            <div class="amount">${formatAmount(trade.amountMin, trade.amountMax)}</div>
+          </div>
+          <div class="date-cell">${formatDate(trade.date)}</div>
+          <div class="pct-change ${trade.pctChange >= 0 ? 'positive' : 'negative'}">
+            ${trade.pctChange >= 0 ? '+' : ''}${trade.pctChange.toFixed(2)}%
+          </div>
+          <div class="date-cell">${formatDate(trade.disclosureDate)}</div>
+          <div>
+            ${trade.suspicious ? `
+              <div class="tooltip">
+                <span class="suspicious-icon">⚠️</span>
+                <span class="tooltip-text">${trade.suspiciousReason}</span>
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function getMemberPhoto(memberId) {
+      const member = tradesData.members.find(m => m.id === memberId);
+      return member ? member.photo : '';
+    }
+    
+    function renderLeaderboard(members) {
+      const sorted = [...members].sort((a, b) => b.stats.returnVsSP500 - a.stats.returnVsSP500);
+      const container = document.getElementById('leaderboardContainer');
+      
+      container.innerHTML = sorted.map((member, i) => `
+        <div class="leader-card">
+          <div class="rank ${i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : ''}">${i + 1}</div>
+          <img class="leader-avatar" src="${member.photo}" alt="${member.name}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 48 48%22><rect fill=%22%23E5E7EB%22 width=%2248%22 height=%2248%22/><text x=%2224%22 y=%2230%22 text-anchor=%22middle%22 fill=%22%239CA3AF%22 font-size=%2216%22>${member.name.charAt(0)}</text></svg>'">
+          <div class="leader-info">
+            <div class="leader-name">${member.name}</div>
+            <div class="leader-meta">
+              <span class="party-badge ${member.party}"></span>
+              ${member.party === 'D' ? 'D' : 'R'}-${member.state} • ${member.chamber}
+            </div>
+            <div class="leader-stats">
+              <div class="leader-stat">
+                <span class="leader-stat-value" style="color: var(--green);">+${member.stats.returnVsSP500}%</span>
+                <span class="leader-stat-label"> vs S&P</span>
+              </div>
+              <div class="leader-stat">
+                <span class="leader-stat-value">${member.stats.totalTrades}</span>
+                <span class="leader-stat-label"> trades</span>
+              </div>
+              <div class="leader-stat">
+                <span class="leader-stat-value">${formatVolume(member.stats.totalVolume)}</span>
+                <span class="leader-stat-label"> vol</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+    
+    function renderTopStocks(stocks) {
+      const container = document.getElementById('topStocksContainer');
+      container.innerHTML = stocks.map(stock => `
+        <li class="stock-item">
+          <div>
+            <div class="stock-ticker">${stock.ticker}</div>
+            <div class="stock-trades">${stock.trades} trades</div>
+          </div>
+          <div class="stock-volume">${formatVolume(stock.volume)}</div>
+        </li>
+      `).join('');
+    }
+    
+    // Tab switching
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab + '-tab').style.display = 'block';
+      });
+    });
+    
+    // Filters
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const filter = btn.dataset.filter;
+        document.querySelectorAll('.trade-row').forEach(row => {
+          if (filter === 'all') {
+            row.style.display = 'grid';
+          } else if (filter === 'suspicious') {
+            row.style.display = row.dataset.suspicious === 'true' ? 'grid' : 'none';
+          } else if (filter === 'buy' || filter === 'sell') {
+            row.style.display = row.dataset.type === filter ? 'grid' : 'none';
+          } else {
+            row.style.display = row.dataset.party === filter ? 'grid' : 'none';
+          }
+        });
+      });
+    });
+    
+    // Search
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const query = e.target.value.toLowerCase();
+      document.querySelectorAll('.trade-row').forEach(row => {
+        const matches = row.dataset.search.includes(query);
+        row.style.display = matches ? 'grid' : 'none';
+      });
+      
+      // Reset filter buttons
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector('.filter-btn[data-filter="all"]').classList.add('active');
+    });
+    
+    // Init
+    loadData();
+  </script>
+</body>
+</html>
