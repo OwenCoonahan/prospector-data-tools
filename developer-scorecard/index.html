@@ -1092,6 +1092,7 @@
     function closeDetail() {
       selectedDev = null;
       document.getElementById('detailPanel').style.display = 'none';
+      document.getElementById('mainLayout').classList.remove('with-detail');
       // Remove selected class from all rows
       document.querySelectorAll('tbody tr.selected').forEach(tr => tr.classList.remove('selected'));
     }
