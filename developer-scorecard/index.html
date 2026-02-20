@@ -1,1573 +1,586 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Developer Scorecard | Track Records & Performance</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://cdn.jsdelivr.net/npm/geist@1.2.0/dist/fonts/geist-sans/style.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <style>
-    :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f8f9fa;
-      --bg-tertiary: #f1f3f4;
-      --text-primary: #1a1a1a;
-      --text-secondary: #5f6368;
-      --text-muted: #9aa0a6;
-      --border: #e1e4e8;
-      --accent: #3B82F6;
-      --accent-muted: #60a5fa;
-      --success: #22c55e;
-      --warning: #f59e0b;
-      --danger: #ef4444;
-      --chart-dev: #3B82F6;
-      --chart-region: #8b5cf6;
-      --chart-market: #64748b;
-      --font-sans: 'Geist', system-ui, sans-serif;
-      --font-mono: 'JetBrains Mono', monospace;
-    }
-
-    [data-theme="dark"] {
-      --bg-primary: #0d0d0d;
-      --bg-secondary: #141414;
-      --bg-tertiary: #1a1a1a;
-      --text-primary: #f0f0f0;
-      --text-secondary: #a0a0a0;
-      --text-muted: #666666;
-      --border: #2a2a2a;
-      --accent: #3B82F6;
-      --accent-muted: #60a5fa;
-      --chart-dev: #60a5fa;
-      --chart-region: #a78bfa;
-      --chart-market: #94a3b8;
-    }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: var(--font-sans);
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      line-height: 1.5;
-      min-height: 100vh;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 2rem;
-    }
-
-    /* Header */
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .logo {
-      display: flex;
-      align-items: baseline;
-      gap: 0.75rem;
-    }
-
-    .logo h1 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: -0.02em;
-    }
-
-    .logo span {
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.1em;
-    }
-
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-    }
-
-    .btn {
-      background: none;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.5rem 0.75rem;
-      cursor: pointer;
-      color: var(--text-secondary);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      transition: all 0.15s ease;
-    }
-
-    .btn:hover {
-      border-color: var(--text-muted);
-      color: var(--text-primary);
-    }
-
-    .btn-icon {
-      padding: 0.5rem;
-    }
-
-    /* Search */
-    .search-section {
-      margin-bottom: 1.5rem;
-    }
-
-    .search-bar {
-      display: flex;
-      gap: 0.75rem;
-      margin-bottom: 1rem;
-    }
-
-    .search-input {
-      flex: 1;
-      padding: 0.875rem 1rem;
-      font-family: var(--font-sans);
-      font-size: 1rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text-primary);
-      transition: all 0.15s ease;
-    }
-
-    .search-input:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .search-input::placeholder {
-      color: var(--text-muted);
-    }
-
-    /* Filters */
-    .filters {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem;
-      align-items: center;
-    }
-
-    .filter-select {
-      padding: 0.5rem 0.75rem;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-primary);
-      cursor: pointer;
-      min-width: 130px;
-    }
-
-    .filter-select:focus {
-      outline: none;
-      border-color: var(--accent);
-    }
-
-    .filter-label {
-      font-size: 0.75rem;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .filter-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    /* Stats bar */
-    .stats-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.75rem 0;
-      margin-bottom: 0.5rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .stats-left {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    .stats-left strong {
-      color: var(--text-primary);
-      font-weight: 600;
-    }
-
-    .stats-right {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    /* Main layout */
-    .main-layout {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 1.5rem;
-    }
-
-    .main-layout.with-detail {
-      grid-template-columns: 1fr 420px;
-    }
-
-    @media (max-width: 1200px) {
-      .main-layout.with-detail {
-        grid-template-columns: 1fr;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer Reliability Score — Prospector Labs</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  darkMode: 'class',
+  theme: {
+    extend: {
+      fontFamily: { sans: ['Geist', 'system-ui', 'sans-serif'], mono: ['Geist Mono', 'monospace'] },
+      colors: {
+        border: 'hsl(var(--border))',
+        bg: 'hsl(var(--bg))',
+        card: 'hsl(var(--card))',
+        muted: 'hsl(var(--muted))',
+        'muted-fg': 'hsl(var(--muted-fg))',
+        accent: 'hsl(var(--accent))',
       }
     }
-
-    /* Table */
-    .table-container {
-      overflow-x: auto;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.875rem;
-    }
-
-    thead {
-      background: var(--bg-tertiary);
-      position: sticky;
-      top: 0;
-    }
-
-    th {
-      text-align: left;
-      padding: 0.75rem 1rem;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-secondary);
-      border-bottom: 1px solid var(--border);
-      white-space: nowrap;
-      cursor: pointer;
-      user-select: none;
-      transition: color 0.15s ease;
-    }
-
-    th:hover {
-      color: var(--text-primary);
-    }
-
-    th.sorted {
-      color: var(--accent);
-    }
-
-    th .sort-icon {
-      margin-left: 0.25rem;
-      opacity: 0.5;
-    }
-
-    th.sorted .sort-icon {
-      opacity: 1;
-    }
-
-    td {
-      padding: 0.625rem 1rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--text-primary);
-    }
-
-    tbody tr {
-      cursor: pointer;
-      transition: background 0.1s ease;
-    }
-
-    tbody tr:hover {
-      background: var(--bg-secondary);
-    }
-
-    tbody tr.selected {
-      background: var(--bg-tertiary);
-    }
-
-    tbody tr:last-child td {
-      border-bottom: none;
-    }
-
-    .cell-name {
-      font-weight: 500;
-      max-width: 250px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .cell-mw {
-      font-family: var(--font-mono);
-      font-weight: 600;
-      text-align: right;
-    }
-
-    .cell-count {
-      font-family: var(--font-mono);
-      text-align: right;
-    }
-
-    .cell-rate {
-      font-family: var(--font-mono);
-      font-weight: 500;
-    }
-
-    .cell-rate.high { color: var(--success); }
-    .cell-rate.medium { color: var(--warning); }
-    .cell-rate.low { color: var(--danger); }
-
-    .cell-timeline {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-    }
-
-    .cell-regions {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-      max-width: 150px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    /* Detail panel */
-    .detail-panel {
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      background: var(--bg-secondary);
-      position: sticky;
-      top: 2rem;
-      max-height: calc(100vh - 4rem);
-      overflow-y: auto;
-    }
-
-    .detail-header {
-      padding: 1.25rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .detail-header h2 {
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin-bottom: 0.25rem;
-      word-break: break-word;
-    }
-
-    .detail-header .subtitle {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-
-    .detail-stats {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border-bottom: 1px solid var(--border);
-    }
-
-    .stat-card {
-      background: var(--bg-secondary);
-      padding: 1rem;
-    }
-
-    .stat-label {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 0.25rem;
-    }
-
-    .stat-value {
-      font-size: 1.25rem;
-      font-weight: 600;
-    }
-
-    .stat-value.success { color: var(--success); }
-    .stat-value.danger { color: var(--danger); }
-    .stat-value.accent { color: var(--accent); }
-
-    .stat-sub {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-top: 0.125rem;
-    }
-
-    .detail-section {
-      padding: 1rem 1.25rem;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .detail-section:last-child {
-      border-bottom: none;
-    }
-
-    .detail-section h3 {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 0.75rem;
-    }
-
-    .tag-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.375rem;
-    }
-
-    .tag {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      padding: 0.25rem 0.5rem;
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      color: var(--text-secondary);
-    }
-
-    /* Benchmark section */
-    .benchmark-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.75rem;
-    }
-
-    .benchmark-card {
-      background: var(--bg-tertiary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      padding: 0.75rem;
-    }
-
-    .benchmark-card.full-width {
-      grid-column: 1 / -1;
-    }
-
-    .benchmark-label {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: var(--text-muted);
-      margin-bottom: 0.5rem;
-    }
-
-    .benchmark-value {
-      font-size: 1.5rem;
-      font-weight: 600;
-      color: var(--text-primary);
-    }
-
-    .benchmark-compare {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      margin-top: 0.25rem;
-    }
-
-    .benchmark-compare.above { color: var(--success); }
-    .benchmark-compare.below { color: var(--danger); }
-    .benchmark-compare.neutral { color: var(--text-muted); }
-
-    .percentile-badge {
-      display: inline-block;
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      font-weight: 600;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      margin-left: 0.5rem;
-    }
-
-    .percentile-top10 { background: rgba(34, 197, 94, 0.2); color: #22c55e; }
-    .percentile-top25 { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-    .percentile-top50 { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-    .percentile-bottom { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-
-    /* Chart container */
-    .chart-container {
-      position: relative;
-      height: 180px;
-      margin-top: 0.5rem;
-    }
-
-    .chart-legend {
-      display: flex;
-      justify-content: center;
-      gap: 1rem;
-      margin-top: 0.5rem;
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-    }
-
-    .legend-item {
-      display: flex;
-      align-items: center;
-      gap: 0.375rem;
-      color: var(--text-secondary);
-    }
-
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 2px;
-    }
-
-    .legend-dot.dev { background: var(--chart-dev); }
-    .legend-dot.region { background: var(--chart-region); }
-    .legend-dot.market { background: var(--chart-market); }
-
-    /* Tech breakdown */
-    .tech-row {
-      display: flex;
-      align-items: center;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--border);
-    }
-
-    .tech-row:last-child {
-      border-bottom: none;
-    }
-
-    .tech-name {
-      flex: 0 0 80px;
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    .tech-bar-container {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .tech-bar-bg {
-      flex: 1;
-      height: 12px;
-      background: var(--border);
-      border-radius: 3px;
-      overflow: hidden;
-      position: relative;
-    }
-
-    .tech-bar {
-      height: 100%;
-      border-radius: 3px;
-      position: absolute;
-      left: 0;
-      top: 0;
-    }
-
-    .tech-bar.dev { background: var(--chart-dev); z-index: 2; }
-    .tech-bar.market { background: var(--chart-market); opacity: 0.4; z-index: 1; }
-
-    .tech-value {
-      flex: 0 0 50px;
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      font-weight: 500;
-      text-align: right;
-    }
-
-    /* Project list */
-    .project-list {
-      max-height: 250px;
-      overflow-y: auto;
-    }
-
-    .project-item {
-      padding: 0.625rem 0;
-      border-bottom: 1px solid var(--border);
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 0.75rem;
-    }
-
-    .project-item:last-child {
-      border-bottom: none;
-    }
-
-    .project-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .project-name {
-      font-size: 0.8rem;
-      font-weight: 500;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-    }
-
-    .project-meta {
-      font-family: var(--font-mono);
-      font-size: 0.7rem;
-      color: var(--text-muted);
-      margin-top: 0.125rem;
-    }
-
-    .project-mw {
-      font-family: var(--font-mono);
-      font-size: 0.75rem;
-      font-weight: 600;
-      white-space: nowrap;
-    }
-
-    .project-status {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      padding: 0.125rem 0.375rem;
-      border-radius: 3px;
-    }
-
-    .status-operational { background: rgba(34, 197, 94, 0.15); color: #22c55e; }
-    .status-withdrawn { background: rgba(239, 68, 68, 0.15); color: #ef4444; }
-    .status-construction { background: rgba(59, 130, 246, 0.15); color: #3b82f6; }
-    .status-pending { background: rgba(245, 158, 11, 0.15); color: #f59e0b; }
-
-    /* Loading */
-    .loading {
-      text-align: center;
-      padding: 4rem;
-      color: var(--text-muted);
-    }
-
-    .loading-spinner {
-      width: 32px;
-      height: 32px;
-      border: 2px solid var(--border);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: 0 auto 1rem;
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    /* Pagination */
-    .pagination {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0.5rem;
-      margin-top: 1.5rem;
-    }
-
-    .pagination button {
-      padding: 0.5rem 1rem;
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--text-primary);
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-
-    .pagination button:hover:not(:disabled) {
-      border-color: var(--accent);
-      color: var(--accent);
-    }
-
-    .pagination button:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-    }
-
-    .pagination .page-info {
-      font-family: var(--font-mono);
-      font-size: 0.8rem;
-      color: var(--text-secondary);
-      padding: 0 1rem;
-    }
-
-    /* Empty state */
-    .empty-state {
-      text-align: center;
-      padding: 4rem 2rem;
-      color: var(--text-muted);
-    }
-
-    .empty-state h3 {
-      font-size: 1.25rem;
-      margin-bottom: 0.5rem;
-      color: var(--text-secondary);
-    }
-
-    /* No selection */
-    .no-selection {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem;
-      text-align: center;
-      color: var(--text-muted);
-    }
-
-    .no-selection svg {
-      width: 48px;
-      height: 48px;
-      margin-bottom: 1rem;
-      opacity: 0.4;
-    }
-
-    /* Footer */
-    footer {
-      margin-top: 3rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-      text-align: center;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-    }
-
-    footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-
-    footer a:hover {
-      text-decoration: underline;
-    }
-
-    /* Responsive */
-    @media (max-width: 768px) {
-      .container {
-        padding: 1rem;
-      }
-
-      header {
-        flex-direction: column;
-        gap: 1rem;
-        align-items: flex-start;
-      }
-
-      .filters {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-
-      .filter-group {
-        width: 100%;
-      }
-
-      .filter-select {
-        flex: 1;
-      }
-
-      th, td {
-        padding: 0.5rem;
-      }
-
-      .detail-panel {
-        position: static;
-        max-height: none;
-      }
-
-      .benchmark-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+  }
+}
+</script>
+<style>
+  :root {
+    --border: 0 0% 89.8%;
+    --bg: 0 0% 100%;
+    --card: 0 0% 100%;
+    --muted: 0 0% 96.1%;
+    --muted-fg: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+  }
+  .dark {
+    --border: 0 0% 14.9%;
+    --bg: 0 0% 3.9%;
+    --card: 0 0% 6%;
+    --muted: 0 0% 10%;
+    --muted-fg: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+  }
+  html { background: hsl(var(--bg)); }
+  body { font-family: 'Geist', system-ui, sans-serif; background: hsl(var(--bg)); color: hsl(0 0% 90%); }
+  .dark body { color: hsl(0 0% 90%); }
+  html:not(.dark) body { color: hsl(0 0% 9%); }
+  .font-mono { font-family: 'Geist Mono', monospace; }
+  .score-excellent { color: #22c55e; }
+  .score-good { color: #84cc16; }
+  .score-fair { color: #eab308; }
+  .score-poor { color: #f97316; }
+  .score-bad { color: #ef4444; }
+  .card { background: hsl(var(--card)); border: 1px solid hsl(var(--border)); border-radius: 0.75rem; }
+  input, select { background: hsl(var(--muted)); border: 1px solid hsl(var(--border)); color: inherit; }
+  input:focus, select:focus { outline: none; border-color: hsl(0 0% 40%); }
+  .tab-active { border-bottom: 2px solid hsl(0 0% 90%); }
+  .dark .tab-active { border-bottom-color: hsl(0 0% 90%); }
+  html:not(.dark) .tab-active { border-bottom-color: hsl(0 0% 9%); }
+  table th { text-align: left; font-weight: 500; color: hsl(var(--muted-fg)); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  table td { border-top: 1px solid hsl(var(--border)); }
+  .fade-in { animation: fadeIn 0.15s ease-in; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border)); border-radius: 3px; }
+  .compare-check { width: 16px; height: 16px; accent-color: hsl(0 0% 63.9%); }
+</style>
 </head>
-<body>
-  <div class="container">
-    <header>
-      <div class="logo">
-        <h1>Developer Scorecard</h1>
-        <span>Track Records</span>
-      </div>
-      <div class="header-actions">
-        <button class="btn" onclick="exportData()" title="Export JSON">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-            <polyline points="7 10 12 15 17 10"/>
-            <line x1="12" y1="15" x2="12" y2="3"/>
-          </svg>
-          Export
-        </button>
-        <button class="btn btn-icon" onclick="toggleTheme()" title="Toggle theme">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="5"/>
-            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-          </svg>
-        </button>
-      </div>
-    </header>
+<body class="min-h-screen">
 
-    <section class="search-section">
-      <div class="search-bar">
-        <input type="text" class="search-input" id="searchInput" placeholder="Search developer name..." autofocus>
+<div id="app" class="max-w-7xl mx-auto px-6 py-8">
+  <!-- Header -->
+  <header class="flex items-center justify-between mb-8">
+    <div>
+      <div class="flex items-center gap-3 mb-1">
+        <h1 class="text-lg font-semibold tracking-tight">Developer Reliability Score</h1>
+        <span class="text-xs font-mono px-2 py-0.5 rounded" style="background:hsl(var(--muted));color:hsl(var(--muted-fg))">BETA</span>
       </div>
-      <div class="filters">
-        <div class="filter-group">
-          <span class="filter-label">Region</span>
-          <select class="filter-select" id="filterRegion">
-            <option value="">All Regions</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">Type</span>
-          <select class="filter-select" id="filterType">
-            <option value="">All Types</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">Min MW</span>
-          <select class="filter-select" id="filterMinMW">
-            <option value="">Any Size</option>
-            <option value="100">≥ 100 MW</option>
-            <option value="500">≥ 500 MW</option>
-            <option value="1000">≥ 1 GW</option>
-            <option value="5000">≥ 5 GW</option>
-            <option value="10000">≥ 10 GW</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">Min Projects</span>
-          <select class="filter-select" id="filterMinProjects">
-            <option value="">Any</option>
-            <option value="5">≥ 5</option>
-            <option value="10">≥ 10</option>
-            <option value="25">≥ 25</option>
-            <option value="50">≥ 50</option>
-            <option value="100">≥ 100</option>
-          </select>
-        </div>
-        <div class="filter-group">
-          <span class="filter-label">Rank By</span>
-          <select class="filter-select" id="sortBy">
-            <option value="total_mw">Total MW</option>
-            <option value="total_projects">Project Count</option>
-            <option value="success_rate">Success Rate</option>
-            <option value="operational_mw">Operational MW</option>
-            <option value="avg_timeline">Avg Timeline</option>
-          </select>
-        </div>
-      </div>
-    </section>
-
-    <div class="stats-bar">
-      <div class="stats-left">
-        <strong id="resultCount">0</strong> developers found
-      </div>
-      <div class="stats-right" id="totalStats"></div>
+      <p class="text-sm" style="color:hsl(var(--muted-fg))">FICO-like scoring for energy project developers · 5,683 developers · 31,889 projects</p>
     </div>
-
-    <div class="main-layout" id="mainLayout">
-      <div id="content">
-        <div class="loading">
-          <div class="loading-spinner"></div>
-          <div>Loading developer data...</div>
-        </div>
-      </div>
-      <div class="detail-panel" id="detailPanel" style="display: none;">
-        <div class="no-selection">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-            <circle cx="9" cy="7" r="4"/>
-            <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-            <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-          </svg>
-          <div>Select a developer to view details</div>
-        </div>
-      </div>
+    <div class="flex items-center gap-4">
+      <span class="text-xs font-mono" style="color:hsl(var(--muted-fg))">Prospector Labs</span>
+      <button onclick="toggleTheme()" class="p-2 rounded-lg hover:bg-[hsl(var(--muted))] transition-colors" title="Toggle theme">
+        <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
     </div>
+  </header>
 
-    <div class="pagination" id="pagination" style="display: none;">
-      <button id="prevPage">← Previous</button>
-      <span class="page-info" id="pageInfo">Page 1 of 1</span>
-      <button id="nextPage">Next →</button>
-    </div>
+  <!-- Tabs -->
+  <nav class="flex gap-6 mb-6 border-b" style="border-color:hsl(var(--border))">
+    <button onclick="switchTab('rankings')" id="tab-rankings" class="pb-3 text-sm font-medium tab-active">Rankings</button>
+    <button onclick="switchTab('search')" id="tab-search" class="pb-3 text-sm font-medium" style="color:hsl(var(--muted-fg))">Search</button>
+    <button onclick="switchTab('compare')" id="tab-compare" class="pb-3 text-sm font-medium" style="color:hsl(var(--muted-fg))">Compare</button>
+    <button onclick="switchTab('scorecard')" id="tab-scorecard" class="pb-3 text-sm font-medium" style="color:hsl(var(--muted-fg))">Scorecard</button>
+  </nav>
 
-    <footer>
-      Data sourced from public ISO interconnection queues. Updated Feb 2026.<br>
-      Built by <a href="https://prospectorlabs.io" target="_blank">Prospector Labs</a>
-    </footer>
-  </div>
+  <!-- Content -->
+  <div id="content"></div>
+</div>
 
-  <script>
-    // State
-    let developers = [];
-    let filtered = [];
-    let selectedDev = null;
-    let currentPage = 1;
-    const pageSize = 50;
-    
-    // Benchmarks (calculated at load)
-    let benchmarks = {
-      regions: {},    // { region: { avgSuccessRate, medianMW, devCount, successRates: [] } }
-      types: {},      // { type: { avgSuccessRate, totalMW, devCount } }
-      market: {}      // Overall market averages
-    };
+<script src="data.js"></script>
+<script>
+// ── State ──
+let currentTab = 'rankings';
+let selectedDev = null;
+let compareList = [];
+let sortCol = 'score';
+let sortDir = 'desc';
+let filterRegion = '';
+let filterTech = '';
+let filterMinProjects = 3;
+let searchQuery = '';
+let rankPage = 0;
+const PAGE_SIZE = 50;
 
-    // Chart instance
-    let comparisonChart = null;
+// ── Helpers ──
+const regions = [...new Set(DEVELOPERS.map(d => d.primary_region).filter(Boolean))].sort();
+const techs = [...new Set(DEVELOPERS.map(d => d.primary_technology).filter(Boolean))].sort();
 
-    // Column definitions
-    const columns = [
-      { key: 'name', label: 'Developer' },
-      { key: 'total_mw', label: 'Total MW' },
-      { key: 'total_projects', label: 'Projects' },
-      { key: 'success_rate', label: 'Success Rate' },
-      { key: 'operational_mw', label: 'Operational' },
-      { key: 'avg_timeline_months', label: 'Avg Timeline' },
-      { key: 'regions', label: 'Regions' }
-    ];
+function scoreClass(s) {
+  if (s >= 700) return 'score-excellent';
+  if (s >= 600) return 'score-good';
+  if (s >= 500) return 'score-fair';
+  if (s >= 400) return 'score-poor';
+  return 'score-bad';
+}
 
-    // Theme
-    function toggleTheme() {
-      const html = document.documentElement;
-      const current = html.getAttribute('data-theme');
-      const next = current === 'dark' ? 'light' : 'dark';
-      html.setAttribute('data-theme', next);
-      localStorage.setItem('theme', next);
-      // Re-render detail to update chart colors
-      if (selectedDev) renderDetail();
-    }
+function gradeColor(g) {
+  if (g.startsWith('A')) return '#22c55e';
+  if (g.startsWith('B')) return '#84cc16';
+  if (g.startsWith('C')) return '#eab308';
+  if (g.startsWith('D')) return '#f97316';
+  return '#ef4444';
+}
 
-    // Initialize theme
-    const savedTheme = localStorage.getItem('theme') || 
-      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', savedTheme);
+function fmt(n, d=0) { return n != null ? n.toLocaleString(undefined, {maximumFractionDigits:d}) : '—'; }
+function pct(n) { return n != null ? (n * 100).toFixed(1) + '%' : '—'; }
 
-    // Calculate benchmarks from all developer data
-    function calculateBenchmarks() {
-      const regionData = {};
-      const typeData = {};
-      let totalSuccessRates = [];
-      let totalMWs = [];
-      let totalProjects = [];
+function filterDevs() {
+  return DEVELOPERS.filter(d => {
+    if (filterRegion && d.primary_region !== filterRegion) return false;
+    if (filterTech && d.primary_technology !== filterTech) return false;
+    if (d.total_projects < filterMinProjects) return false;
+    if (searchQuery && !d.name.toLowerCase().includes(searchQuery.toLowerCase())) return false;
+    return true;
+  });
+}
 
-      developers.forEach(d => {
-        // Market totals
-        if (d.success_rate != null) totalSuccessRates.push(d.success_rate);
-        totalMWs.push(d.total_mw);
-        totalProjects.push(d.total_projects);
+function sortDevs(arr) {
+  const dir = sortDir === 'desc' ? -1 : 1;
+  return [...arr].sort((a, b) => {
+    const av = a[sortCol] ?? 0, bv = b[sortCol] ?? 0;
+    return av < bv ? dir : av > bv ? -dir : 0;
+  });
+}
 
-        // Region breakdown
-        d.regions.forEach(region => {
-          if (!regionData[region]) {
-            regionData[region] = { successRates: [], mws: [], devCount: 0 };
-          }
-          if (d.success_rate != null) regionData[region].successRates.push(d.success_rate);
-          regionData[region].mws.push(d.total_mw);
-          regionData[region].devCount++;
-        });
+function optionsHtml(items, selected, label) {
+  return `<option value="">${label}</option>` + items.map(i => 
+    `<option value="${i}" ${i===selected?'selected':''}>${i}</option>`
+  ).join('');
+}
 
-        // Type breakdown - calculate per-developer success by type
-        d.types.forEach(type => {
-          if (!typeData[type]) {
-            typeData[type] = { successRates: [], totalMW: 0, devCount: 0 };
-          }
-          if (d.success_rate != null) typeData[type].successRates.push(d.success_rate);
-          typeData[type].devCount++;
-        });
-      });
+// ── Filters bar ──
+function filtersHtml() {
+  return `
+    <div class="flex flex-wrap gap-3 mb-5">
+      <select onchange="filterRegion=this.value;rankPage=0;render()" class="px-3 py-1.5 rounded-lg text-sm">
+        ${optionsHtml(regions, filterRegion, 'All Regions')}
+      </select>
+      <select onchange="filterTech=this.value;rankPage=0;render()" class="px-3 py-1.5 rounded-lg text-sm">
+        ${optionsHtml(techs, filterTech, 'All Technologies')}
+      </select>
+      <select onchange="filterMinProjects=+this.value;rankPage=0;render()" class="px-3 py-1.5 rounded-lg text-sm">
+        <option value="1" ${filterMinProjects===1?'selected':''}>Min 1 project</option>
+        <option value="3" ${filterMinProjects===3?'selected':''}>Min 3 projects</option>
+        <option value="5" ${filterMinProjects===5?'selected':''}>Min 5 projects</option>
+        <option value="10" ${filterMinProjects===10?'selected':''}>Min 10 projects</option>
+        <option value="20" ${filterMinProjects===20?'selected':''}>Min 20 projects</option>
+      </select>
+    </div>`;
+}
 
-      // Calculate region benchmarks
-      Object.keys(regionData).forEach(region => {
-        const rd = regionData[region];
-        const sortedRates = [...rd.successRates].sort((a,b) => a - b);
-        const sortedMWs = [...rd.mws].sort((a,b) => a - b);
-        benchmarks.regions[region] = {
-          avgSuccessRate: sortedRates.length ? (sortedRates.reduce((a,b) => a+b, 0) / sortedRates.length) : 0,
-          medianMW: sortedMWs.length ? sortedMWs[Math.floor(sortedMWs.length / 2)] : 0,
-          devCount: rd.devCount,
-          successRates: sortedRates // Keep sorted for percentile calc
-        };
-      });
+// ── Sort header ──
+function sortHeader(col, label) {
+  const arrow = sortCol === col ? (sortDir === 'desc' ? ' ↓' : ' ↑') : '';
+  return `<th class="px-3 py-2 cursor-pointer select-none whitespace-nowrap" onclick="toggleSort('${col}')">${label}${arrow}</th>`;
+}
+function toggleSort(col) {
+  if (sortCol === col) sortDir = sortDir === 'desc' ? 'asc' : 'desc';
+  else { sortCol = col; sortDir = 'desc'; }
+  render();
+}
 
-      // Calculate type benchmarks
-      Object.keys(typeData).forEach(type => {
-        const td = typeData[type];
-        const sortedRates = [...td.successRates].sort((a,b) => a - b);
-        benchmarks.types[type] = {
-          avgSuccessRate: sortedRates.length ? (sortedRates.reduce((a,b) => a+b, 0) / sortedRates.length) : 0,
-          devCount: td.devCount,
-          successRates: sortedRates
-        };
-      });
+// ── Rankings Tab ──
+function renderRankings() {
+  const filtered = sortDevs(filterDevs());
+  const page = filtered.slice(rankPage * PAGE_SIZE, (rankPage + 1) * PAGE_SIZE);
+  const totalPages = Math.ceil(filtered.length / PAGE_SIZE);
 
-      // Market averages
-      const sortedMarketRates = totalSuccessRates.sort((a,b) => a - b);
-      const sortedMarketMWs = totalMWs.sort((a,b) => a - b);
-      benchmarks.market = {
-        avgSuccessRate: sortedMarketRates.length ? (sortedMarketRates.reduce((a,b) => a+b, 0) / sortedMarketRates.length) : 0,
-        medianMW: sortedMarketMWs.length ? sortedMarketMWs[Math.floor(sortedMarketMWs.length / 2)] : 0,
-        devCount: developers.length,
-        successRates: sortedMarketRates
-      };
-    }
-
-    // Calculate percentile rank
-    function getPercentile(value, sortedArray) {
-      if (!sortedArray.length || value == null) return null;
-      let count = 0;
-      for (let v of sortedArray) {
-        if (v < value) count++;
-        else break;
-      }
-      return Math.round((count / sortedArray.length) * 100);
-    }
-
-    // Get percentile badge HTML
-    function getPercentileBadge(percentile) {
-      if (percentile == null) return '';
-      if (percentile >= 90) return `<span class="percentile-badge percentile-top10">Top 10%</span>`;
-      if (percentile >= 75) return `<span class="percentile-badge percentile-top25">Top 25%</span>`;
-      if (percentile >= 50) return `<span class="percentile-badge percentile-top50">Top 50%</span>`;
-      return `<span class="percentile-badge percentile-bottom">Bottom ${100 - percentile}%</span>`;
-    }
-
-    // Load data
-    async function loadData() {
-      try {
-        const response = await fetch('data/developers.json');
-        developers = await response.json();
-        calculateBenchmarks();
-        initFilters();
-        applyFilters();
-      } catch (err) {
-        document.getElementById('content').innerHTML = `
-          <div class="empty-state">
-            <h3>Failed to load data</h3>
-            <p>Please check that the data file exists.</p>
-          </div>
-        `;
-      }
-    }
-
-    // Initialize filter dropdowns
-    function initFilters() {
-      const regions = new Set();
-      const types = new Set();
-      developers.forEach(d => {
-        d.regions.forEach(r => regions.add(r));
-        d.types.forEach(t => types.add(t));
-      });
-
-      populateSelect('filterRegion', [...regions].sort());
-      populateSelect('filterType', [...types].sort());
-    }
-
-    function populateSelect(id, values) {
-      const select = document.getElementById(id);
-      const firstOption = select.options[0];
-      select.innerHTML = '';
-      select.appendChild(firstOption);
-      values.forEach(v => {
-        const opt = document.createElement('option');
-        opt.value = v;
-        opt.textContent = v;
-        select.appendChild(opt);
-      });
-    }
-
-    // Apply filters
-    function applyFilters() {
-      const search = document.getElementById('searchInput').value.toLowerCase();
-      const region = document.getElementById('filterRegion').value;
-      const type = document.getElementById('filterType').value;
-      const minMW = parseInt(document.getElementById('filterMinMW').value) || 0;
-      const minProjects = parseInt(document.getElementById('filterMinProjects').value) || 0;
-      const sortBy = document.getElementById('sortBy').value;
-
-      filtered = developers.filter(d => {
-        if (minMW && d.total_mw < minMW) return false;
-        if (minProjects && d.total_projects < minProjects) return false;
-        if (region && !d.regions.includes(region)) return false;
-        if (type && !d.types.includes(type)) return false;
-        if (search && !d.name.toLowerCase().includes(search)) return false;
-        return true;
-      });
-
-      // Sort
-      filtered.sort((a, b) => {
-        let aVal = a[sortBy];
-        let bVal = b[sortBy];
-        
-        if (sortBy === 'operational_mw') {
-          aVal = a.operational.mw;
-          bVal = b.operational.mw;
-        }
-        
-        if (aVal == null) return 1;
-        if (bVal == null) return -1;
-        
-        // For avg_timeline, lower is better
-        if (sortBy === 'avg_timeline_months') {
-          return aVal - bVal;
-        }
-        
-        return bVal - aVal;
-      });
-
-      currentPage = 1;
-      render();
-    }
-
-    // Render
-    function render() {
-      const totalPages = Math.ceil(filtered.length / pageSize);
-      const start = (currentPage - 1) * pageSize;
-      const pageData = filtered.slice(start, start + pageSize);
-
-      // Update stats
-      document.getElementById('resultCount').textContent = filtered.length.toLocaleString();
-      const totalMW = filtered.reduce((sum, d) => sum + d.total_mw, 0);
-      const totalProjects = filtered.reduce((sum, d) => sum + d.total_projects, 0);
-      document.getElementById('totalStats').textContent = 
-        `${formatMW(totalMW)} total capacity • ${totalProjects.toLocaleString()} projects`;
-
-      // Render table
-      if (filtered.length === 0) {
-        document.getElementById('content').innerHTML = `
-          <div class="empty-state">
-            <h3>No developers found</h3>
-            <p>Try adjusting your search or filters.</p>
-          </div>
-        `;
-        document.getElementById('pagination').style.display = 'none';
-        return;
-      }
-
-      let html = `
-        <div class="table-container">
-          <table>
-            <thead>
-              <tr>
-                <th style="width: 40px">#</th>
-                ${columns.map(c => `<th>${c.label}</th>`).join('')}
+  return `
+    ${filtersHtml()}
+    <div class="card overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr>
+              <th class="px-3 py-2 w-8">#</th>
+              <th class="px-3 py-2">Developer</th>
+              ${sortHeader('score', 'Score')}
+              <th class="px-3 py-2">Grade</th>
+              ${sortHeader('completion_rate', 'Completion')}
+              ${sortHeader('withdrawal_rate', 'Withdrawal')}
+              ${sortHeader('total_projects', 'Projects')}
+              ${sortHeader('completed_capacity_mw', 'MW Online')}
+              <th class="px-3 py-2">Region</th>
+              <th class="px-3 py-2">Tech</th>
+              <th class="px-3 py-2">Confidence</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${page.map((d, i) => `
+              <tr class="hover:bg-[hsl(var(--muted))] cursor-pointer transition-colors" onclick="viewDev('${d.name.replace(/'/g,"\\'")}')">
+                <td class="px-3 py-2.5 font-mono text-xs" style="color:hsl(var(--muted-fg))">${rankPage * PAGE_SIZE + i + 1}</td>
+                <td class="px-3 py-2.5 font-medium">${d.name}</td>
+                <td class="px-3 py-2.5 font-mono font-semibold ${scoreClass(d.score)}">${d.score}</td>
+                <td class="px-3 py-2.5 font-mono" style="color:${gradeColor(d.grade)}">${d.grade}</td>
+                <td class="px-3 py-2.5 font-mono">${pct(d.completion_rate)}</td>
+                <td class="px-3 py-2.5 font-mono">${pct(d.withdrawal_rate)}</td>
+                <td class="px-3 py-2.5 font-mono">${d.total_projects}</td>
+                <td class="px-3 py-2.5 font-mono">${fmt(d.completed_capacity_mw, 0)}</td>
+                <td class="px-3 py-2.5 text-xs">${d.primary_region || '—'}</td>
+                <td class="px-3 py-2.5 text-xs">${d.primary_technology || '—'}</td>
+                <td class="px-3 py-2.5 text-xs">${d.confidence}</td>
               </tr>
-            </thead>
-            <tbody>
-              ${pageData.map((d, i) => `
-                <tr data-idx="${start + i}" class="${selectedDev && selectedDev.name === d.name ? 'selected' : ''}" onclick="selectDeveloper(${start + i})">
-                  <td class="cell-count">${start + i + 1}</td>
-                  <td class="cell-name" title="${escapeHtml(d.name)}">${d.name}</td>
-                  <td class="cell-mw">${formatMW(d.total_mw)}</td>
-                  <td class="cell-count">${d.total_projects}</td>
-                  <td class="cell-rate ${getRateClass(d.success_rate)}">${d.success_rate != null ? d.success_rate + '%' : '—'}</td>
-                  <td class="cell-mw">${formatMW(d.operational.mw)}</td>
-                  <td class="cell-timeline">${d.avg_timeline_months ? d.avg_timeline_months + ' mo' : '—'}</td>
-                  <td class="cell-regions" title="${d.regions.join(', ')}">${d.regions.join(', ')}</td>
-                </tr>
-              `).join('')}
-            </tbody>
-          </table>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="flex items-center justify-between px-4 py-3 border-t" style="border-color:hsl(var(--border))">
+        <span class="text-xs" style="color:hsl(var(--muted-fg))">${filtered.length} developers</span>
+        <div class="flex gap-2">
+          <button onclick="rankPage=Math.max(0,rankPage-1);render()" class="px-3 py-1 text-xs rounded-lg" style="background:hsl(var(--muted))" ${rankPage===0?'disabled':''}>← Prev</button>
+          <span class="text-xs font-mono py-1" style="color:hsl(var(--muted-fg))">${rankPage+1}/${totalPages}</span>
+          <button onclick="rankPage=Math.min(${totalPages-1},rankPage+1);render()" class="px-3 py-1 text-xs rounded-lg" style="background:hsl(var(--muted))" ${rankPage>=totalPages-1?'disabled':''}>Next →</button>
         </div>
-      `;
+      </div>
+    </div>`;
+}
 
-      document.getElementById('content').innerHTML = html;
-
-      // Pagination
-      const pagination = document.getElementById('pagination');
-      if (totalPages > 1) {
-        pagination.style.display = 'flex';
-        document.getElementById('pageInfo').textContent = `Page ${currentPage} of ${totalPages}`;
-        document.getElementById('prevPage').disabled = currentPage === 1;
-        document.getElementById('nextPage').disabled = currentPage === totalPages;
-      } else {
-        pagination.style.display = 'none';
-      }
-    }
-
-    function selectDeveloper(idx) {
-      selectedDev = filtered[idx];
-      document.getElementById('mainLayout').classList.add('with-detail');
-      renderDetail();
-      render();
-    }
-
-    function renderDetail() {
-      if (!selectedDev) return;
-      
-      const d = selectedDev;
-      const panel = document.getElementById('detailPanel');
-      panel.style.display = 'block';
-
-      // Calculate benchmarks for this developer
-      const primaryRegion = d.regions[0];
-      const regionBench = benchmarks.regions[primaryRegion] || {};
-      const marketBench = benchmarks.market;
-
-      // Calculate developer's percentile in their primary region
-      const regionPercentile = d.success_rate != null && regionBench.successRates 
-        ? getPercentile(d.success_rate, regionBench.successRates) 
-        : null;
-
-      // Calculate market percentile
-      const marketPercentile = d.success_rate != null 
-        ? getPercentile(d.success_rate, marketBench.successRates)
-        : null;
-
-      // Compare to region avg
-      const regionDiff = d.success_rate != null && regionBench.avgSuccessRate != null
-        ? d.success_rate - regionBench.avgSuccessRate
-        : null;
-
-      // Compare to market
-      const marketDiff = d.success_rate != null && marketBench.avgSuccessRate != null
-        ? d.success_rate - marketBench.avgSuccessRate
-        : null;
-
-      // MW comparison
-      const mwVsMedian = regionBench.medianMW ? ((d.total_mw / regionBench.medianMW) * 100).toFixed(0) : null;
-
-      // Filter and sort projects
-      const projects = d.projects.sort((a, b) => (b.mw || 0) - (a.mw || 0));
-
-      // Build tech type breakdown for comparison
-      const techTypes = ['Solar', 'Wind', 'Storage', 'Hybrid', 'Gas'];
-      const devTypeCounts = {};
-      d.projects.forEach(p => {
-        if (p.type && techTypes.some(t => p.type.includes(t))) {
-          const mainType = techTypes.find(t => p.type.includes(t)) || 'Other';
-          devTypeCounts[mainType] = (devTypeCounts[mainType] || 0) + 1;
-        }
-      });
-      const devTotal = d.total_projects;
-
-      panel.innerHTML = `
-        <div class="detail-header">
-          <h2>${d.name}</h2>
-          <div class="subtitle">${d.total_projects} projects • Active since ${formatDateShort(d.earliest_queue)}</div>
-        </div>
-        
-        <div class="detail-stats">
-          <div class="stat-card">
-            <div class="stat-label">Total Capacity</div>
-            <div class="stat-value">${formatMW(d.total_mw)}</div>
-            <div class="stat-sub">${d.total_projects} projects</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Success Rate</div>
-            <div class="stat-value ${d.success_rate >= 50 ? 'success' : d.success_rate >= 25 ? '' : 'danger'}">${d.success_rate != null ? d.success_rate + '%' : '—'}</div>
-            <div class="stat-sub">${d.operational.count + d.construction.count} of ${d.operational.count + d.construction.count + d.withdrawn.count} completed</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Operational</div>
-            <div class="stat-value success">${formatMW(d.operational.mw)}</div>
-            <div class="stat-sub">${d.operational.count} projects</div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-label">Under Construction</div>
-            <div class="stat-value accent">${formatMW(d.construction.mw)}</div>
-            <div class="stat-sub">${d.construction.count} projects</div>
-          </div>
-        </div>
-
-        <!-- BENCHMARKS SECTION -->
-        <div class="detail-section">
-          <h3>📊 Benchmarks vs ${primaryRegion}</h3>
-          <div class="benchmark-grid">
-            <div class="benchmark-card">
-              <div class="benchmark-label">Success Rate</div>
-              <div class="benchmark-value">${d.success_rate != null ? d.success_rate + '%' : '—'}${regionPercentile ? getPercentileBadge(regionPercentile) : ''}</div>
-              <div class="benchmark-compare ${regionDiff > 0 ? 'above' : regionDiff < 0 ? 'below' : 'neutral'}">
-                ${regionDiff != null ? (regionDiff > 0 ? '+' : '') + regionDiff.toFixed(1) + '% vs region avg (' + regionBench.avgSuccessRate.toFixed(1) + '%)' : '—'}
-              </div>
+// ── Search Tab ──
+function renderSearch() {
+  const results = searchQuery ? sortDevs(filterDevs()).slice(0, 30) : [];
+  return `
+    <div class="mb-5">
+      <input type="text" placeholder="Search developer name..." value="${searchQuery}"
+        oninput="searchQuery=this.value;render()"
+        class="w-full max-w-lg px-4 py-2.5 rounded-lg text-sm" autofocus>
+    </div>
+    ${filtersHtml()}
+    ${results.length ? `
+      <div class="grid gap-3">
+        ${results.map(d => `
+          <div class="card px-5 py-4 flex items-center justify-between cursor-pointer hover:bg-[hsl(var(--muted))] transition-colors" onclick="viewDev('${d.name.replace(/'/g,"\\'")}')">
+            <div>
+              <div class="font-medium">${d.name}</div>
+              <div class="text-xs mt-1" style="color:hsl(var(--muted-fg))">${d.primary_region || '—'} · ${d.primary_technology || '—'} · ${d.total_projects} projects</div>
             </div>
-            <div class="benchmark-card">
-              <div class="benchmark-label">Portfolio Size</div>
-              <div class="benchmark-value">${formatMW(d.total_mw)}</div>
-              <div class="benchmark-compare ${mwVsMedian > 100 ? 'above' : mwVsMedian < 100 ? 'below' : 'neutral'}">
-                ${mwVsMedian ? mwVsMedian + '% of region median' : '—'}
-              </div>
-            </div>
-            <div class="benchmark-card full-width">
-              <div class="benchmark-label">Market Ranking</div>
-              <div class="benchmark-value">${marketPercentile != null ? getPercentileBadge(marketPercentile) : '—'}</div>
-              <div class="benchmark-compare ${marketDiff > 0 ? 'above' : marketDiff < 0 ? 'below' : 'neutral'}">
-                ${marketDiff != null ? (marketDiff > 0 ? '+' : '') + marketDiff.toFixed(1) + '% vs market avg (' + marketBench.avgSuccessRate.toFixed(1) + '%)' : '—'}
-              </div>
+            <div class="text-right">
+              <div class="font-mono text-2xl font-semibold ${scoreClass(d.score)}">${d.score}</div>
+              <div class="font-mono text-xs" style="color:${gradeColor(d.grade)}">${d.grade} · ${d.confidence}</div>
             </div>
           </div>
-        </div>
+        `).join('')}
+      </div>
+    ` : searchQuery ? '<p class="text-sm" style="color:hsl(var(--muted-fg))">No results found.</p>' : '<p class="text-sm" style="color:hsl(var(--muted-fg))">Start typing to search developers.</p>'}
+  `;
+}
 
-        <!-- COMPARISON CHART -->
-        <div class="detail-section">
-          <h3>📈 Success Rate Comparison</h3>
-          <div class="chart-container">
-            <canvas id="comparisonChart"></canvas>
-          </div>
-          <div class="chart-legend">
-            <span class="legend-item"><span class="legend-dot dev"></span>Developer</span>
-            <span class="legend-item"><span class="legend-dot region"></span>Region Avg</span>
-            <span class="legend-item"><span class="legend-dot market"></span>Market Avg</span>
-          </div>
-        </div>
+// ── Scorecard Tab ──
+function renderScorecard() {
+  if (!selectedDev) return '<p class="text-sm" style="color:hsl(var(--muted-fg))">Select a developer from Rankings or Search to view their scorecard.</p>';
+  const d = DEVELOPERS.find(x => x.name === selectedDev);
+  if (!d) return '<p>Developer not found.</p>';
 
-        <!-- TECHNOLOGY BREAKDOWN -->
-        <div class="detail-section">
-          <h3>⚡ Technology Focus vs Market</h3>
-          ${techTypes.filter(t => devTypeCounts[t] || benchmarks.types[t]).slice(0, 4).map(type => {
-            const devPct = devTotal ? ((devTypeCounts[type] || 0) / devTotal * 100) : 0;
-            const marketPct = benchmarks.types[type] ? (benchmarks.types[type].devCount / developers.length * 100) : 0;
-            return `
-              <div class="tech-row">
-                <span class="tech-name">${type}</span>
-                <div class="tech-bar-container">
-                  <div class="tech-bar-bg">
-                    <div class="tech-bar market" style="width: ${Math.min(marketPct * 2, 100)}%"></div>
-                    <div class="tech-bar dev" style="width: ${Math.min(devPct * 2, 100)}%"></div>
-                  </div>
-                  <span class="tech-value">${devPct.toFixed(0)}%</span>
+  const dims = [
+    { name: 'Completion Rate', weight: 30, score: d.s_completion_rate, raw: pct(d.completion_rate), desc: `${pct(d.completion_rate)} of projects reached COD` },
+    { name: 'Withdrawal Rate', weight: 20, score: d.s_withdrawal_rate, raw: pct(d.withdrawal_rate), desc: `${pct(d.withdrawal_rate)} of projects withdrawn (lower is better)` },
+    { name: 'Timeline Adherence', weight: 20, score: d.s_timeline_adherence, raw: d.avg_timeline_months ? d.avg_timeline_months.toFixed(0) + ' mo' : 'N/A', desc: d.avg_timeline_months ? `Avg ${d.avg_timeline_months.toFixed(0)} months queue-to-COD` : 'Insufficient data' },
+    { name: 'Capacity Delivered', weight: 15, score: d.s_capacity_delivered, raw: fmt(d.completed_capacity_mw, 0) + ' MW', desc: `${fmt(d.completed_capacity_mw, 0)} MW brought online` },
+    { name: 'Regional Diversity', weight: 10, score: d.s_regional_diversity, raw: d.regions ? d.regions.split(',').length + ' regions' : '0', desc: `Active in ${d.regions ? d.regions.split(',').length : 0} ISO regions` },
+    { name: 'Experience Depth', weight: 5, score: d.s_experience_depth, raw: (d.years_active||0) + ' yrs', desc: `${d.years_active||0} years active, ${d.total_projects} projects` },
+  ];
+
+  setTimeout(() => drawRadar('radar-canvas', dims), 50);
+
+  const rList = d.regions ? d.regions.split(',') : [];
+  const tList = d.technologies ? d.technologies.split(',') : [];
+  const sList = d.states ? d.states.split(',') : [];
+
+  return `
+    <button onclick="selectedDev=null;switchTab('rankings')" class="text-xs mb-4 px-3 py-1 rounded-lg" style="background:hsl(var(--muted));color:hsl(var(--muted-fg))">← Back to Rankings</button>
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <!-- Score hero -->
+      <div class="card p-8 flex flex-col items-center justify-center">
+        <div class="font-mono text-6xl font-bold ${scoreClass(d.score)}">${d.score}</div>
+        <div class="font-mono text-lg mt-1" style="color:${gradeColor(d.grade)}">${d.grade}</div>
+        <div class="text-xs mt-2" style="color:hsl(var(--muted-fg))">Confidence: ${d.confidence}</div>
+        <div class="text-sm font-medium mt-4">${d.name}</div>
+        <div class="text-xs mt-1" style="color:hsl(var(--muted-fg))">${d.primary_region || '—'} · ${d.primary_technology || '—'}</div>
+      </div>
+
+      <!-- Radar chart -->
+      <div class="card p-6">
+        <h3 class="text-xs font-medium mb-4" style="color:hsl(var(--muted-fg))">SCORE DIMENSIONS</h3>
+        <canvas id="radar-canvas" width="300" height="300"></canvas>
+      </div>
+
+      <!-- Key stats -->
+      <div class="card p-6">
+        <h3 class="text-xs font-medium mb-4" style="color:hsl(var(--muted-fg))">KEY METRICS</h3>
+        <div class="space-y-3 text-sm">
+          <div class="flex justify-between"><span style="color:hsl(var(--muted-fg))">Total Projects</span><span class="font-mono">${d.total_projects}</span></div>
+          <div class="flex justify-between"><span style="color:hsl(var(--muted-fg))">Completed</span><span class="font-mono">${d.completed_projects}</span></div>
+          <div class="flex justify-between"><span style="color:hsl(var(--muted-fg))">Active</span><span class="font-mono">${d.active_projects}</span></div>
+          <div class="flex justify-between"><span style="color:hsl(var(--muted-fg))">Withdrawn</span><span class="font-mono">${d.withdrawn_projects}</span></div>
+          <div class="flex justify-between"><span style="color:hsl(var(--muted-fg))">Total Capacity</span><span class="font-mono">${fmt(d.total_capacity_mw, 0)} MW</span></div>
+          <div class="flex justify-between"><span style="color:hsl(var(--muted-fg))">Online Capacity</span><span class="font-mono">${fmt(d.completed_capacity_mw, 0)} MW</span></div>
+          <div class="flex justify-between"><span style="color:hsl(var(--muted-fg))">Years Active</span><span class="font-mono">${d.years_active || '—'}</span></div>
+          <div class="flex justify-between"><span style="color:hsl(var(--muted-fg))">First Project</span><span class="font-mono">${d.first_project_year || '—'}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Score breakdown -->
+    <div class="card p-6 mt-6">
+      <h3 class="text-xs font-medium mb-4" style="color:hsl(var(--muted-fg))">SCORE BREAKDOWN</h3>
+      <div class="space-y-4">
+        ${dims.map(dim => `
+          <div>
+            <div class="flex justify-between text-sm mb-1">
+              <span>${dim.name} <span class="font-mono text-xs" style="color:hsl(var(--muted-fg))">(${dim.weight}%)</span></span>
+              <span class="font-mono">${dim.score.toFixed(0)}/100 · ${dim.raw}</span>
+            </div>
+            <div class="w-full h-1.5 rounded-full" style="background:hsl(var(--muted))">
+              <div class="h-full rounded-full transition-all" style="width:${dim.score}%;background:${dim.score>=70?'#22c55e':dim.score>=50?'#eab308':'#ef4444'}"></div>
+            </div>
+            <div class="text-xs mt-0.5" style="color:hsl(var(--muted-fg))">${dim.desc}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+
+    <!-- Geography & Tech -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div class="card p-6">
+        <h3 class="text-xs font-medium mb-3" style="color:hsl(var(--muted-fg))">REGIONS</h3>
+        <div class="flex flex-wrap gap-1.5">${rList.map(r => `<span class="px-2 py-0.5 rounded text-xs font-mono" style="background:hsl(var(--muted))">${r}</span>`).join('')}</div>
+      </div>
+      <div class="card p-6">
+        <h3 class="text-xs font-medium mb-3" style="color:hsl(var(--muted-fg))">TECHNOLOGIES</h3>
+        <div class="flex flex-wrap gap-1.5">${tList.map(t => `<span class="px-2 py-0.5 rounded text-xs font-mono" style="background:hsl(var(--muted))">${t}</span>`).join('')}</div>
+      </div>
+      <div class="card p-6">
+        <h3 class="text-xs font-medium mb-3" style="color:hsl(var(--muted-fg))">STATES</h3>
+        <div class="flex flex-wrap gap-1.5">${sList.slice(0,15).map(s => `<span class="px-2 py-0.5 rounded text-xs font-mono" style="background:hsl(var(--muted))">${s}</span>`).join('')}${sList.length>15?`<span class="text-xs" style="color:hsl(var(--muted-fg))">+${sList.length-15} more</span>`:''}</div>
+      </div>
+    </div>
+  `;
+}
+
+// ── Compare Tab ──
+function renderCompare() {
+  const searchResults = searchQuery ? DEVELOPERS.filter(d => d.name.toLowerCase().includes(searchQuery.toLowerCase())).slice(0, 10) : [];
+  const selected = DEVELOPERS.filter(d => compareList.includes(d.name));
+
+  if (selected.length >= 2) {
+    const dims = ['s_completion_rate', 's_withdrawal_rate', 's_timeline_adherence', 's_capacity_delivered', 's_regional_diversity', 's_experience_depth'];
+    const dimNames = ['Completion', 'Withdrawal', 'Timeline', 'Capacity', 'Regional', 'Experience'];
+    const colors = ['#22c55e', '#3b82f6', '#eab308', '#f97316', '#a855f7'];
+    setTimeout(() => drawCompareRadar('compare-radar', selected, dimNames, dims, colors), 50);
+  }
+
+  return `
+    <div class="mb-5">
+      <input type="text" placeholder="Search to add developers (select 2-5)..." value="${searchQuery}"
+        oninput="searchQuery=this.value;render()"
+        class="w-full max-w-lg px-4 py-2.5 rounded-lg text-sm">
+    </div>
+    ${searchResults.length && searchQuery ? `
+      <div class="card mb-5 max-w-lg overflow-hidden">
+        ${searchResults.map(d => `
+          <div class="px-4 py-2 flex items-center justify-between hover:bg-[hsl(var(--muted))] cursor-pointer text-sm" onclick="addCompare('${d.name.replace(/'/g,"\\'")}')">
+            <span>${d.name}</span>
+            <span class="font-mono ${scoreClass(d.score)}">${d.score}</span>
+          </div>
+        `).join('')}
+      </div>
+    ` : ''}
+    ${compareList.length ? `
+      <div class="flex gap-2 mb-5 flex-wrap">
+        ${compareList.map((n, i) => `
+          <span class="px-3 py-1 rounded-lg text-xs font-medium flex items-center gap-2" style="background:hsl(var(--muted))">
+            ${n}
+            <button onclick="removeCompare(${i})" class="hover:text-red-400">×</button>
+          </span>
+        `).join('')}
+        <button onclick="compareList=[];render()" class="px-3 py-1 rounded-lg text-xs" style="color:hsl(var(--muted-fg))">Clear all</button>
+      </div>
+    ` : ''}
+    ${selected.length >= 2 ? `
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="card p-6">
+          <h3 class="text-xs font-medium mb-4" style="color:hsl(var(--muted-fg))">RADAR COMPARISON</h3>
+          <canvas id="compare-radar" width="400" height="400"></canvas>
+        </div>
+        <div class="card p-6">
+          <h3 class="text-xs font-medium mb-4" style="color:hsl(var(--muted-fg))">SCORE COMPARISON</h3>
+          <div class="space-y-4">
+            ${selected.map((d, i) => `
+              <div class="flex items-center gap-4">
+                <div class="w-3 h-3 rounded-full" style="background:${['#22c55e','#3b82f6','#eab308','#f97316','#a855f7'][i]}"></div>
+                <div class="flex-1">
+                  <div class="text-sm font-medium">${d.name}</div>
+                  <div class="text-xs" style="color:hsl(var(--muted-fg))">${d.primary_region||'—'} · ${d.primary_technology||'—'}</div>
                 </div>
-              </div>
-            `;
-          }).join('')}
-          <div class="chart-legend" style="margin-top: 0.75rem;">
-            <span class="legend-item"><span class="legend-dot dev"></span>Developer</span>
-            <span class="legend-item"><span class="legend-dot market"></span>Market</span>
-          </div>
-        </div>
-
-        <div class="detail-section">
-          <h3>Regions (${d.regions.length})</h3>
-          <div class="tag-list">
-            ${d.regions.map(r => `<span class="tag">${r}</span>`).join('')}
-          </div>
-        </div>
-
-        <div class="detail-section">
-          <h3>Projects (${projects.length})</h3>
-          <div class="project-list">
-            ${projects.slice(0, 30).map(p => `
-              <div class="project-item">
-                <div class="project-info">
-                  <div class="project-name" title="${escapeHtml(p.name || p.id)}">${p.name || p.id}</div>
-                  <div class="project-meta">${p.region} • ${p.type || 'Unknown'} • ${formatDateShort(p.queue_date)}</div>
-                </div>
-                <div style="text-align: right;">
-                  <div class="project-mw">${p.mw ? p.mw.toLocaleString() + ' MW' : '—'}</div>
-                  <span class="project-status ${getStatusClass(p.status)}">${p.status || 'Unknown'}</span>
-                </div>
+                <div class="font-mono text-2xl font-bold ${scoreClass(d.score)}">${d.score}</div>
               </div>
             `).join('')}
-            ${projects.length > 30 ? `<div style="padding: 0.5rem 0; color: var(--text-muted); font-size: 0.75rem;">+ ${projects.length - 30} more projects</div>` : ''}
           </div>
         </div>
-      `;
+      </div>
+      <div class="card overflow-hidden">
+        <table class="w-full text-sm">
+          <thead><tr>
+            <th class="px-4 py-3">Metric</th>
+            ${selected.map(d => `<th class="px-4 py-3">${d.name}</th>`).join('')}
+          </tr></thead>
+          <tbody>
+            ${[
+              ['Score', d => `<span class="font-mono font-bold ${scoreClass(d.score)}">${d.score}</span>`],
+              ['Grade', d => `<span class="font-mono" style="color:${gradeColor(d.grade)}">${d.grade}</span>`],
+              ['Completion Rate', d => `<span class="font-mono">${pct(d.completion_rate)}</span>`],
+              ['Withdrawal Rate', d => `<span class="font-mono">${pct(d.withdrawal_rate)}</span>`],
+              ['Total Projects', d => `<span class="font-mono">${d.total_projects}</span>`],
+              ['Completed', d => `<span class="font-mono">${d.completed_projects}</span>`],
+              ['Total MW', d => `<span class="font-mono">${fmt(d.total_capacity_mw,0)}</span>`],
+              ['MW Online', d => `<span class="font-mono">${fmt(d.completed_capacity_mw,0)}</span>`],
+              ['Regions', d => `<span class="font-mono">${d.regions?d.regions.split(',').length:0}</span>`],
+              ['Years Active', d => `<span class="font-mono">${d.years_active||'—'}</span>`],
+              ['Confidence', d => `<span>${d.confidence}</span>`],
+            ].map(([label, fn]) => `
+              <tr>
+                <td class="px-4 py-2.5" style="color:hsl(var(--muted-fg))">${label}</td>
+                ${selected.map(d => `<td class="px-4 py-2.5">${fn(d)}</td>`).join('')}
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    ` : '<p class="text-sm" style="color:hsl(var(--muted-fg))">Select at least 2 developers to compare.</p>'}
+  `;
+}
 
-      // Render chart after DOM is updated
-      setTimeout(() => renderComparisonChart(d), 50);
-    }
+function addCompare(name) {
+  if (!compareList.includes(name) && compareList.length < 5) {
+    compareList.push(name);
+    searchQuery = '';
+    render();
+  }
+}
+function removeCompare(i) { compareList.splice(i, 1); render(); }
 
-    function renderComparisonChart(dev) {
-      const ctx = document.getElementById('comparisonChart');
-      if (!ctx) return;
+// ── Charts ──
+let radarChart = null;
+let compareChart = null;
 
-      // Destroy existing chart
-      if (comparisonChart) {
-        comparisonChart.destroy();
-      }
-
-      const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-      const colors = {
-        dev: isDark ? '#60a5fa' : '#3B82F6',
-        region: isDark ? '#a78bfa' : '#8b5cf6',
-        market: isDark ? '#94a3b8' : '#64748b',
-        text: isDark ? '#a0a0a0' : '#5f6368',
-        grid: isDark ? '#2a2a2a' : '#e1e4e8'
-      };
-
-      // Prepare data for each region
-      const labels = dev.regions.slice(0, 5);
-      const devRates = labels.map(() => dev.success_rate || 0);
-      const regionRates = labels.map(r => benchmarks.regions[r]?.avgSuccessRate || 0);
-      const marketRate = benchmarks.market.avgSuccessRate;
-
-      comparisonChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Developer',
-              data: devRates,
-              backgroundColor: colors.dev,
-              borderRadius: 4,
-              barPercentage: 0.7
-            },
-            {
-              label: 'Region Avg',
-              data: regionRates,
-              backgroundColor: colors.region,
-              borderRadius: 4,
-              barPercentage: 0.7
-            },
-            {
-              label: 'Market Avg',
-              data: labels.map(() => marketRate),
-              type: 'line',
-              borderColor: colors.market,
-              borderWidth: 2,
-              borderDash: [5, 5],
-              pointRadius: 0,
-              fill: false
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              callbacks: {
-                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
-              }
-            }
-          },
-          scales: {
-            x: {
-              grid: { display: false },
-              ticks: { color: colors.text, font: { family: "'JetBrains Mono', monospace", size: 10 } }
-            },
-            y: {
-              beginAtZero: true,
-              max: 100,
-              grid: { color: colors.grid },
-              ticks: { 
-                color: colors.text, 
-                font: { family: "'JetBrains Mono', monospace", size: 10 },
-                callback: v => v + '%'
-              }
-            }
-          }
+function drawRadar(canvasId, dims) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  if (radarChart) radarChart.destroy();
+  const isDark = document.documentElement.classList.contains('dark');
+  radarChart = new Chart(canvas, {
+    type: 'radar',
+    data: {
+      labels: dims.map(d => d.name),
+      datasets: [{
+        data: dims.map(d => d.score),
+        backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)',
+        borderColor: isDark ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.6)',
+        pointBackgroundColor: isDark ? 'rgba(255,255,255,0.8)' : 'rgba(0,0,0,0.8)',
+        borderWidth: 1.5,
+        pointRadius: 3,
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: {
+        r: {
+          beginAtZero: true, max: 100,
+          ticks: { display: false },
+          grid: { color: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' },
+          angleLines: { color: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)' },
+          pointLabels: { color: isDark ? 'rgba(255,255,255,0.5)' : 'rgba(0,0,0,0.5)', font: { size: 11, family: 'Geist' } },
         }
-      });
+      }
     }
+  });
+}
 
-    function escapeHtml(str) {
-      if (!str) return '';
-      return str.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function drawCompareRadar(canvasId, devs, dimNames, dimKeys, colors) {
+  const canvas = document.getElementById(canvasId);
+  if (!canvas) return;
+  if (compareChart) compareChart.destroy();
+  const isDark = document.documentElement.classList.contains('dark');
+  compareChart = new Chart(canvas, {
+    type: 'radar',
+    data: {
+      labels: dimNames,
+      datasets: devs.map((d, i) => ({
+        label: d.name,
+        data: dimKeys.map(k => d[k]),
+        backgroundColor: colors[i] + '15',
+        borderColor: colors[i],
+        pointBackgroundColor: colors[i],
+        borderWidth: 1.5,
+        pointRadius: 3,
+      }))
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { labels: { color: isDark?'rgba(255,255,255,0.6)':'rgba(0,0,0,0.6)', font: { size: 11, family: 'Geist' } } } },
+      scales: {
+        r: {
+          beginAtZero: true, max: 100,
+          ticks: { display: false },
+          grid: { color: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)' },
+          angleLines: { color: isDark?'rgba(255,255,255,0.08)':'rgba(0,0,0,0.08)' },
+          pointLabels: { color: isDark?'rgba(255,255,255,0.5)':'rgba(0,0,0,0.5)', font: { size: 11, family: 'Geist' } },
+        }
+      }
     }
+  });
+}
 
-    function formatMW(mw) {
-      if (!mw) return '0 MW';
-      if (mw >= 1000) return (mw / 1000).toFixed(1) + ' GW';
-      return Math.round(mw).toLocaleString() + ' MW';
-    }
+// ── Navigation ──
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('nav button').forEach(b => {
+    b.classList.remove('tab-active');
+    b.style.color = 'hsl(var(--muted-fg))';
+  });
+  const btn = document.getElementById('tab-' + tab);
+  btn.classList.add('tab-active');
+  btn.style.color = '';
+  render();
+}
 
-    function formatDateShort(dateStr) {
-      if (!dateStr) return '—';
-      const d = new Date(dateStr);
-      if (isNaN(d)) return dateStr;
-      return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-    }
+function viewDev(name) {
+  selectedDev = name;
+  switchTab('scorecard');
+}
 
-    function getRateClass(rate) {
-      if (rate == null) return '';
-      if (rate >= 50) return 'high';
-      if (rate >= 25) return 'medium';
-      return 'low';
-    }
+function toggleTheme() {
+  document.documentElement.classList.toggle('dark');
+  render();
+}
 
-    function getStatusClass(status) {
-      if (!status) return 'status-pending';
-      const s = status.toLowerCase();
-      if (s.includes('operational')) return 'status-operational';
-      if (s.includes('withdrawn')) return 'status-withdrawn';
-      if (s.includes('construction')) return 'status-construction';
-      return 'status-pending';
-    }
+// ── Render ──
+function render() {
+  const el = document.getElementById('content');
+  switch (currentTab) {
+    case 'rankings': el.innerHTML = renderRankings(); break;
+    case 'search': el.innerHTML = renderSearch(); break;
+    case 'scorecard': el.innerHTML = renderScorecard(); break;
+    case 'compare': el.innerHTML = renderCompare(); break;
+  }
+}
 
-    function exportData() {
-      const data = filtered.map(d => ({
-        name: d.name,
-        total_mw: d.total_mw,
-        total_projects: d.total_projects,
-        success_rate: d.success_rate,
-        operational_mw: d.operational.mw,
-        operational_count: d.operational.count,
-        withdrawn_mw: d.withdrawn.mw,
-        withdrawn_count: d.withdrawn.count,
-        construction_mw: d.construction.mw,
-        construction_count: d.construction.count,
-        pending_mw: d.pending.mw,
-        pending_count: d.pending.count,
-        avg_timeline_months: d.avg_timeline_months,
-        regions: d.regions,
-        types: d.types
-      }));
-
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'developer-scorecard-export.json';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    // Event listeners
-    document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 200));
-    ['filterRegion', 'filterType', 'filterMinMW', 'filterMinProjects', 'sortBy'].forEach(id => {
-      document.getElementById(id).addEventListener('change', applyFilters);
-    });
-
-    document.getElementById('prevPage').addEventListener('click', () => {
-      if (currentPage > 1) { currentPage--; render(); window.scrollTo(0, 0); }
-    });
-
-    document.getElementById('nextPage').addEventListener('click', () => {
-      const totalPages = Math.ceil(filtered.length / pageSize);
-      if (currentPage < totalPages) { currentPage++; render(); window.scrollTo(0, 0); }
-    });
-
-    function debounce(fn, ms) {
-      let timer;
-      return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), ms); };
-    }
-
-    // Init
-    loadData();
-  </script>
+render();
+</script>
 </body>
 </html>
